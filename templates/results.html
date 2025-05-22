@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Results for {{query}} - {{config.BOT_SESSION_NAME}}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6a11cb;
+            --secondary: #2575fc;
+            --accent: #ff4d4d;
+            --dark: #1e1e2d;
+            --light: #f8f9fa;
+        }
+        
+        body {
+            background: #f8f9fa;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        .result-header {
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .result-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            transition: all 0.3s;
+            border-left: 4px solid var(--primary);
+        }
+        
+        .result-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        
+        .result-content {
+            white-space: pre-line;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+        
+        .result-content a {
+            color: var(--secondary);
+            word-break: break-all;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .result-content a:hover {
+            text-decoration: underline;
+        }
+        
+        .result-content b {
+            color: var(--dark);
+            font-weight: 600;
+        }
+        
+        .social-links {
+            margin: 30px 0;
+            text-align: center;
+        }
+        
+        .social-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin: 0 5px;
+            color: white;
+            font-size: 1rem;
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+        
+        .telegram { background-color: #0088cc; }
+        .whatsapp { background-color: #25D366; }
+        
+        .social-btn:hover {
+            transform: scale(1.1);
+            color: white;
+        }
+        
+        .action-btn {
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            border: none;
+            padding: 10px 20px;
+            font-weight: 600;
+            color: white;
+            border-radius: 50px;
+            transition: all 0.3s;
+        }
+        
+        .action-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            color: white;
+        }
+        
+        .pagination .page-item.active .page-link {
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            border-color: var(--primary);
+        }
+        
+        .pagination .page-link {
+            color: var(--primary);
+        }
+        
+        .no-results {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        
+        .items-per-page-selector {
+            max-width: 100px;
+            display: inline-block;
+        }
+        
+        .results-count {
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+        
+        .search-query {
+            font-weight: 600;
+            color: var(--primary);
+        }
+    </style>
+</head>
+<body>
+    <div class="container py-5">
+        <div class="result-header animate__animated animate__fadeInDown">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h2 class="mb-0">Results for "<span class="search-query">{{query}}</span>"</h2>
+                    <p class="mb-0">{{total}} results found</p>
+                </div>
+                <div class="col-md-4 text-md-end">
+                    <a href="{{config.WEB_BASE_URL}}" class="btn action-btn animate__animated animate__fadeIn">
+                        <i class="fas fa-arrow-left me-2"></i> New Search
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Items per page selector -->
+        <div class="mb-4 animate__animated animate__fadeIn">
+            <form method="get" class="row g-3 align-items-center">
+                <input type="hidden" name="query" value="{{query}}">
+                <div class="col-auto">
+                    <label for="per_page" class="col-form-label">Items per page:</label>
+                </div>
+                <div class="col-auto">
+                    <select name="per_page" id="per_page" class="form-select items-per-page-selector" onchange="this.form.submit()">
+                        <option value="10" {% if pagination.items_per_page == 10 %}selected{% endif %}>10</option>
+                        <option value="25" {% if pagination.items_per_page == 25 %}selected{% endif %}>25</option>
+                        <option value="50" {% if pagination.items_per_page == 50 %}selected{% endif %}>50</option>
+                        <option value="100" {% if pagination.items_per_page == 100 %}selected{% endif %}>100</option>
+                    </select>
+                </div>
+                <div class="col-auto">
+                    <span class="results-count">
+                        Showing {{pagination.start_index}}-{{pagination.end_index}} of {{total}} items
+                    </span>
+                </div>
+            </form>
+        </div>
+        
+        {% if results %}
+            <div class="row">
+                {% for result in results %}
+                    <div class="col-md-6 animate__animated" data-animate="animate__fadeInUp" style="animation-delay: {{ loop.index0 * 0.1 }}s">
+                        <div class="result-card">
+                            <div class="result-content">{{result|safe}}</div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            
+            <!-- Pagination controls -->
+            <div class="mt-4 animate__animated animate__fadeIn">
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center">
+                        {% if pagination.has_prev %}
+                            <li class="page-item">
+                                <a class="page-link" href="?query={{query}}&page=1&per_page={{pagination.items_per_page}}">
+                                    <i class="fas fa-angle-double-left"></i>
+                                </a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?query={{query}}&page={{pagination.prev_page}}&per_page={{pagination.items_per_page}}">
+                                    <i class="fas fa-angle-left"></i>
+                                </a>
+                            </li>
+                        {% endif %}
+                        
+                        {% for num in pagination.page_numbers %}
+                            <li class="page-item {% if num == pagination.current_page %}active{% endif %}">
+                                <a class="page-link" href="?query={{query}}&page={{num}}&per_page={{pagination.items_per_page}}">
+                                    {{num}}
+                                </a>
+                            </li>
+                        {% endfor %}
+                        
+                        {% if pagination.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?query={{query}}&page={{pagination.next_page}}&per_page={{pagination.items_per_page}}">
+                                    <i class="fas fa-angle-right"></i>
+                                </a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?query={{query}}&page={{pagination.last_page}}&per_page={{pagination.items_per_page}}">
+                                    <i class="fas fa-angle-double-right"></i>
+                                </a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            </div>
+        {% else %}
+            <div class="no-results animate__animated animate__fadeIn">
+                <div class="py-5">
+                    <i class="fas fa-search fa-4x mb-4" style="color: var(--accent);"></i>
+                    <h3>Sorry No results found for "<span class="search-query">{{query}}</span>"</h3>
+                    <p class="mb-4">Try different keywords or check back later</p>
+                    <a href="{{config.WEB_BASE_URL}}" class="btn action-btn me-2">
+                        <i class="fas fa-search me-2"></i> Search Again
+                    </a>
+                    <a href="https://t.me/{{config.BOT_USERNAME}}" class="btn btn-outline-primary">
+                        <i class="fab fa-telegram me-2"></i> Try Telegram Bot
+                    </a>
+                </div>
+            </div>
+        {% endif %}
+        
+        <div class="social-links animate__animated animate__fadeInUp animate__delay-1s">
+            <p class="mb-3">Join our communities for more content:</p>
+            <a href="https://t.me/{{config.UPDATES_CHANNEL}}" class="social-btn telegram">
+                <i class="fab fa-telegram"></i>
+            </a>
+            <a href="https://whatsapp.com/channel/0029VaCUrJwEAKW5rDJXz23h" class="social-btn whatsapp">
+                <i class="fab fa-whatsapp"></i>
+            </a>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Animation on scroll
+        document.addEventListener('DOMContentLoaded', function() {
+            const animateElements = document.querySelectorAll('.animate__animated');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const animation = entry.target.dataset.animate || 'animate__fadeInUp';
+                        const delay = entry.target.style.animationDelay || '0s';
+                        entry.target.style.animationDelay = delay;
+                        entry.target.classList.add(animation);
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.1 });
+            
+            animateElements.forEach(el => {
+                observer.observe(el);
+            });
+            
+            // Make all external links open in new tab
+            document.querySelectorAll('a[href^="http"]').forEach(link => {
+                if (!link.href.includes(window.location.hostname)) {
+                    link.setAttribute('target', '_blank');
+                    link.setAttribute('rel', 'noopener noreferrer');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
