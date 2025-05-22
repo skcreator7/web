@@ -7,28 +7,57 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Montserrat:wght@800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #6a11cb;
-            --secondary: #2575fc;
+            --primary: #ff0000;
+            --secondary: #990000;
             --accent: #ff4d4d;
-            --dark: #1e1e2d;
-            --light: #f8f9fa;
+            --dark: #0a0a0a;
+            --darker: #000000;
+            --light: #ffffff;
         }
         
         body {
-            background: linear-gradient(135deg, var(--light) 0%, #c3cfe2 100%);
+            background: url('wp1945909-movie-posters-wallpapers.jpg') no-repeat center center fixed;
+            background-size: cover;
             min-height: 100vh;
             font-family: 'Poppins', sans-serif;
+            color: var(--light);
+            position: relative;
+        }
+        
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(10, 10, 10, 0.9) 0%, rgba(0, 0, 0, 0.95) 100%);
+            z-index: -1;
+            animation: pulseBackground 15s infinite alternate;
+        }
+        
+        @keyframes pulseBackground {
+            0% { opacity: 0.9; }
+            100% { opacity: 0.95; }
+        }
+        
+        .container {
+            position: relative;
+            z-index: 1;
         }
         
         .hero-section {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: white;
+            background: rgba(20, 20, 20, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 0, 0, 0.2);
             border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5), 0 0 20px rgba(255, 0, 0, 0.3);
             overflow: hidden;
             position: relative;
+            margin-top: 30px;
         }
         
         .hero-section::before {
@@ -38,8 +67,8 @@
             left: -50%;
             width: 200%;
             height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
-            animation: rotate 15s linear infinite;
+            background: radial-gradient(circle, rgba(255,0,0,0.1) 0%, rgba(255,0,0,0) 70%);
+            animation: rotate 20s linear infinite;
         }
         
         @keyframes rotate {
@@ -48,26 +77,35 @@
         }
         
         .search-box {
-            background: white;
+            background: rgba(30, 30, 30, 0.8);
             border-radius: 10px;
             padding: 30px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
             position: relative;
             z-index: 1;
+            border: 1px solid rgba(255, 0, 0, 0.1);
         }
         
         .search-input {
+            background: rgba(50, 50, 50, 0.5);
             border: none;
-            border-bottom: 2px solid var(--secondary);
+            border-bottom: 2px solid var(--primary);
             border-radius: 0;
             padding: 15px 0;
             font-size: 1.2rem;
             transition: all 0.3s;
+            color: white;
         }
         
         .search-input:focus {
             box-shadow: none;
             border-bottom: 2px solid var(--accent);
+            background: rgba(50, 50, 50, 0.7);
+            color: white;
+        }
+        
+        .search-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
         }
         
         .search-btn {
@@ -81,7 +119,7 @@
         
         .search-btn:hover {
             transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            box-shadow: 0 5px 15px rgba(255, 0, 0, 0.4);
         }
         
         .social-links {
@@ -100,6 +138,7 @@
             font-size: 1.2rem;
             transition: all 0.3s;
             text-decoration: none;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.3);
         }
         
         .telegram { background-color: #0088cc; }
@@ -109,14 +148,54 @@
         .social-btn:hover {
             transform: scale(1.1) translateY(-5px);
             color: white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.4);
         }
         
-        .animated-text {
-            background: linear-gradient(to right, #ff8a00, #e52e71);
+        .main-title {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 800;
+            font-size: 3.5rem;
+            text-transform: uppercase;
+            background: linear-gradient(to right, #ff0000, #ffffff, #ff0000);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
+            background-size: 200% auto;
+            animation: shine 3s linear infinite;
+            margin-bottom: 0.5rem;
+            line-height: 1;
+            text-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+        }
+        
+        @keyframes shine {
+            0% { background-position: 0% center; }
+            100% { background-position: 200% center; }
+        }
+        
+        .subtitle {
+            font-style: italic;
+            font-weight: 300;
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 2rem;
+            position: relative;
             display: inline-block;
+        }
+        
+        .subtitle::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(to right, transparent, var(--primary), transparent);
+        }
+        
+        .tagline {
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 2rem;
         }
         
         .features {
@@ -124,42 +203,65 @@
         }
         
         .feature-card {
-            background: white;
+            background: rgba(30, 30, 30, 0.7);
             border-radius: 10px;
-            padding: 20px;
+            padding: 25px;
             margin-bottom: 20px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
             transition: all 0.3s;
             height: 100%;
+            border: 1px solid rgba(255, 0, 0, 0.1);
+            color: white;
         }
         
         .feature-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 25px rgba(255, 0, 0, 0.2);
+            background: rgba(40, 40, 40, 0.8);
+            border-color: rgba(255, 0, 0, 0.3);
         }
         
         .feature-icon {
             font-size: 2.5rem;
             margin-bottom: 15px;
-            background: linear-gradient(to right, var(--primary), var(--secondary));
+            background: linear-gradient(to right, var(--primary), var(--accent));
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
         }
         
         .telegram-btn {
-            background: #0088cc;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
             color: white;
             font-weight: 600;
             padding: 10px 20px;
             border-radius: 50px;
             transition: all 0.3s;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.3);
         }
         
         .telegram-btn:hover {
             transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            box-shadow: 0 5px 15px rgba(255, 0, 0, 0.4);
             color: white;
+        }
+        
+        @media (max-width: 768px) {
+            .main-title {
+                font-size: 2.5rem;
+            }
+            
+            .subtitle {
+                font-size: 1rem;
+            }
+            
+            .hero-section {
+                padding: 20px !important;
+            }
+            
+            .search-box {
+                padding: 20px;
+            }
         }
     </style>
 </head>
@@ -168,11 +270,14 @@
         <div class="hero-section p-5 mb-5 animate__animated animate__fadeIn">
             <div class="row align-items-center">
                 <div class="col-lg-6">
-                    <h1 class="display-4 fw-bold mb-4 animate__animated animate__fadeInLeft">
-                        <span class="animated-text">{{config.BOT_SESSION_NAME}}</span> Search
+                    <h1 class="main-title animate__animated animate__fadeInLeft">
+                        SK4FiLM
                     </h1>
-                    <p class="lead mb-4 animate__animated animate__fadeInLeft animate__delay-1s">
-                        Find your favorite movies with our powerful SK4FiLM search engine
+                    <p class="subtitle animate__animated animate__fadeInLeft animate__delay-1s">
+                        House of Entertainment
+                    </p>
+                    <p class="tagline animate__animated animate__fadeInLeft animate__delay-2s">
+                        Find your favorite movies with our powerful search engine
                     </p>
                 </div>
                 <div class="col-lg-6 animate__animated animate__fadeInRight">
