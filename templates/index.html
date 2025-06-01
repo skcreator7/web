@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SK CREATOR 7 - Movie Search & Tutorials</title>
+    <title>SK4FiLM - Movie Search</title>
     <link rel="stylesheet" href="https://unpkg.com/sheryjs/dist/Shery.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Poppins:wght@800&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary: #3a0ca3;
@@ -14,20 +14,36 @@
             --accent: #f72585;
             --dark: #0a0a0a;
             --light: #ffffff;
+            --neon-pink: #ff2a6d;
+            --neon-blue: #05d9e8;
+            --neon-purple: #d300c5;
         }
         
         body {
             font-family: 'Josefin Sans', sans-serif;
-            background-color: var(--dark);
             color: white;
             overflow-x: hidden;
             margin: 0;
             padding: 0;
+            background: url('https://i.postimg.cc/T2mcBGtv/pxfuel-2.jpg') no-repeat center center fixed;
+            background-size: cover;
+            position: relative;
+        }
+        
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 10, 10, 0.7);
+            z-index: -1;
         }
         
         nav {
             display: flex;
-            justify-content: space-between;
+            flex-direction: column;
             align-items: center;
             padding: 1.5rem 5%;
             position: fixed;
@@ -40,43 +56,81 @@
         }
         
         #heading {
-            font-size: 1.8rem;
-            font-weight: 700;
-            background: linear-gradient(to right, var(--accent), var(--primary));
+            font-family: 'Poppins', sans-serif;
+            font-size: 4rem;
+            font-weight: 800;
+            background: linear-gradient(to right, 
+                var(--neon-pink), 
+                var(--neon-blue), 
+                var(--neon-purple),
+                var(--neon-pink));
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
             text-transform: uppercase;
-            letter-spacing: 2px;
+            letter-spacing: 8px;
             margin: 0;
-        }
-        
-        .nryt a {
-            margin-left: 2rem;
-            font-weight: 600;
+            background-size: 300% auto;
+            animation: gradient 3s linear infinite, neonGlow 2s ease-in-out infinite alternate;
+            text-shadow: 0 0 10px rgba(255, 42, 109, 0.7),
+                         0 0 20px rgba(5, 217, 232, 0.5),
+                         0 0 30px rgba(211, 0, 197, 0.3);
             position: relative;
-            padding: 0.5rem 0;
-            color: white;
-            text-decoration: none;
+            padding: 0 20px;
+            line-height: 1;
+            margin-bottom: 5px;
         }
         
-        .nryt a::after {
+        .tagline {
+            font-family: 'Josefin Sans', sans-serif;
+            font-style: italic;
+            font-size: 1.2rem;
+            color: rgba(255,255,255,0.8);
+            margin-top: -10px;
+            letter-spacing: 2px;
+        }
+        
+        @keyframes gradient {
+            0% { background-position: 0% center; }
+            100% { background-position: 300% center; }
+        }
+        
+        @keyframes neonGlow {
+            from {
+                text-shadow: 0 0 10px rgba(255, 42, 109, 0.7),
+                             0 0 20px rgba(5, 217, 232, 0.5),
+                             0 0 30px rgba(211, 0, 197, 0.3);
+            }
+            to {
+                text-shadow: 0 0 15px rgba(255, 42, 109, 0.9),
+                             0 0 25px rgba(5, 217, 232, 0.7),
+                             0 0 35px rgba(211, 0, 197, 0.5),
+                             0 0 45px rgba(211, 0, 197, 0.4);
+            }
+        }
+        
+        #heading::before {
             content: '';
             position: absolute;
-            bottom: 0;
+            top: 0;
             left: 0;
-            width: 0;
-            height: 3px;
-            background: var(--accent);
-            transition: width 0.3s ease;
-        }
-        
-        .nryt a:hover::after {
-            width: 100%;
+            right: 0;
+            bottom: 0;
+            border-radius: 50px;
+            background: linear-gradient(to right, 
+                var(--neon-pink), 
+                var(--neon-blue), 
+                var(--neon-purple),
+                var(--neon-pink));
+            background-size: 300% auto;
+            animation: gradient 3s linear infinite;
+            z-index: -1;
+            opacity: 0.3;
+            filter: blur(15px);
         }
         
         .main {
-            padding: 120px 5% 60px;
+            padding: 220px 5% 60px;
         }
         
         .search-box {
@@ -87,6 +141,46 @@
             border: 3px solid var(--accent);
             max-width: 800px;
             margin: 0 auto;
+            backdrop-filter: blur(5px);
+        }
+        
+        .telegram-box {
+            background: rgba(30, 41, 59, 0.8);
+            border-radius: 15px;
+            padding: 15px;
+            margin: 20px auto;
+            max-width: 800px;
+            border: 2px solid #0088cc;
+            backdrop-filter: blur(5px);
+            text-align: center;
+        }
+        
+        .telegram-btn {
+            background: linear-gradient(50deg, #0088cc, #24a1e1);
+            color: white;
+            font-weight: 600;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            margin: 0 auto;
+        }
+        
+        .telegram-btn i {
+            margin-right: 10px;
+            font-size: 1.2rem;
+        }
+        
+        .telegram-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 136, 204, 0.4);
+            background: linear-gradient(50deg, #24a1e1, #0088cc);
         }
         
         .search-input {
@@ -99,6 +193,13 @@
             font-size: 1.1rem;
             border-radius: 5px;
             margin-bottom: 15px;
+            transition: all 0.3s;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-bottom-color: var(--accent);
+            box-shadow: 0 5px 15px rgba(247, 37, 133, 0.3);
         }
         
         .search-btn {
@@ -124,6 +225,7 @@
         .search-btn:hover {
             transform: translateY(-3px);
             box-shadow: 0 5px 15px rgba(0, 102, 255, 0.4);
+            background: linear-gradient(50deg, var(--secondary), var(--accent));
         }
         
         .social-box {
@@ -133,6 +235,13 @@
             margin: 40px auto;
             max-width: 800px;
             border: 1px solid var(--primary);
+            transition: all 0.3s;
+            backdrop-filter: blur(5px);
+        }
+        
+        .social-box:hover {
+            border-color: var(--accent);
+            box-shadow: 0 10px 20px rgba(247, 37, 133, 0.2);
         }
         
         .social-title {
@@ -159,6 +268,7 @@
             font-size: 1.5rem;
             transition: all 0.3s;
             text-decoration: none;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
         }
         
         .telegram { background-color: #0088cc; }
@@ -167,6 +277,7 @@
         
         .social-btn:hover {
             transform: scale(1.1) translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.4);
         }
         
         .video-section {
@@ -180,6 +291,21 @@
             font-size: 1.8rem;
             margin-bottom: 30px;
             color: var(--accent);
+            position: relative;
+            display: inline-block;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            border-radius: 3px;
         }
         
         .video-box {
@@ -194,11 +320,13 @@
             overflow: hidden;
             border: 1px solid var(--accent);
             transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            backdrop-filter: blur(5px);
         }
         
         .video-item:hover {
             transform: translateY(-10px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            box-shadow: 0 15px 30px rgba(247, 37, 133, 0.3);
         }
         
         .video-item iframe {
@@ -211,6 +339,7 @@
             padding: 15px;
             text-align: center;
             font-weight: 600;
+            background: rgba(58, 12, 163, 0.2);
         }
         
         footer {
@@ -218,10 +347,96 @@
             padding: 40px 5%;
             text-align: center;
             border-top: 1px solid var(--accent);
+            backdrop-filter: blur(5px);
         }
         
         .copyright {
             margin-top: 20px;
+        }
+        
+        .copyright a {
+            transition: all 0.3s;
+        }
+        
+        .copyright a:hover {
+            color: var(--accent);
+            text-decoration: underline;
+        }
+        
+        /* Loading animation */
+        .loader {
+            display: none;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top: 4px solid var(--accent);
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Results section */
+        .results-container {
+            display: none;
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 20px;
+            background: rgba(30, 41, 59, 0.8);
+            border-radius: 10px;
+            border: 1px solid var(--primary);
+            backdrop-filter: blur(5px);
+        }
+        
+        .results-title {
+            color: var(--accent);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .movie-results {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .movie-card {
+            background: rgba(60, 65, 90, 0.7);
+            border-radius: 8px;
+            overflow: hidden;
+            transition: all 0.3s;
+            border: 1px solid rgba(247, 37, 133, 0.3);
+            backdrop-filter: blur(5px);
+        }
+        
+        .movie-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(247, 37, 133, 0.2);
+            border-color: var(--accent);
+        }
+        
+        .movie-poster {
+            width: 100%;
+            height: 350px;
+            object-fit: cover;
+        }
+        
+        .movie-info {
+            padding: 15px;
+        }
+        
+        .movie-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .movie-year {
+            color: #ccc;
+            font-size: 0.9rem;
         }
         
         @media (max-width: 768px) {
@@ -230,12 +445,16 @@
             }
             
             #heading {
-                font-size: 1.4rem;
+                font-size: 2.5rem;
+                letter-spacing: 5px;
             }
             
-            .nryt a {
-                margin-left: 1rem;
-                font-size: 0.9rem;
+            .tagline {
+                font-size: 1rem;
+            }
+            
+            .main {
+                padding: 180px 5% 60px;
             }
             
             .search-box {
@@ -246,42 +465,75 @@
             .video-box {
                 grid-template-columns: 1fr;
             }
+            
+            .movie-results {
+                grid-template-columns: 1fr;
+            }
+            
+            body {
+                background-attachment: scroll;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            #heading {
+                font-size: 1.8rem;
+                letter-spacing: 3px;
+                padding: 0 10px;
+            }
+            
+            .tagline {
+                font-size: 0.9rem;
+            }
+            
+            .main {
+                padding: 150px 5% 60px;
+            }
         }
     </style>
 </head>
 <body>
     <nav>
-        <div class="nleft">
-            <a href="https://t.me/SK4FiLM">
-                <h4 id="heading" class="magnet">SK 4 FiLM</h4>
-            </a>
-        </div>
-        <div class="nryt">
-            <a class="home-btn magnet" href="#main">HOME</a>
-            <a href="#tutorials" class="about-btn magnet">TUTORIALS</a>
-        </div>
+        <a href="https://t.me/SK4FiLM" class="magnet">
+            <h4 id="heading">SK4FiLM</h4>
+            <div class="tagline">House of entertainment</div>
+        </a>
     </nav>
     
     <div class="main" id="main">
         <div class="search-box">
-            <form action="/search" method="get">
+            <form id="searchForm">
                 <input type="text" name="query" class="search-input" placeholder="Search for movies..." required>
                 <button class="search-btn magnet" type="submit">
                     <i class="fas fa-search"></i> Search
                 </button>
             </form>
+            <div class="loader" id="loader"></div>
+        </div>
+        
+        <div class="telegram-box">
+            <a href="https://t.me/skfilmbot" class="telegram-btn magnet" target="_blank">
+                <i class="fab fa-telegram"></i> Use Telegram Bot
+            </a>
+        </div>
+        
+        <div class="results-container" id="resultsContainer">
+            <h3 class="results-title">Search Results</h3>
+            <div class="movie-results" id="movieResults">
+                <!-- Results will be inserted here by JavaScript -->
+            </div>
         </div>
         
         <div class="social-box">
             <h4 class="social-title">Connect With Us</h4>
             <div class="social-links">
-                <a href="https://t.me/skfilmbot" class="social-btn telegram magnet">
+                <a href="https://t.me/skfilmbot" class="social-btn telegram magnet" target="_blank">
                     <i class="fab fa-telegram"></i>
                 </a>
-                <a href="https://whatsapp.com/channel/0029Va69Ts2C6ZvmEWsHNo3c" class="social-btn whatsapp magnet">
+                <a href="https://whatsapp.com/channel/0029Va69Ts2C6ZvmEWsHNo3c" class="social-btn whatsapp magnet" target="_blank">
                     <i class="fab fa-whatsapp"></i>
                 </a>
-                <a href="https://youtube.com/@Skcreator7" class="social-btn youtube magnet">
+                <a href="https://youtube.com/@Skcreator7" class="social-btn youtube magnet" target="_blank">
                     <i class="fab fa-youtube"></i>
                 </a>
             </div>
@@ -290,17 +542,17 @@
         <div class="video-section" id="tutorials">
             <h3 class="section-title">Tutorial Videos</h3>
             <div class="video-box">
-                <div class="video-item">
-                    <iframe src="https://www.youtube.com/embed/YOUR_VIDEO_ID_1" frameborder="0" allowfullscreen></iframe>
+                <div class="video-item magnet">
+                    <iframe src="https://youtube.com/shorts/9Z0wUYm2RRg?feature=share" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                     <div class="video-title">How to Search Movies</div>
                 </div>
-                <div class="video-item">
-                    <iframe src="https://www.youtube.com/embed/YOUR_VIDEO_ID_2" frameborder="0" allowfullscreen></iframe>
-                    <div class="video-title">Using Telegram Bot</div>
+                <div class="video-item magnet">
+                    <iframe src="https://youtu.be/fVL7DfhnwWM" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    <div class="video-title">How To Open StreaamNet Link</div>
                 </div>
-                <div class="video-item">
-                    <iframe src="https://www.youtube.com/embed/YOUR_VIDEO_ID_3" frameborder="0" allowfullscreen></iframe>
-                    <div class="video-title">Advanced Features</div>
+                <div class="video-item magnet">
+                    <iframe src="https://youtu.be/ZNKeL-pcIDw" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    <div class="video-title">How To Open DiskWala Link</div>
                 </div>
             </div>
         </div>
@@ -308,8 +560,8 @@
     
     <footer>
         <div class="copyright">
-            <h5>Copyright © 2025 <a href="https://t.me/SK4FiLM" style="color: var(--accent);">SK</a>. All Rights Reserved.</h5>
-            <h4>This Page Is Designed By <a href="https://t.me/SK4FiLM" style="color: var(--accent);">SK 4 FiLM</a></h4>
+            <h5>Copyright © 2025 <a href="https://t.me/SK4FiLM" class="magnet">SK4FiLM</a>. All Rights Reserved.</h5>
+            <h4>This Page Is Designed By <a href="https://t.me/SK4FiLM" class="magnet">SK4FiLM</a></h4>
         </div>
     </footer>
 
@@ -323,14 +575,121 @@
             duration: 0.5
         });
         
-        // Smooth scrolling
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                document.querySelector(this.getAttribute('href')).scrollIntoView({
+        // Form submission with mock results
+        document.getElementById('searchForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const query = document.querySelector('.search-input').value;
+            
+            // Show loader
+            document.getElementById('loader').style.display = 'block';
+            document.getElementById('resultsContainer').style.display = 'none';
+            
+            // Simulate API call with timeout
+            setTimeout(() => {
+                displayMockResults(query);
+                document.getElementById('loader').style.display = 'none';
+                document.getElementById('resultsContainer').style.display = 'block';
+                
+                // Scroll to results
+                document.getElementById('resultsContainer').scrollIntoView({
                     behavior: 'smooth'
                 });
+            }, 1500);
+        });
+        
+        // Display mock search results
+        function displayMockResults(query) {
+            const resultsContainer = document.getElementById('movieResults');
+            resultsContainer.innerHTML = '';
+            
+            // Create mock data based on query
+            const mockMovies = [
+                {
+                    title: query + " (2023)",
+                    year: "2023",
+                    image: "https://via.placeholder.com/300x450?text=" + encodeURIComponent(query)
+                },
+                {
+                    title: query + " 2: The Sequel",
+                    year: "2021",
+                    image: "https://via.placeholder.com/300x450?text=" + encodeURIComponent(query + " 2")
+                },
+                {
+                    title: "The " + query + " Chronicles",
+                    year: "2019",
+                    image: "https://via.placeholder.com/300x450?text=The+" + encodeURIComponent(query) + "+Chronicles"
+                },
+                {
+                    title: query + " Begins",
+                    year: "2015",
+                    image: "https://via.placeholder.com/300x450?text=" + encodeURIComponent(query) + "+Begins"
+                }
+            ];
+            
+            // Add each movie to results
+            mockMovies.forEach(movie => {
+                const movieCard = document.createElement('div');
+                movieCard.className = 'movie-card magnet';
+                movieCard.innerHTML = `
+                    <img src="${movie.image}" alt="${movie.title}" class="movie-poster">
+                    <div class="movie-info">
+                        <h4 class="movie-title">${movie.title}</h4>
+                        <p class="movie-year">${movie.year}</p>
+                    </div>
+                `;
+                resultsContainer.appendChild(movieCard);
             });
+            
+            // Reinitialize magnet effect for new elements
+            Shery.magnet(".magnet", {
+                ease: "cubic-bezier(0.23, 1, 0.32, 1)",
+                duration: 0.5
+            });
+        }
+        
+        // Initialize GSAP animations
+        gsap.from(".search-box", {
+            duration: 1,
+            y: 50,
+            opacity: 0,
+            ease: "power3.out"
+        });
+        
+        gsap.from(".telegram-box", {
+            duration: 1,
+            y: 50,
+            opacity: 0,
+            ease: "power3.out",
+            delay: 0.2
+        });
+        
+        gsap.from(".social-box", {
+            duration: 1,
+            y: 50,
+            opacity: 0,
+            ease: "power3.out",
+            delay: 0.3
+        });
+        
+        gsap.from(".video-item", {
+            duration: 1,
+            y: 50,
+            opacity: 0,
+            stagger: 0.2,
+            ease: "power3.out",
+            scrollTrigger: {
+                trigger: ".video-section",
+                start: "top 80%"
+            }
+        });
+        
+        // Add pulsing animation to the title
+        gsap.to("#heading", {
+            duration: 2,
+            scale: 1.05,
+            repeat: -1,
+            yoyo: true,
+            ease: "sine.inOut"
         });
     </script>
 </body>
