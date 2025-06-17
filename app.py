@@ -64,6 +64,12 @@ class Paginator:
         }
 
 @app.before_serving
+async def startup():
+    # Initialize any resources here
+    logger.info("Starting up application...")
+    # Start the visitor count reset task
+    asyncio.create_task(reset_visitor_count())
+
 async def reset_visitor_count():
     global last_reset, visitors
     while True:
@@ -71,6 +77,7 @@ async def reset_visitor_count():
         if now - last_reset > timedelta(hours=1):
             visitors.clear()
             last_reset = now
+            logger.info("Visitor count reset")
         await asyncio.sleep(3600)  # Check every hour
 
 @app.before_request
@@ -125,7 +132,16 @@ async def search():
 async def run_server():
     config = HyperConfig()
     config.bind = [f"0.0.0.0:{Config.WEB_SERVER_PORT}"]
+    # Increase startup timeout to 30 seconds
+    config.startup_timeout = 30.0
+    # Enable lifespan support
+    config.lifespan = "on"
+    
     await serve(app, config)
 
 if __name__ == "__main__":
-    asyncio.run(run_server())
+    try:
+        asyncio.run(run_server())
+    except Exception as e:
+        logger.error(f"Server failed to start: {e}")
+        raise
