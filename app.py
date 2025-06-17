@@ -6,6 +6,8 @@ from hypercorn.config import Config as HyperConfig
 from main import web_search, format_result
 import asyncio
 import os
+from collections import defaultdict
+from datetime import datetime, timedelta
 
 logging.basicConfig(
     level=logging.INFO,
@@ -15,6 +17,10 @@ logger = logging.getLogger(__name__)
 
 app = Quart(__name__)
 app.secret_key = Config.SECRET_KEY
+
+# Visitor tracking
+visitors = defaultdict(int)
+last_reset = datetime.now()
 
 class Paginator:
     def __init__(self, items, items_per_page=10, window_size=5):
@@ -56,6 +62,30 @@ class Paginator:
             'end_index': end_index,
             'items_per_page': self.items_per_page
         }
+
+@app.before_serving
+async def reset_visitor_count():
+    global last_reset, visitors
+    while True:
+        now = datetime.now()
+        if now - last_reset > timedelta(hours=1):
+            visitors.clear()
+            last_reset = now
+        await asyncio.sleep(3600)  # Check every hour
+
+@app.before_request
+async def track_visitor():
+    if request.remote_addr:
+        visitors[request.remote_addr] = datetime.now().timestamp()
+
+@app.route('/visitor_count')
+async def get_visitor_count():
+    # Clean up old visitors (last seen more than 30 minutes ago)
+    cutoff = datetime.now().timestamp() - 1800
+    active_visitors = {ip: ts for ip, ts in visitors.items() if ts > cutoff}
+    visitors.clear()
+    visitors.update(active_visitors)
+    return jsonify({'count': len(visitors)})
 
 @app.route('/health')
 async def health_check():
