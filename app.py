@@ -66,7 +66,6 @@ class Paginator:
 async def startup():
     """Initialize application resources"""
     logger.info("Application starting up...")
-    # Start background tasks if needed
 
 @app.before_request
 async def track_visitor():
@@ -75,7 +74,6 @@ async def track_visitor():
     if ip:
         ip = ip.split(',')[0].strip()  # Handle proxy chains
         visitors[ip] = datetime.now().timestamp()
-        logger.debug(f"Visitor activity from {ip}")
 
 def get_active_visitors():
     """Count visitors active in last 30 minutes"""
@@ -94,6 +92,14 @@ async def visitor_count():
         'status': 'success'
     })
 
+@app.route('/health')
+async def health_check():
+    return jsonify({
+        "status": "healthy",
+        "visitors": len(visitors),
+        "timestamp": datetime.now().isoformat()
+    })
+
 @app.route('/')
 async def home():
     """Main page with visitor counter"""
@@ -110,7 +116,6 @@ async def search():
     
     try:
         results = await web_search(query)
-        
         paginator = Paginator(results, items_per_page=per_page)
         page_data = paginator.get_page(page)
         
