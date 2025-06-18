@@ -5,10 +5,10 @@ from hypercorn.asyncio import serve
 from hypercorn.config import Config as HyperConfig
 from main import web_search, format_result
 import asyncio
-import os
-from collections import defaultdict
 from datetime import datetime, timedelta
+from collections import defaultdict
 
+# Configure logging
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
@@ -18,9 +18,8 @@ logger = logging.getLogger(__name__)
 app = Quart(__name__)
 app.secret_key = Config.SECRET_KEY
 
-# Visitor tracking
-visitors = defaultdict(int)
-last_reset = datetime.now()
+# Visitor tracking system
+visitors = defaultdict(float)  # {ip: last_active_timestamp}
 
 class Paginator:
     def __init__(self, items, items_per_page=10, window_size=5):
@@ -65,41 +64,39 @@ class Paginator:
 
 @app.before_serving
 async def startup():
-    # Initialize any resources here
-    logger.info("Starting up application...")
-    # Start the visitor count reset task
-    asyncio.create_task(reset_visitor_count())
-
-async def reset_visitor_count():
-    global last_reset, visitors
-    while True:
-        now = datetime.now()
-        if now - last_reset > timedelta(hours=1):
-            visitors.clear()
-            last_reset = now
-            logger.info("Visitor count reset")
-        await asyncio.sleep(3600)  # Check every hour
+    """Initialize application resources"""
+    logger.info("Application starting up...")
+    # Start background tasks if needed
 
 @app.before_request
 async def track_visitor():
-    if request.remote_addr:
-        visitors[request.remote_addr] = datetime.now().timestamp()
+    """Track visitor activity"""
+    ip = request.headers.get('X-Forwarded-For', request.remote_addr)
+    if ip:
+        ip = ip.split(',')[0].strip()  # Handle proxy chains
+        visitors[ip] = datetime.now().timestamp()
+        logger.debug(f"Visitor activity from {ip}")
+
+def get_active_visitors():
+    """Count visitors active in last 30 minutes"""
+    cutoff = datetime.now().timestamp() - 1800
+    return {ip: ts for ip, ts in visitors.items() if ts > cutoff}
 
 @app.route('/visitor_count')
-async def get_visitor_count():
-    # Clean up old visitors (last seen more than 30 minutes ago)
-    cutoff = datetime.now().timestamp() - 1800
-    active_visitors = {ip: ts for ip, ts in visitors.items() if ts > cutoff}
+async def visitor_count():
+    """Endpoint for visitor count data"""
+    active = get_active_visitors()
     visitors.clear()
-    visitors.update(active_visitors)
-    return jsonify({'count': len(visitors)})
-
-@app.route('/health')
-async def health_check():
-    return jsonify({"status": "healthy"})
+    visitors.update(active)
+    return jsonify({
+        'count': len(active),
+        'updated': datetime.now().isoformat(),
+        'status': 'success'
+    })
 
 @app.route('/')
 async def home():
+    """Main page with visitor counter"""
     return await render_template('index.html', config=Config)
 
 @app.route('/search')
@@ -130,18 +127,18 @@ async def search():
         return await render_template('error.html', error=str(e), config=Config), 500
 
 async def run_server():
+    """Configure and run the server"""
     config = HyperConfig()
     config.bind = [f"0.0.0.0:{Config.WEB_SERVER_PORT}"]
-    # Increase startup timeout to 30 seconds
     config.startup_timeout = 30.0
-    # Enable lifespan support
     config.lifespan = "on"
     
+    logger.info(f"Starting server on port {Config.WEB_SERVER_PORT}")
     await serve(app, config)
 
 if __name__ == "__main__":
     try:
         asyncio.run(run_server())
     except Exception as e:
-        logger.error(f"Server failed to start: {e}")
+        logger.critical(f"Server failed: {e}")
         raise
