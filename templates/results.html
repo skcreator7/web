@@ -19,13 +19,13 @@
         }
         
         body {
-            background: url('https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80') no-repeat center center fixed; /* Truncated for example */
+            background: url('https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80') no-repeat center center fixed;
             background-size: cover;
             font-family: 'Poppins', sans-serif;
             color: var(--text);
             position: relative;
             min-height: 100vh;
-            overflow-x: hidden; /* Prevent horizontal scroll from animations */
+            overflow-x: hidden;
         }
         
         body::before {
@@ -61,19 +61,19 @@
             /* container for branding elements */
         }
         .site-branding h1 {
-            font-size: 3.2rem; /* Made it larger */
-            font-weight: 700;   /* Bold */
-            letter-spacing: 3px; /* More spacing */
+            font-size: 3.2rem;
+            font-weight: 700;
+            letter-spacing: 3px;
             color: var(--light);
-            text-shadow: 2px 2px 6px rgba(0,0,0,0.6), 0 0 10px var(--accent), 0 0 20px var(--accent); /* Enhanced shadow */
+            text-shadow: 2px 2px 6px rgba(0,0,0,0.6), 0 0 10px var(--accent), 0 0 20px var(--accent);
             margin-bottom: 0.1rem;
-            text-transform: uppercase; /* Stylish uppercase */
+            text-transform: uppercase;
         }
 
         .animated-digit {
-            display: inline-block; /* Needed for transform animations */
+            display: inline-block;
             animation: digitPulse 2.5s infinite ease-in-out;
-            position: relative; /* For pseudo-elements if needed, or fine-tuning */
+            position: relative;
         }
 
         @keyframes digitPulse {
@@ -211,7 +211,7 @@
             backdrop-filter: blur(5px);
         }
         
-        .search-query { /* This animates the query text and "House of entertainment" */
+        .search-query {
             font-weight: 600;
             color: var(--accent);
             animation: textPulse 2s infinite;
@@ -241,6 +241,16 @@
             text-align: center;
             margin-top: 40px; 
             padding-bottom: 20px;
+        }
+        
+        /* New styles for ad container */
+        .ad-container {
+            margin: 30px 0;
+            text-align: center;
+            background: rgba(30, 41, 59, 0.5);
+            padding: 15px;
+            border-radius: 10px;
+            backdrop-filter: blur(5px);
         }
     </style>
 </head>
@@ -294,43 +304,26 @@
         {% if results %}
             <div class="row">
                 {% for result in results %}
-    <div class="col-md-6 animate__animated" data-animate="animate__fadeInUp" style="animation-delay: {{ loop.index0 * 0.1 }}s">
-        <div class="result-card">
-            <a href="https://www.profitableratecpm.com/syvm0kia4y?key=5bcfb4ccef6cabb5414077b5affd5612" target="_blank" rel="noopener noreferrer">
-  <div class="result-content">{{result|safe}}</div>
-</a>
-        </div>
-    </div>
-
-    {% if loop.index == 3 %}
-
-<div class="col-md-6 animate__animated" data-animate="animate__fadeInUp">
-  <!-- Adsterra Native Ad -->
-  <div class="result-card text-center">
-    <script type="text/javascript">
-      atOptions = {
-        'key' : 'f05568f02d3e9f490a197f94d60bb29f',
-        'format' : 'iframe',
-        'height' : 250,
-        'width' : 300,
-        'params' : {}
-      };
-    </script>
-    <script type="text/javascript" src="//www.highperformanceformat.com/f05568f02d3e9f490a197f94d60bb29f/invoke.js"></script>
-  </div>
-</div>
-
-    {% endif %}
-
-<div class="col-md-12 animate__animated" data-animate="animate__fadeInUp">
-  <!-- Profitableratecpm Ad -->
-  <div class="result-card text-center">
-    <script async="async" data-cfasync="false" src="//pl27116646.profitableratecpm.com/ac936d2c88be3888f29215610f4b6209/invoke.js"></script>
-    <div id="container-ac936d2c88be3888f29215610f4b6209"></div>
-  </div>
-</div>
-
-{% endfor %}
+                    <div class="col-md-6 animate__animated" data-animate="animate__fadeInUp" style="animation-delay: {{ loop.index0 * 0.1 }}s">
+                        <div class="result-card">
+                            <div class="result-content">{{result|safe}}</div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            
+            <!-- Ad Banner Below Results -->
+            <div class="ad-container animate__animated animate__fadeIn">
+                <script type="text/javascript">
+                    atOptions = {
+                        'key': 'eec8aed0fc971951fd57592d05a63677',
+                        'format': 'iframe',
+                        'height': 90,
+                        'width': 728,
+                        'params': {}
+                    };
+                </script>
+                <script type="text/javascript" src="//marksdespitelinear.com/eec8aed0fc971951fd57592d05a63677/invoke.js"></script>
             </div>
             
             <!-- Pagination controls -->
@@ -356,16 +349,7 @@
                                     {{num}}
                                 </a>
                             </li>
-                        
-<div class="col-md-12 animate__animated" data-animate="animate__fadeInUp">
-  <!-- Profitableratecpm Ad -->
-  <div class="result-card text-center">
-    <script async="async" data-cfasync="false" src="//pl27116646.profitableratecpm.com/ac936d2c88be3888f29215610f4b6209/invoke.js"></script>
-    <div id="container-ac936d2c88be3888f29215610f4b6209"></div>
-  </div>
-</div>
-
-{% endfor %}
+                        {% endfor %}
                         
                         {% if pagination.has_next %}
                             <li class="page-item">
@@ -391,7 +375,7 @@
                     <a href="{{config.WEB_BASE_URL}}" class="btn action-btn me-2">
                         <i class="fas fa-search me-2"></i> Search Again
                     </a>
-                    <a href="https://t.me/+aH09R6aMoM81MWQ1" class="btn action-btn" style="background: var(--accent); border: none;"> <!-- Changed button style -->
+                    <a href="https://t.me/+aH09R6aMoM81MWQ1" class="btn action-btn" style="background: var(--accent); border: none;">
                         <i class="fab fa-telegram me-2"></i> Try Telegram Group
                     </a>
                 </div>
@@ -423,10 +407,6 @@
                         if (animationClass && !entry.target.classList.contains(animationClass)) {
                              entry.target.classList.add(animationClass);
                         }
-                        // For one-time animations, uncomment below and adjust conditions if needed
-                        // if (!entry.target.classList.contains('animate__fadeInDown') && !entry.target.classList.contains('animate__delay-1s')) {
-                        //    observer.unobserve(entry.target); 
-                        // }
                     }
                 });
             }, { threshold: 0.1 });
@@ -444,6 +424,4 @@
         });
     </script>
 </body>
-    <meta name="monetag" content="6bbabbf67dcd4fe893db9a99a2f106da">
-    <script src="https://fpyf8.com/88/tag.min.js" data-zone="156319" async data-cfasync="false"></script>
 </html>
