@@ -56,10 +56,6 @@
             animation: headerGlow 4s infinite alternate;
         }
 
-        /* Styling for SK4FiLM and animated 4 */
-        .site-branding {
-            /* container for branding elements */
-        }
         .site-branding h1 {
             font-size: 3.2rem;
             font-weight: 700;
@@ -109,7 +105,7 @@
             background: rgba(30, 41, 59, 0.8);
             border-radius: 10px;
             padding: 20px;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             box-shadow: 0 3px 10px rgba(0,0,0,0.08);
             transition: all 0.3s;
             border-left: 4px solid var(--primary);
@@ -237,33 +233,39 @@
         .pagination .page-link:hover {
             background: rgba(0, 102, 255, 0.2);
         }
+        
         .social-links {
             text-align: center;
             margin-top: 40px; 
             padding-bottom: 20px;
         }
         
-        /* New styles for ad container */
-        .ad-container {
-            margin: 30px 0;
+        /* Ad container styles */
+        .result-ad-container {
+            margin: 15px 0 25px 0;
             text-align: center;
             background: rgba(30, 41, 59, 0.5);
-            padding: 15px;
-            border-radius: 10px;
+            padding: 10px;
+            border-radius: 8px;
             backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .result-ad-container iframe {
+            margin: 0 auto;
+            display: block;
+            max-width: 100%;
         }
     </style>
 </head>
 <body>
     <div class="container py-5">
         <div class="result-header animate__animated animate__fadeInDown">
-            <!-- Site Branding with animated SK4FiLM -->
             <div class="site-branding text-center mb-3">
                 <h1>SK<span class="animated-digit">4</span>FiLM</h1>
                 <p class="mb-0" style="font-size: 1.2rem;"><em><span class="search-query">House of entertainment</span></em></p>
             </div>
             <hr style="border-top: 1px solid rgba(255,255,255,0.2); margin-bottom: 20px;">
-            <!-- End of Site Branding -->
             
             <div class="row align-items-center">
                 <div class="col-md-8">
@@ -278,7 +280,6 @@
             </div>
         </div>
         
-        <!-- Items per page selector -->
         <div class="mb-4 animate__animated animate__fadeIn">
             <form method="get" class="row g-3 align-items-center">
                 <input type="hidden" name="query" value="{{query}}">
@@ -308,25 +309,24 @@
                         <div class="result-card">
                             <div class="result-content">{{result|safe}}</div>
                         </div>
+                        
+                        <!-- Ad Banner Below Each Result -->
+                        <div class="result-ad-container animate__animated animate__fadeIn">
+                            <script type="text/javascript">
+                                atOptions = {
+                                    'key': 'eec8aed0fc971951fd57592d05a63677',
+                                    'format': 'iframe',
+                                    'height': 90,
+                                    'width': 728,
+                                    'params': {}
+                                };
+                            </script>
+                            <script type="text/javascript" src="//marksdespitelinear.com/eec8aed0fc971951fd57592d05a63677/invoke.js"></script>
+                        </div>
                     </div>
                 {% endfor %}
             </div>
             
-            <!-- Ad Banner Below Results -->
-            <div class="ad-container animate__animated animate__fadeIn">
-                <script type="text/javascript">
-                    atOptions = {
-                        'key': 'eec8aed0fc971951fd57592d05a63677',
-                        'format': 'iframe',
-                        'height': 90,
-                        'width': 728,
-                        'params': {}
-                    };
-                </script>
-                <script type="text/javascript" src="//marksdespitelinear.com/eec8aed0fc971951fd57592d05a63677/invoke.js"></script>
-            </div>
-            
-            <!-- Pagination controls -->
             <div class="mt-4 animate__animated animate__fadeIn">
                 <nav aria-label="Page navigation">
                     <ul class="pagination justify-content-center">
