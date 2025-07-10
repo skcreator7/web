@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-        <meta name="clckd" content="970bc6f7c9bd933d63bf657b51a14e39" />
         <script>(function(d,z,s){s.src='https://'+d+'/401/'+z;try{(document.body||document.documentElement).appendChild(s)}catch(e){}})('groleegni.net',9548793,document.createElement('script'))</script>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
@@ -347,27 +346,25 @@
 </div>
 </form>
 <!-- Ad below search bar -->
-<div class="text-center my-3">
-    <script type="text/javascript">
-        atOptions = {
-            'key' : '2678a2490e729afaed09a2fe9863ec3b',
-            'format' : 'iframe',
-            'height' : 50,
-            'width' : 320,
-            'params' : {}
-        };
-    </script>
-    <script type="text/javascript" src="//marksdespitelinear.com/2678a2490e729afaed09a2fe9863ec3b/invoke.js"></script>
+<script type="text/javascript">
+	atOptions = {
+		'key' : 'dcc8e93c640f875f1b9d46a11df45d8f',
+		'format' : 'iframe',
+		'height' : 60,
+		'width' : 468,
+		'params' : {}
+	};
+</script>
+<script type="text/javascript" src="//marksdespitelinear.com/dcc8e93c640f875f1b9d46a11df45d8f/invoke.js"></script>
+</div>
+</div>
+</div>
 </div>
 
-</div>
-</div>
-</div>
-</div>
-        <div class="text-center my-4">
+	<div class="text-center my-4">
   <script async="async" data-cfasync="false" src="//marksdespitelinear.com/ac936d2c88be3888f29215610f4b6209/invoke.js"></script>
   <div id="container-ac936d2c88be3888f29215610f4b6209"></div>
-        </div>
+</div>
 <!-- Social Media Box -->
 <div class="section-box animate__animated animate__fadeInUp animate__delay-1s">
 <h4 class="text-center mb-4">Join Our Community</h4>
@@ -429,16 +426,10 @@
 </div>
 
 <!-- Ad above Why Choose Us -->
-        <script type="text/javascript">
-	atOptions = {
-		'key' : 'dcc8e93c640f875f1b9d46a11df45d8f',
-		'format' : 'iframe',
-		'height' : 60,
-		'width' : 468,
-		'params' : {}
-	};
-</script>
-<script type="text/javascript" src="//marksdespitelinear.com/dcc8e93c640f875f1b9d46a11df45d8f/invoke.js"></script>
+<div class="text-center my-4">
+  <script async="async" data-cfasync="false" src="//marksdespitelinear.com/ac936d2c88be3888f29215610f4b6209/invoke.js"></script>
+  <div id="container-ac936d2c88be3888f29215610f4b6209"></div>
+</div>
 <!-- Features Section -->
 <div class="section-box animate__animated animate__fadeIn">
 <h2 class="text-center mb-4">Why Choose Us?</h2>
@@ -534,21 +525,50 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
+    const searchForm = document.querySelector('form[action="/search"]');
     const searchBtn = document.getElementById('delayed-search-btn');
     const countdownText = document.getElementById('countdown-text');
+    const searchInput = document.querySelector('.search-input');
+
+    // Initially disable the form submission
+    searchForm.addEventListener('submit', (e) => {
+        if (searchBtn.style.display === 'none') {
+            e.preventDefault();
+            countdownText.innerHTML = "<span style='color:#ff0000;'>⚠️ Please wait for the timer to finish!</span>";
+            return false;
+        }
+    });
+
+    // Disable right-click and inspect element
+    document.addEventListener('contextmenu', (e) => {
+        e.preventDefault();
+        return false;
+    });
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && e.key === 'I')) {
+            e.preventDefault();
+            return false;
+        }
+    });
 
     let secondsLeft = 10;
-    countdownText.innerHTML = `<span style="color:#00ccff;">⏳ Please wait ${secondsLeft} seconds...</span>`;
+    countdownText.innerHTML = `<span style="color:#00ccff;">⏳ Please wait ${secondsLeft} seconds to enable search...</span>`;
 
     const countdown = setInterval(() => {
         secondsLeft--;
         if (secondsLeft > 0) {
-            countdownText.innerHTML = `<span style="color:#00ccff;">⏳ Please wait ${secondsLeft} seconds...</span>`;
+            countdownText.innerHTML = `<span style="color:#00ccff;">⏳ Please wait ${secondsLeft} seconds to enable search...</span>`;
         } else {
             clearInterval(countdown);
-            countdownText.innerHTML = "";
+            countdownText.innerHTML = "<span style='color:#00ccff;'>✅ Search is now enabled!</span>";
             searchBtn.style.display = 'inline-block';
             searchBtn.classList.add('animate__animated', 'animate__fadeInUp');
+            
+            // Remove the message after 3 seconds
+            setTimeout(() => {
+                countdownText.innerHTML = "";
+            }, 3000);
         }
     }, 1000);
 });
