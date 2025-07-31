@@ -1,29 +1,32 @@
 import re
-from typing import Optional
-import aiohttp
 import html
-from configs import Config
+import aiohttp
+from typing import Optional, List
+from configs import config
 import logging
 
 logger = logging.getLogger(__name__)
 
 async def shorten_url(url: str) -> Optional[str]:
-    """Shorten URL using your shortener API"""
+    """Shorten URL using mdiskshortner.link API"""
     if not url or any(p in url for p in ("t.me/", "wa.me/", "chat.whatsapp.com/")):
         return url
         
     try:
         async with aiohttp.ClientSession() as session:
             async with session.post(
-                "https://mdiskshortner.link",
+                "https://mdiskshortner.link/api",
                 json={"url": url},
-                headers={"Authorization": f"Bearer {Config.SHORTENER_API_KEY}"},
+                headers={"Authorization": f"Bearer {config.SHORTENER_API_KEY}"},
                 timeout=5
             ) as resp:
                 data = await resp.json()
-                return data.get("short_url", url)
+                if resp.status == 200:
+                    return data.get("short_url", url)
+                logger.warning(f"URL shortening failed with status {resp.status}")
+                return url
     except Exception as e:
-        logger.warning(f"URL shortening failed: {e}")
+        logger.warning(f"URL shortening error: {e}")
         return url
 
 def replace_youtube_links(text: str) -> str:
