@@ -137,7 +137,7 @@ async def search():
         )
     except Exception as e:
         logger.error(f"Search error: {e}")
-        return await render_template('error.html', error=str(e), 500
+        return await render_template('error.html', error=str(e)), 500
 
 async def run_server():
     """Configure and run the server"""
