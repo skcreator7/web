@@ -2,7 +2,7 @@ import re
 import html
 import aiohttp
 from typing import Optional
-from configs import config
+from configs import app_config
 import logging
 
 logger = logging.getLogger(__name__)
@@ -15,9 +15,9 @@ async def shorten_url(url: str) -> Optional[str]:
     try:
         async with aiohttp.ClientSession() as session:
             async with session.post(
-                "https://mdiskshortner.link/api",
+                f"{app_config.SHORTENER_URL}/api",
                 json={"url": url},
-                headers={"Authorization": f"Bearer {config.SHORTENER_API_KEY}"},
+                headers={"Authorization": f"Bearer {app_config.SHORTENER_API_KEY}"},
                 timeout=5
             ) as resp:
                 data = await resp.json()
