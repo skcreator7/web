@@ -27,7 +27,7 @@ async def web_search(query: str, limit: int = 50) -> List[str]:
         return []
     
     results = []
-    for channel in config.CHANNEL_IDS:
+    for channel in app_config.CHANNEL_IDS:
         try:
             async for msg in user_client.search_messages(channel, query=query, limit=limit):
                 content = msg.text or msg.caption
