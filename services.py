@@ -1,6 +1,6 @@
 import logging
 from pyrogram import Client
-from configs import config
+from configs import app_config
 from utils import process_links, format_result
 from typing import List
 
@@ -10,10 +10,10 @@ async def web_search(query: str, limit: int = 50) -> List[str]:
     """Search for content in configured Telegram channels"""
     user_client = Client(
         "user_session",
-        api_id=config.API_ID,
-        api_hash=config.API_HASH,
-        session_string=config.USER_SESSION_STRING
-    ) if config.USER_SESSION_STRING else None
+        api_id=app_config.API_ID,
+        api_hash=app_config.API_HASH,
+        session_string=app_config.USER_SESSION_STRING
+    ) if app_config.USER_SESSION_STRING else None
     
     if not user_client:
         logger.warning("User client not configured (no session string)")
