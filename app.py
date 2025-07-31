@@ -105,17 +105,17 @@ async def health_check():
 @app.route('/')
 async def home():
     """Main page with visitor counter"""
-    return await render_template('index.html', config=config)
+    return await render_template('index.html', config=app_config)
 
 @app.route('/search')
-@rate_limit(config.RATE_LIMIT, timedelta(minutes=1))
+@rate_limit(app_config.RATE_LIMIT, timedelta(minutes=1))
 async def search():
     query = request.args.get('query', '').strip()
     page = request.args.get('page', 1, type=int)
     per_page = request.args.get('per_page', 10, type=int)
     
     if not query:
-        return await render_template('index.html', config=config)
+        return await render_template('index.html', config=app_config)
     
     try:
         results = await web_search(query)
@@ -133,11 +133,11 @@ async def search():
             results=page_data['items'],
             total=len(results),
             pagination=page_data,
-            config=config
+            config=app_config
         )
     except Exception as e:
         logger.error(f"Search error: {e}")
-        return await render_template('error.html', error=str(e), config=config), 500
+        return await render_template('error.html', error=str(e), 500
 
 async def run_server():
     """Configure and run the server"""
