@@ -1,0 +1,7 @@
+quart==0.18.4
+hypercorn==0.14.4
+Werkzeug==2.3.7  # Important fix for url_quote import error
+pyrogram==2.0.106
+TgCrypto==1.2.5
+IMDbPY==6.8
+jinja2==3.1.2
