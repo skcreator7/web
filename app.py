@@ -3,7 +3,8 @@ import logging
 from configs import config
 from hypercorn.asyncio import serve
 from hypercorn.config import Config as HyperConfig
-from utils import web_search, format_result, process_links
+from main import web_search
+from utils import format_result, process_links
 import asyncio
 from datetime import datetime, timedelta
 from collections import defaultdict
@@ -65,21 +66,25 @@ class Paginator:
 
 @app.before_serving
 async def startup():
+    """Initialize application resources"""
     logger.info("Application starting up...")
 
 @app.before_request
 async def track_visitor():
+    """Track visitor activity"""
     ip = request.headers.get('X-Forwarded-For', request.remote_addr)
     if ip:
-        ip = ip.split(',')[0].strip()
+        ip = ip.split(',')[0].strip()  # Handle proxy chains
         visitors[ip] = datetime.now().timestamp()
 
 def get_active_visitors():
+    """Count visitors active in last 30 minutes"""
     cutoff = datetime.now().timestamp() - 1800
     return {ip: ts for ip, ts in visitors.items() if ts > cutoff}
 
 @app.route('/visitor_count')
 async def visitor_count():
+    """Endpoint for visitor count data"""
     active = get_active_visitors()
     visitors.clear()
     visitors.update(active)
@@ -99,6 +104,7 @@ async def health_check():
 
 @app.route('/')
 async def home():
+    """Main page with visitor counter"""
     return await render_template('index.html', config=config)
 
 @app.route('/search')
@@ -134,6 +140,7 @@ async def search():
         return await render_template('error.html', error=str(e), config=config), 500
 
 async def run_server():
+    """Configure and run the server"""
     config = HyperConfig()
     config.bind = [f"0.0.0.0:{config.WEB_SERVER_PORT}"]
     config.startup_timeout = 30.0
