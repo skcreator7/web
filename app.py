@@ -3,7 +3,7 @@ import logging
 from configs import config
 from hypercorn.asyncio import serve
 from hypercorn.config import Config as HyperConfig
-from main import web_search
+from services import web_search
 from utils import format_result, process_links
 import asyncio
 from datetime import datetime, timedelta
