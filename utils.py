@@ -1,7 +1,7 @@
 import re
 import html
 import aiohttp
-from typing import Optional, List
+from typing import Optional
 from configs import config
 import logging
 
