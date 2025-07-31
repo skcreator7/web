@@ -1,6 +1,6 @@
 from quart import Quart, render_template, request, jsonify
 import logging
-from configs import config
+from configs import app_config
 from hypercorn.asyncio import serve
 from hypercorn.config import Config as HyperConfig
 from services import web_search
@@ -17,7 +17,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 app = Quart(__name__)
-app.secret_key = config.SECRET_KEY
+app.secret_key = app_config.SECRET_KEY
 rate_limiter = RateLimiter(app)
 
 # Visitor tracking system
@@ -141,13 +141,13 @@ async def search():
 
 async def run_server():
     """Configure and run the server"""
-    config = HyperConfig()
-    config.bind = [f"0.0.0.0:{config.WEB_SERVER_PORT}"]
-    config.startup_timeout = 30.0
-    config.lifespan = "on"
+    hypercorn_config = HyperConfig()
+    hypercorn_config.bind = [f"0.0.0.0:{app_config.WEB_SERVER_PORT}"]
+    hypercorn_config.startup_timeout = 30.0
+    hypercorn_config.lifespan = "on"
     
-    logger.info(f"Starting server on port {config.WEB_SERVER_PORT}")
-    await serve(app, config)
+    logger.info(f"Starting server on port {app_config.WEB_SERVER_PORT}")
+    await serve(app, hypercorn_config)
 
 if __name__ == "__main__":
     try:
