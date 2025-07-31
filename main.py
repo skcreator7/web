@@ -5,8 +5,8 @@ from pyrogram.errors import FloodWait, RPCError
 import logging
 from configs import config
 from imdb import IMDb
-from utils import format_result, process_links
-from quart import Quart
+from utils import format_result, process_links, web_search
+from typing import List
 
 logging.basicConfig(
     level=logging.INFO,
