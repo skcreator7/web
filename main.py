@@ -3,7 +3,7 @@ from pyrogram import Client, filters
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
 from pyrogram.errors import FloodWait, RPCError
 import logging
-from configs import config
+from configs import app_config
 from imdb import IMDb
 from services import web_search
 from utils import format_result, process_links
@@ -37,18 +37,18 @@ class MovieBot(Client):
         return False
 
 Bot = MovieBot(
-    config.BOT_SESSION_NAME,
-    api_id=config.API_ID,
-    api_hash=config.API_HASH,
-    bot_token=config.BOT_TOKEN
+    app_config.BOT_SESSION_NAME,
+    api_id=app_config.API_ID,
+    api_hash=app_config.API_HASH,
+    bot_token=app_config.BOT_TOKEN
 )
 
 User = Client(
     "user_session",
-    api_id=config.API_ID,
-    api_hash=config.API_HASH,
-    session_string=config.USER_SESSION_STRING
-) if config.USER_SESSION_STRING else None
+    api_id=app_config.API_ID,
+    api_hash=app_config.API_HASH,
+    session_string=app_config.USER_SESSION_STRING
+) if app_config.USER_SESSION_STRING else None
 
 async def delete_message(bot, message, delay=180):
     await asyncio.sleep(delay)
