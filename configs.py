@@ -19,6 +19,7 @@ class Config:
     
     # URL Shortener
     SHORTENER_API_KEY = os.environ.get("SHORTENER_API_KEY", "")
+    SHORTENER_URL = "https://mdiskshortner.link"
     
     # Rate limiting
     RATE_LIMIT = int(os.environ.get("RATE_LIMIT", 5))  # requests per minute
