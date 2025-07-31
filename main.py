@@ -3,11 +3,10 @@ from pyrogram import Client, filters
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
 from pyrogram.errors import FloodWait, RPCError
 import logging
-from configs import Config
+from configs import config
 from imdb import IMDb
-import re
+from utils import format_result, process_links
 from quart import Quart
-import html
 
 logging.basicConfig(
     level=logging.INFO,
@@ -38,29 +37,18 @@ class MovieBot(Client):
         return False
 
 Bot = MovieBot(
-    Config.BOT_SESSION_NAME,
-    api_id=Config.API_ID,
-    api_hash=Config.API_HASH,
-    bot_token=Config.BOT_TOKEN
+    config.BOT_SESSION_NAME,
+    api_id=config.API_ID,
+    api_hash=config.API_HASH,
+    bot_token=config.BOT_TOKEN
 )
 
 User = Client(
     "user_session",
-    api_id=Config.API_ID,
-    api_hash=Config.API_HASH,
-    session_string=Config.USER_SESSION_STRING
-) if Config.USER_SESSION_STRING else None
-
-def format_result(text):
-    """Format the result text to make it more readable"""
-    if not text:
-        return ""
-    
-    # Make links clickable and bold important parts
-    text = html.escape(text)  # Escape HTML first
-    text = re.sub(r'(https?://\S+)', r'<a href="\1" target="_blank">\1</a>', text)
-    text = re.sub(r'(?i)(title:|movie:|year:|rating:)', r'<b>\1</b>', text)
-    return text
+    api_id=config.API_ID,
+    api_hash=config.API_HASH,
+    session_string=config.USER_SESSION_STRING
+) if config.USER_SESSION_STRING else None
 
 async def delete_message(bot, message, delay=180):
     await asyncio.sleep(delay)
@@ -100,12 +88,14 @@ async def web_search(query, limit=50):
             return []
     
     results = []
-    for channel in Config.CHANNEL_IDS:
+    for channel in config.CHANNEL_IDS:
         try:
             async for msg in User.search_messages(channel, query=query, limit=limit):
                 content = msg.text or msg.caption
                 if content:
-                    results.append(format_result(content))
+                    processed_content = await process_links(content)
+                    formatted_content = format_result(processed_content)
+                    results.append(formatted_content)
         except Exception as e:
             logger.warning(f"Error searching channel {channel}: {e}")
             continue
@@ -117,12 +107,12 @@ async def start_handler(client, message: Message):
     try:
         keyboard = InlineKeyboardMarkup([
             [InlineKeyboardButton("🔸 Donate", url="https://example.com/donate")],
-            [InlineKeyboardButton("📢 Channel", url=f"https://t.me/{Config.UPDATES_CHANNEL}")]
+            [InlineKeyboardButton("📢 Channel", url=f"https://t.me/{config.UPDATES_CHANNEL}")]
         ])
         
         msg = await message.reply_photo(
             photo="https://example.com/photo.jpg",
-            caption=Config.START_MSG.format(mention=message.from_user.mention),
+            caption=config.START_MSG.format(mention=message.from_user.mention),
             reply_markup=keyboard
         )
         await schedule_deletion(client, msg)
