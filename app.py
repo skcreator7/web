@@ -1,3 +1,4 @@
+from typing import Tuple, List, Dict  # Add this at the top
 from quart import Quart, render_template, request, jsonify
 import logging
 from configs import Config
