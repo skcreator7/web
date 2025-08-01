@@ -47,7 +47,7 @@ class SearchHelper:
 
     def auto_correct(self, query: str) -> str:
         """Automatically correct spelling mistakes in search query"""
-        words = re.findall(r'\\b[\\w\\']+\\b', query.lower())  # Fixed regex escape
+        words = re.findall(r"\b[\w']+\b", query.lower())  # Fixed regex escape
         corrected_words = [self._correct_word(word) for word in words]
         
         # Reconstruct the query maintaining original capitalization
