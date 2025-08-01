@@ -1,10 +1,11 @@
 quart==0.18.4
 hypercorn==0.14.4
-Werkzeug==2.3.7  # Important fix for url_quote import error
+Werkzeug==2.3.7
 pyrogram==2.0.106
 TgCrypto==1.2.5
 IMDbPY==6.8
 jinja2==3.1.2
-pydantic-settings
-quart-rate-limiter
-aiohttp
+textblob==0.17.1
+python-Levenshtein==0.21.1
+fuzzywuzzy==0.18.0
+nltk==3.8.1
