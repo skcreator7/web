@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <script src="https://fpyf8.com/88/tag.min.js" data-zone="156319" async data-cfasync="false"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Results for {{query}} - {{config.BOT_SESSION_NAME}}</title>
@@ -11,12 +10,13 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #ff0000; /* Red */
-            --secondary: #0066ff; /* Blue */
-            --accent: #00ccff; /* Light Blue */
+            --primary: #ff0000;
+            --secondary: #0066ff;
+            --accent: #00ccff;
             --dark: #0f172a;
             --light: #ffffff;
             --text: #f8f9fa;
+            --corrected-bg: rgba(0, 204, 255, 0.1);
         }
         
         body {
@@ -215,9 +215,9 @@
         }
         
         @keyframes textPulse {
-            0% { text-shadow: 0 0 5px rgba(255, 0, 0, 0.5); }
-            50% { text-shadow: 0 0 10px rgba(0, 204, 255, 0.5); }
-            100% { text-shadow: 0 0 5px rgba(255, 0, 0, 0.5); }
+            0% { text-shadow: 0 0 5px rgba(255, 0, 0, 0.3); }
+            50% { text-shadow: 0 0 10px rgba(0, 204, 255, 0.4); }
+            100% { text-shadow: 0 0 5px rgba(255, 0, 0, 0.3); }
         }
         
         .pagination .page-item.active .page-link {
@@ -241,6 +241,19 @@
             padding-bottom: 20px;
         }
         
+        /* Correction alert styles */
+        .correction-alert {
+            background: var(--corrected-bg);
+            border-left: 4px solid var(--accent);
+            border-radius: 8px;
+            animation: correctionSlideIn 0.5s ease-out;
+        }
+        
+        @keyframes correctionSlideIn {
+            from { transform: translateX(20px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
         /* Ad container styles */
         .result-ad-container {
             margin: 15px 0 25px 0;
@@ -251,16 +264,27 @@
             backdrop-filter: blur(5px);
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
-        
-        .result-ad-container iframe {
-            margin: 0 auto;
-            display: block;
-            max-width: 100%;
-        }
     </style>
 </head>
 <body>
     <div class="container py-5">
+        <!-- Correction Alert -->
+        {% if corrected_query %}
+        <div class="correction-alert alert mb-4 animate__animated animate__fadeIn">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <i class="fas fa-spell-check me-2"></i>
+                    Showing results for <strong>"{{corrected_query}}"</strong>
+                    <small class="text-muted">(original search: "{{query}}")</small>
+                </div>
+                <a href="?query={{corrected_query|urlencode}}&page=1&per_page={{pagination.items_per_page}}" 
+                   class="btn btn-sm btn-outline-light">
+                    <i class="fas fa-redo me-1"></i> Search corrected version
+                </a>
+            </div>
+        </div>
+        {% endif %}
+
         <div class="result-header animate__animated animate__fadeInDown">
             <div class="site-branding text-center mb-3">
                 <h1>SK<span class="animated-digit">4</span>FiLM</h1>
@@ -270,7 +294,7 @@
             
             <div class="row align-items-center">
                 <div class="col-md-8">
-                    <h2 class="mb-0">Results for "<span class="search-query">{{query}}</span>"</h2>
+                    <h2 class="mb-0">Results for "<span class="search-query">{{corrected_query if corrected_query else query}}</span>"</h2>
                     <p class="mb-0">{{total}} results found</p>
                 </div>
                 <div class="col-md-4 text-md-end">
