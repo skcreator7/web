@@ -1,29 +1,13 @@
-import requests
-import os
-
-def shorten_link(original_url):
-    token = os.getenv("SHORTENER_API_TOKEN")
-    if not token:
-        return original_url
-    try:
-        response = requests.get("https://mdiskshortner.link/api", params={
-            "api": token,
-            "url": original_url
-        })
-        data = response.json()
-        return data.get("shortenedUrl", original_url)
-    except Exception:
-        return original_url
-
 from quart import Quart, render_template, request, jsonify
 import logging
 from configs import Config
 from hypercorn.asyncio import serve
 from hypercorn.config import Config as HyperConfig
-from main import web_search, format_result
+from main import format_result
 import asyncio
-from datetime import datetime, timedelta
+from datetime import datetime
 from collections import defaultdict
+from search_utils import search_helper
 
 # Configure logging
 logging.basicConfig(
@@ -35,8 +19,8 @@ logger = logging.getLogger(__name__)
 app = Quart(__name__)
 app.secret_key = Config.SECRET_KEY
 
-# Visitor tracking system
-visitors = defaultdict(float)  # {ip: last_active_timestamp}
+# Visitor tracking
+visitors = defaultdict(float)
 
 class Paginator:
     def __init__(self, items, items_per_page=10, window_size=5):
@@ -79,43 +63,51 @@ class Paginator:
             'items_per_page': self.items_per_page
         }
 
-@app.before_serving
-async def startup():
-    """Initialize application resources"""
-    logger.info("Application starting up...")
+async def web_search(query: str, limit: int = 50) -> Tuple[str, List[str]]:
+    """Auto-correcting search that returns (corrected_query, results)"""
+    from main import User  # Import here to avoid circular imports
+    
+    if not User or not User.is_connected:
+        try:
+            if User:
+                await User.start()
+            else:
+                logger.warning("User client not configured")
+                return query, []
+        except Exception as e:
+            logger.error(f"Failed to start user client: {e}")
+            return query, []
+    
+    # Build search corpus from channels
+    corpus = []
+    for channel in Config.CHANNEL_IDS:
+        try:
+            async for msg in User.get_chat_history(channel, limit=200):
+                content = msg.text or msg.caption
+                if content:
+                    corpus.append(content)
+        except Exception as e:
+            logger.warning(f"Error building corpus from {channel}: {e}")
+            continue
+    
+    # Build search index for auto-correction
+    await search_helper.build_index(corpus)
+    
+    # Perform auto-correcting search
+    corrected_query, matches = await search_helper.advanced_search(query, corpus)
+    
+    # Format results
+    formatted_results = [format_result(match['original_text']) for match in matches[:limit]]
+    
+    return corrected_query, formatted_results
 
 @app.before_request
 async def track_visitor():
     """Track visitor activity"""
     ip = request.headers.get('X-Forwarded-For', request.remote_addr)
     if ip:
-        ip = ip.split(',')[0].strip()  # Handle proxy chains
+        ip = ip.split(',')[0].strip()
         visitors[ip] = datetime.now().timestamp()
-
-def get_active_visitors():
-    """Count visitors active in last 30 minutes"""
-    cutoff = datetime.now().timestamp() - 1800
-    return {ip: ts for ip, ts in visitors.items() if ts > cutoff}
-
-@app.route('/visitor_count')
-async def visitor_count():
-    """Endpoint for visitor count data"""
-    active = get_active_visitors()
-    visitors.clear()
-    visitors.update(active)
-    return jsonify({
-        'count': len(active),
-        'updated': datetime.now().isoformat(),
-        'status': 'success'
-    })
-
-@app.route('/health')
-async def health_check():
-    return jsonify({
-        "status": "healthy",
-        "visitors": len(visitors),
-        "timestamp": datetime.now().isoformat()
-    })
 
 @app.route('/')
 async def home():
@@ -132,13 +124,19 @@ async def search():
         return await render_template('index.html', config=Config)
     
     try:
-        results = await web_search(query)
+        # Get auto-corrected results
+        corrected_query, results = await web_search(query)
+        
+        # Show correction message if query was changed
+        show_correction = corrected_query.lower() != query.lower()
+        
         paginator = Paginator(results, items_per_page=per_page)
         page_data = paginator.get_page(page)
         
         return await render_template(
             'results.html',
             query=query,
+            corrected_query=corrected_query if show_correction else None,
             results=page_data['items'],
             total=len(results),
             pagination=page_data,
@@ -147,6 +145,19 @@ async def search():
     except Exception as e:
         logger.error(f"Search error: {e}")
         return await render_template('error.html', error=str(e), config=Config), 500
+
+@app.route('/visitor_count')
+async def visitor_count():
+    """Endpoint for visitor count data"""
+    cutoff = datetime.now().timestamp() - 1800
+    active = {ip: ts for ip, ts in visitors.items() if ts > cutoff}
+    visitors.clear()
+    visitors.update(active)
+    return jsonify({
+        'count': len(active),
+        'updated': datetime.now().isoformat(),
+        'status': 'success'
+    })
 
 async def run_server():
     """Configure and run the server"""
