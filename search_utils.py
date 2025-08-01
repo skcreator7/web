@@ -1,6 +1,6 @@
 import re
 from typing import Tuple, List, Dict
-from fuzzywuzzy import fuzz, process
+from rapidfuzz import fuzz, process
 from textblob import TextBlob
 import nltk
 from nltk.corpus import stopwords
@@ -21,7 +21,6 @@ class SearchHelper:
         """Build a search index from available content"""
         self.search_index.clear()
         for text in corpus:
-            # Extract meaningful keywords
             words = re.findall(r'\b[a-z]{3,}\b', text.lower())
             for word in words:
                 if word not in self.stop_words:
@@ -37,7 +36,7 @@ class SearchHelper:
         
         # Then try fuzzy match with our index
         if self.search_index:
-            match, score = process.extractOne(
+            match, score, _ = process.extractOne(
                 corrected, 
                 self.search_index, 
                 scorer=fuzz.ratio
@@ -48,11 +47,10 @@ class SearchHelper:
 
     def auto_correct(self, query: str) -> str:
         """Automatically correct spelling mistakes in search query"""
-        # Split into words and correct each one
         words = re.findall(r'\b[\w\']+\b', query.lower())
         corrected_words = [self._correct_word(word) for word in words]
         
-        # Reconstruct the query maintaining original capitalization for proper nouns
+        # Reconstruct the query maintaining original capitalization
         corrected = []
         for original, fixed in zip(query.split(), corrected_words):
             if original.istitle():
