@@ -21,7 +21,7 @@ class SearchHelper:
         """Build a search index from available content"""
         self.search_index.clear()
         for text in corpus:
-            words = re.findall(r'\b[a-z]{3,}\b', text.lower())
+            words = re.findall(r'\\b[a-z]{3,}\\b', text.lower())  # Fixed regex escape
             for word in words:
                 if word not in self.stop_words:
                     self.search_index.add(word)
@@ -47,7 +47,7 @@ class SearchHelper:
 
     def auto_correct(self, query: str) -> str:
         """Automatically correct spelling mistakes in search query"""
-        words = re.findall(r'\b[\w\']+\b', query.lower())
+        words = re.findall(r'\\b[\\w\\']+\\b', query.lower())  # Fixed regex escape
         corrected_words = [self._correct_word(word) for word in words]
         
         # Reconstruct the query maintaining original capitalization
