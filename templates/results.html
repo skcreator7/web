@@ -17,6 +17,7 @@
             --light: #ffffff;
             --text: #f8f9fa;
             --corrected-bg: rgba(0, 204, 255, 0.1);
+            --corrected-border: #00ccff;
         }
         
         body {
@@ -244,14 +245,24 @@
         /* Correction alert styles */
         .correction-alert {
             background: var(--corrected-bg);
-            border-left: 4px solid var(--accent);
+            border-left: 4px solid var(--corrected-border);
             border-radius: 8px;
             animation: correctionSlideIn 0.5s ease-out;
+            margin-bottom: 20px;
         }
         
         @keyframes correctionSlideIn {
-            from { transform: translateX(20px); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
+            from { transform: translateY(-10px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        .correction-alert .btn {
+            transition: all 0.3s;
+        }
+        
+        .correction-alert .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
         
         /* Ad container styles */
@@ -264,21 +275,37 @@
             backdrop-filter: blur(5px);
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .site-branding h1 {
+                font-size: 2.5rem;
+            }
+            
+            .correction-alert {
+                padding: 12px;
+            }
+            
+            .correction-alert .btn {
+                padding: 5px 10px;
+                font-size: 0.8rem;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="container py-5">
         <!-- Correction Alert -->
         {% if corrected_query %}
-        <div class="correction-alert alert mb-4 animate__animated animate__fadeIn">
-            <div class="d-flex justify-content-between align-items-center">
-                <div>
+        <div class="correction-alert alert animate__animated animate__fadeIn">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center">
+                <div class="mb-2 mb-md-0">
                     <i class="fas fa-spell-check me-2"></i>
-                    Showing results for <strong>"{{corrected_query}}"</strong>
-                    <small class="text-muted">(original search: "{{query}}")</small>
+                    <span>Showing results for <strong>"{{corrected_query}}"</strong></span>
+                    <small class="text-muted d-block d-md-inline ms-md-2">(original search: "{{query}}")</small>
                 </div>
                 <a href="?query={{corrected_query|urlencode}}&page=1&per_page={{pagination.items_per_page}}" 
-                   class="btn btn-sm btn-outline-light">
+                   class="btn btn-sm btn-outline-light align-self-end align-self-md-center">
                     <i class="fas fa-redo me-1"></i> Search corrected version
                 </a>
             </div>
