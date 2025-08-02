@@ -1,4 +1,4 @@
-from typing import Tuple, List, Dict  # Add this at the top
+from typing import Tuple, List, Dict
 from quart import Quart, render_template, request, jsonify
 import logging
 from configs import Config
@@ -68,8 +68,11 @@ async def web_search(query: str, limit: int = 50) -> Tuple[str, str, List[str]]:
     """Auto-correcting search that returns (original_query, corrected_query, results)"""
     from main import User  # Import here to avoid circular imports
 
+    logger.info(f"Starting search for: {query}")
+    
     if not User or not User.is_connected:
         try:
+            logger.info("User client not connected, attempting to start...")
             if User:
                 await User.start()
             else:
@@ -82,7 +85,8 @@ async def web_search(query: str, limit: int = 50) -> Tuple[str, str, List[str]]:
     corpus = []
     for channel in Config.CHANNEL_IDS:
         try:
-            async for msg in User.get_chat_history(channel, limit=200):
+            logger.info(f"Searching in channel: {channel}")
+            async for msg in User.search_messages(channel, query=query, limit=200):
                 content = msg.text or msg.caption
                 if content:
                     corpus.append(content)
@@ -90,10 +94,13 @@ async def web_search(query: str, limit: int = 50) -> Tuple[str, str, List[str]]:
             logger.warning(f"Error building corpus from {channel}: {e}")
             continue
 
+    logger.info(f"Built corpus with {len(corpus)} items")
+    
     await search_helper.build_index(corpus)
     original_query, corrected_query, matches = await search_helper.advanced_search(query, corpus)
     formatted_results = [format_result(match['original_text']) for match in matches[:limit]]
 
+    logger.info(f"Found {len(formatted_results)} results")
     return original_query, corrected_query, formatted_results
 
 @app.before_request
@@ -130,11 +137,13 @@ async def search():
             results=page_data['items'],
             total=len(results),
             pagination=page_data,
-            config=Config
+            config=Config,
+            year=datetime.now().year,
+            debug=True  # For debugging purposes
         )
     except Exception as e:
         logger.error(f"Search error: {e}")
-        return await render_template('error.html', error=str(e), config=Config), 500
+        return await render_template('error.html', error=str(e), config=Config, year=datetime.now().year), 500
 
 @app.route('/visitor_count')
 async def visitor_count():
