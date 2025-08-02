@@ -3,9 +3,12 @@ from typing import Tuple, List, Dict
 from rapidfuzz import fuzz
 import nltk
 from nltk.corpus import stopwords
+from imdb import IMDb
 
+# NLTK stopwords डाउनलोड करें
 nltk.download('stopwords', quiet=True)
 nltk.download('punkt', quiet=True)
+
 
 class SearchHelper:
     def __init__(self):
@@ -15,9 +18,10 @@ class SearchHelper:
             'download', 'watch', 'free', 'online', 'stream', 'bluray',
             'torrent', 'subtitle'
         })
+        self.imdb_client = IMDb()
 
     async def build_index(self, corpus: List[str]):
-        """Build a search index from the corpus."""
+        """Corpus से searchable index तैयार करो।"""
         self.search_index.clear()
         for text in corpus:
             words = re.findall(r'\b[a-z0-9]{2,}\b', text.lower())
@@ -27,8 +31,8 @@ class SearchHelper:
 
     async def search(self, query: str, corpus: List[str]) -> Tuple[str, List[Dict]]:
         """
-        Perform direct fuzzy search (without auto-correct).
-        Returns (original_query, matched_results)
+        Fuzzy search (बिना auto-correct के)।
+        Returns: (original_query, results)
         """
         query = query.strip().lower()
 
@@ -51,5 +55,28 @@ class SearchHelper:
         results.sort(key=lambda x: (-x['score'], x['match_type'] == 'fuzzy'))
         return query, results
 
-# ✅ Global instance
+    async def correct_query_with_imdb(self, query: str) -> str:
+        """
+        IMDb से query correct करें।
+        """
+        try:
+            results = self.imdb_client.search_movie(query)
+            if results:
+                corrected_title = results[0]['title']
+                return corrected_title
+        except Exception as e:
+            print("IMDb Error:", e)
+
+        # fallback: वही query लौटाओ
+        return query
+
+    async def advanced_search(self, query: str, corpus: List[str]) -> Tuple[str, List[Dict]]:
+        """
+        Auto-correct + search
+        """
+        corrected = await self.correct_query_with_imdb(query)
+        return await self.search(corrected, corpus)
+
+
+# ✅ Global instance use करने के लिए
 search_helper = SearchHelper()
