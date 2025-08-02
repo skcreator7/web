@@ -14,31 +14,32 @@ class SearchHelper:
         self.stop_words = set(stopwords.words('english')).union({
             'movie', 'film', 'hd', 'full', 'part', 'scene', 'trailer',
             'download', 'watch', 'free', 'online', 'stream', 'bluray',
-            'torrent', 'subtitle'
+            'torrent', 'subtitle'  # ध्यान दें: 720p, 1080p यहां से हटाए गए हैं
         })
-        self.low_priority_words = {'720p', '1080p', '480p', 'hevc'}
 
     async def build_index(self, corpus: List[str]):
-        """Build a search index from available content"""
+        """Build a search index from the corpus."""
         self.search_index.clear()
         for text in corpus:
-            words = re.findall(r'\b[a-z0-9]{3,}\b', text.lower())
+            words = re.findall(r'\b[a-z]{2,}\b', text.lower())  # Words with at least 2 letters
             for word in words:
                 if word not in self.stop_words:
                     self.search_index.add(word)
 
-    def clean_query(self, query: str) -> str:
-        """Remove stopwords before correcting"""
-        words = re.findall(r'\b[\w]{2,}\b', query.lower())
-        return ' '.join([w for w in words if w not in self.stop_words])
-
     def _correct_word(self, word: str) -> str:
-        """Correct a single word using multiple strategies"""
-        if len(word) <= 2 or word in self.stop_words:
+        """Correct a word using TextBlob + fuzzy, but preserve short movie codes."""
+        
+        if word in self.stop_words:
             return word
 
+        # Preserve 2- or 3-letter important movie codes (e.g. kgf, leo, rrr)
+        if len(word) <= 3:
+            return word
+
+        # TextBlob correction
         corrected = str(TextBlob(word).correct())
 
+        # Fuzzy match with our index
         if self.search_index:
             match = process.extractOne(
                 corrected,
@@ -47,14 +48,15 @@ class SearchHelper:
             )
             if match and match[1] > 85:
                 return match[0]
+
         return corrected
 
     def auto_correct(self, query: str) -> str:
-        """Automatically correct spelling mistakes in search query"""
+        """Automatically correct spelling mistakes in search query."""
         words = re.findall(r"\b[\w']+\b", query.lower())
         corrected_words = [self._correct_word(word) for word in words]
 
-        # Reconstruct query with original capitalization
+        # Reconstruct original case
         corrected = []
         for original, fixed in zip(query.split(), corrected_words):
             if original.istitle():
@@ -68,27 +70,17 @@ class SearchHelper:
     async def advanced_search(self, query: str, corpus: List[str]) -> Tuple[str, List[Dict]]:
         """
         Perform auto-correcting search.
-        Returns: (corrected_query, results)
+        Returns (corrected_query, matched_results)
         """
-        cleaned = self.clean_query(query)
-        corrected_query = self.auto_correct(cleaned)
+        corrected_query = self.auto_correct(query)
 
         results = []
         for text in corpus:
-            text_lower = text.lower()
-            corrected_lower = corrected_query.lower()
+            ratio = fuzz.ratio(corrected_query.lower(), text.lower())
+            partial = fuzz.partial_ratio(corrected_query.lower(), text.lower())
+            token_set = fuzz.token_set_ratio(corrected_query.lower(), text.lower())
 
-            ratio = fuzz.ratio(corrected_lower, text_lower)
-            partial = fuzz.partial_ratio(corrected_lower, text_lower)
-            token_set = fuzz.token_set_ratio(corrected_lower, text_lower)
-
-            # Composite score
             composite_score = (token_set * 0.5) + (partial * 0.3) + (ratio * 0.2)
-
-            # Penalize low-priority words
-            for word in self.low_priority_words:
-                if word in text_lower and word not in corrected_lower:
-                    composite_score -= 5
 
             if composite_score > 65:
                 results.append({
@@ -98,11 +90,8 @@ class SearchHelper:
                     'match_type': 'fuzzy' if composite_score < 90 else 'exact'
                 })
 
-        # Sort by relevance
         results.sort(key=lambda x: (-x['score'], x['match_type'] == 'fuzzy'))
-
         return corrected_query, results
-
 
 # ✅ Global instance
 search_helper = SearchHelper()
