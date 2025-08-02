@@ -294,6 +294,17 @@
             font-style: italic;
         }
         
+        /* Ad after each result */
+        .result-ad {
+            margin: 15px 0 25px 0;
+            padding: 10px;
+            background: rgba(30, 41, 59, 0.6);
+            border-radius: 8px;
+            text-align: center;
+            border: 1px dashed var(--accent);
+            backdrop-filter: blur(5px);
+        }
+        
         /* No Results Section with Ad */
         .no-results-container {
             margin-bottom: 30px;
@@ -314,7 +325,7 @@
                 font-size: 0.8rem;
             }
             
-            .ads-container {
+            .ads-container, .result-ad {
                 padding: 10px;
             }
         }
@@ -413,6 +424,20 @@
                                 {{ lines[1:] | join('\n') | safe }}
                               </div>
                             {% endif %}
+                        </div>
+                        
+                        <!-- Ad after each result -->
+                        <div class="result-ad animate__animated animate__fadeIn">
+                            <script type="text/javascript">
+                                atOptions = {
+                                    'key' : '2678a2490e729afaed09a2fe9863ec3b',
+                                    'format' : 'iframe',
+                                    'height' : 90,
+                                    'width' : 728,
+                                    'params' : {}
+                                };
+                            </script>
+                            <script type="text/javascript" src="//marksdespitelinear.com/2678a2490e729afaed09a2fe9863ec3b/invoke.js"></script>
                         </div>
                     </div>
                 {% endfor %}
