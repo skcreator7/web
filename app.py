@@ -1,4 +1,4 @@
-from typing import Tuple, List, Dict
+from typing import List
 from quart import Quart, render_template, request, jsonify
 import logging
 from configs import Config
@@ -64,11 +64,11 @@ class Paginator:
             'items_per_page': self.items_per_page
         }
 
-async def web_search(query: str, limit: int = 50) -> Tuple[str, str, List[str]]:
-    """Auto-correcting search that returns (original_query, corrected_query, results)"""
+async def web_search(query: str, limit: int = 50) -> List[str]:
+    """Advanced search with query cleaning"""
     from main import User  # Import here to avoid circular imports
 
-    logger.info(f"Starting search for: {query}")
+    logger.info(f"Original query: {query}")
     
     if not User or not User.is_connected:
         try:
@@ -77,10 +77,10 @@ async def web_search(query: str, limit: int = 50) -> Tuple[str, str, List[str]]:
                 await User.start()
             else:
                 logger.warning("User client not configured")
-                return query, query, []
+                return []
         except Exception as e:
             logger.error(f"Failed to start user client: {e}")
-            return query, query, []
+            return []
 
     corpus = []
     for channel in Config.CHANNEL_IDS:
@@ -96,12 +96,11 @@ async def web_search(query: str, limit: int = 50) -> Tuple[str, str, List[str]]:
 
     logger.info(f"Built corpus with {len(corpus)} items")
     
-    await search_helper.build_index(corpus)
-    original_query, corrected_query, matches = await search_helper.advanced_search(query, corpus)
+    matches = await search_helper.advanced_search(query, corpus)
     formatted_results = [format_result(match['original_text']) for match in matches[:limit]]
 
     logger.info(f"Found {len(formatted_results)} results")
-    return original_query, corrected_query, formatted_results
+    return formatted_results
 
 @app.before_request
 async def track_visitor():
@@ -124,22 +123,19 @@ async def search():
         return await render_template('index.html', config=Config)
 
     try:
-        original_query, corrected_query, results = await web_search(query)
-        show_correction = corrected_query.lower() != original_query.lower()
-
+        results = await web_search(query)
         paginator = Paginator(results, items_per_page=per_page)
         page_data = paginator.get_page(page)
 
         return await render_template(
             'results.html',
-            query=original_query,
-            corrected_query=corrected_query if show_correction else None,
+            query=query,
+            corrected_query=None,
             results=page_data['items'],
             total=len(results),
             pagination=page_data,
             config=Config,
-            year=datetime.now().year,
-            debug=True  # For debugging purposes
+            year=datetime.now().year
         )
     except Exception as e:
         logger.error(f"Search error: {e}")
