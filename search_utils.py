@@ -1,6 +1,5 @@
 import re
 from typing import List, Dict
-from rapidfuzz import fuzz
 import logging
 
 # Configure logging
@@ -12,7 +11,6 @@ logger = logging.getLogger(__name__)
 
 class SearchHelper:
     def __init__(self):
-        # Words to ignore in search queries
         self.ignore_words = {
             'movie', 'film', 'hd', 'full', 'part', 'scene', 'trailer',
             'download', 'watch', 'free', 'online', 'stream', 'bluray',
@@ -23,17 +21,23 @@ class SearchHelper:
 
     def _clean_query(self, query: str) -> str:
         """Remove common movie-related words from query"""
-        # Split query into words and filter out ignored words
+        # Extract year if present
+        year_match = re.search(r'(19|20)\d{2}', query)
+        year = year_match.group() if year_match else ""
+        
+        # Split and clean words
         words = re.findall(r'\b[a-z0-9]{2,}\b', query.lower())
         cleaned_words = [word for word in words if word not in self.ignore_words]
-        return ' '.join(cleaned_words)
+        
+        # Reconstruct query
+        cleaned_query = ' '.join(cleaned_words)
+        if year:
+            cleaned_query = f"{cleaned_query} {year}" if cleaned_query else year
+        
+        return cleaned_query.strip()
 
     async def advanced_search(self, query: str, corpus: List[str]) -> List[Dict]:
-        """
-        Advanced fuzzy search with query cleaning
-        Returns: List of matched results with scores
-        """
-        # Clean the query first
+        """Perform cleaned search"""
         cleaned_query = self._clean_query(query)
         if not cleaned_query:
             return []
@@ -41,24 +45,13 @@ class SearchHelper:
         results = []
         for text in corpus:
             text_lower = text.lower()
-            
-            # Calculate multiple similarity metrics
-            ratio = fuzz.ratio(cleaned_query, text_lower)
-            partial = fuzz.partial_ratio(cleaned_query, text_lower)
-            token_set = fuzz.token_set_ratio(cleaned_query, text_lower)
-            
-            # Weighted composite score
-            composite_score = (token_set * 0.5) + (partial * 0.3) + (ratio * 0.2)
-
-            if composite_score > 60:  # Adjust threshold as needed
+            if cleaned_query in text_lower:
                 results.append({
                     'original_text': text,
-                    'score': composite_score,
-                    'match_type': 'fuzzy' if composite_score < 90 else 'exact'
+                    'score': 100,  # Exact match
+                    'match_type': 'exact'
                 })
-
-        # Sort by score (highest first)
-        results.sort(key=lambda x: -x['score'])
+        
         return results
 
 # Global instance
