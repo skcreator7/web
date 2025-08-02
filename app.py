@@ -66,13 +66,12 @@ class Paginator:
 
 async def web_search(query: str, limit: int = 50) -> List[str]:
     """Advanced search with query cleaning"""
-    from main import User  # Import here to avoid circular imports
+    from main import User
 
     logger.info(f"Original query: {query}")
     
     if not User or not User.is_connected:
         try:
-            logger.info("User client not connected, attempting to start...")
             if User:
                 await User.start()
             else:
@@ -85,7 +84,6 @@ async def web_search(query: str, limit: int = 50) -> List[str]:
     corpus = []
     for channel in Config.CHANNEL_IDS:
         try:
-            logger.info(f"Searching in channel: {channel}")
             async for msg in User.search_messages(channel, query=query, limit=200):
                 content = msg.text or msg.caption
                 if content:
@@ -94,13 +92,8 @@ async def web_search(query: str, limit: int = 50) -> List[str]:
             logger.warning(f"Error building corpus from {channel}: {e}")
             continue
 
-    logger.info(f"Built corpus with {len(corpus)} items")
-    
     matches = await search_helper.advanced_search(query, corpus)
-    formatted_results = [format_result(match['original_text']) for match in matches[:limit]]
-
-    logger.info(f"Found {len(formatted_results)} results")
-    return formatted_results
+    return [format_result(match['original_text']) for match in matches[:limit]]
 
 @app.before_request
 async def track_visitor():
