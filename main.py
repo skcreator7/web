@@ -4,8 +4,8 @@ from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, 
 from pyrogram.errors import FloodWait, RPCError
 import logging
 from configs import Config
-import re
 import html
+import re
 
 logging.basicConfig(
     level=logging.INFO,
@@ -48,25 +48,12 @@ User = Client(
 ) if Config.USER_SESSION_STRING else None
 
 def format_result(text):
-    """Format the result text to make it more readable"""
+    """Format the result text"""
     if not text:
         return ""
-    
-    # Make links clickable and bold important parts
-    text = html.escape(text)  # Escape HTML first
+    text = html.escape(text)
     text = re.sub(r'(https?://\S+)', r'<a href="\1" target="_blank">\1</a>', text)
-    text = re.sub(r'(?i)(title:|movie:|year:|rating:)', r'<b>\1</b>', text)
     return text
-
-async def delete_message(bot, message, delay=180):
-    await asyncio.sleep(delay)
-    try:
-        await bot.delete_messages(message.chat.id, message.id)
-    except Exception as e:
-        logger.error(f"Error deleting message: {e}")
-
-async def schedule_deletion(bot, message, delay=180):
-    asyncio.create_task(delete_message(bot, message, delay))
 
 async def web_search(query, limit=50):
     if not User or not User.is_connected:
@@ -74,7 +61,7 @@ async def web_search(query, limit=50):
             if User:
                 await User.start()
             else:
-                logger.warning("User client not configured (no session string)")
+                logger.warning("User client not configured")
                 return []
         except Exception as e:
             logger.error(f"Failed to start user client: {e}")
@@ -106,7 +93,6 @@ async def start_handler(client, message: Message):
             caption=Config.START_MSG.format(mention=message.from_user.mention),
             reply_markup=keyboard
         )
-        await schedule_deletion(client, msg)
     except Exception as e:
         logger.error(f"Start handler error: {str(e)}")
 
