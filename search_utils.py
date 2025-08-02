@@ -5,7 +5,7 @@ import nltk
 from nltk.corpus import stopwords
 from imdb import IMDb
 
-# NLTK stopwords डाउनलोड करें
+# Download NLTK data
 nltk.download('stopwords', quiet=True)
 nltk.download('punkt', quiet=True)
 
@@ -45,7 +45,7 @@ class SearchHelper:
 
             composite_score = (token_set * 0.5) + (partial * 0.3) + (ratio * 0.2)
 
-            if composite_score > 65:
+            if composite_score > 60:  # Tune threshold here
                 results.append({
                     'text': text,
                     'score': composite_score,
@@ -62,7 +62,9 @@ class SearchHelper:
         try:
             results = self.imdb_client.search_movie(query)
             if results:
-                corrected_title = results[0]['title']
+                title = results[0]['title']
+                year = results[0].get('year')
+                corrected_title = f"{title} ({year})" if year else title
                 return corrected_title
         except Exception as e:
             print("IMDb Error:", e)
@@ -70,13 +72,16 @@ class SearchHelper:
         # fallback: वही query लौटाओ
         return query
 
-    async def advanced_search(self, query: str, corpus: List[str]) -> Tuple[str, List[Dict]]:
+    async def advanced_search(self, query: str, corpus: List[str]) -> Tuple[str, str, List[Dict]]:
         """
-        Auto-correct + search
+        Auto-correct + fuzzy search
+        Returns: original query, corrected query, and results
         """
-        corrected = await self.correct_query_with_imdb(query)
-        return await self.search(corrected, corpus)
+        original_query = query.strip()
+        corrected = await self.correct_query_with_imdb(original_query)
+        _, results = await self.search(corrected, corpus)
+        return original_query, corrected, results
 
 
-# ✅ Global instance use करने के लिए
+# ✅ Global instance
 search_helper = SearchHelper()
