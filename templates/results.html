@@ -23,7 +23,7 @@
         body {
             background: url('https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80') no-repeat center center fixed;
             background-size: cover;
-            font-family: 'Poppins', sans-serif;
+            font-family: 'Josefin Sans', sans-serif;
             color: var(--text);
             position: relative;
             min-height: 100vh;
@@ -266,14 +266,37 @@
         }
         
         /* Ad container styles */
-        .result-ad-container {
-            margin: 15px 0 25px 0;
+        .ads-container {
+            margin: 30px 0;
+            padding: 15px;
+            background: rgba(30, 41, 59, 0.7);
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.1);
             text-align: center;
-            background: rgba(30, 41, 59, 0.5);
-            padding: 10px;
-            border-radius: 8px;
             backdrop-filter: blur(5px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .ads-container h3 {
+            font-family: 'Josefin Sans', sans-serif;
+            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .ads-placeholder {
+            padding: 20px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 8px;
+            margin: 10px 0;
+            color: rgba(255,255,255,0.7);
+            font-style: italic;
+        }
+        
+        /* No Results Section with Ad */
+        .no-results-container {
+            margin-bottom: 30px;
         }
         
         /* Responsive adjustments */
@@ -289,6 +312,10 @@
             .correction-alert .btn {
                 padding: 5px 10px;
                 font-size: 0.8rem;
+            }
+            
+            .ads-container {
+                padding: 10px;
             }
         }
     </style>
@@ -332,6 +359,24 @@
             </div>
         </div>
         
+        <!-- Top Ads Section -->
+        <div class="ads-container animate__animated animate__fadeIn">
+            <h3><i class="fas fa-ad me-2"></i>Sponsored Content</h3>
+            <div class="ads-placeholder">
+                <!-- Ad Script 1 -->
+                <script type="text/javascript">
+                    atOptions = {
+                        'key' : '2678a2490e729afaed09a2fe9863ec3b',
+                        'format' : 'iframe',
+                        'height' : 250,
+                        'width' : 300,
+                        'params' : {}
+                    };
+                </script>
+                <script type="text/javascript" src="//marksdespitelinear.com/2678a2490e729afaed09a2fe9863ec3b/invoke.js"></script>
+            </div>
+        </div>
+        
         <div class="mb-4 animate__animated animate__fadeIn">
             <form method="get" class="row g-3 align-items-center">
                 <input type="hidden" name="query" value="{{query}}">
@@ -359,33 +404,36 @@
                 {% for result in results %}
                     <div class="col-md-6 animate__animated" data-animate="animate__fadeInUp" style="animation-delay: {{ loop.index0 * 0.1 }}s">
                         <div class="result-card">
-                            
-    {% set lines = result.splitlines() %}
-    {% if lines %}
-      <h4 style="font-size: 20px; font-weight: 700; color: #fff; margin-bottom: 5px;">
-        🎬 {{ lines[0] }}
-      </h4>
-      <div class="result-content">
-        {{ lines[1:] | join('\n') | safe }}
-      </div>
-    {% endif %}
-    
+                            {% set lines = result.splitlines() %}
+                            {% if lines %}
+                              <h4 style="font-size: 20px; font-weight: 700; color: #fff; margin-bottom: 5px;">
+                                🎬 {{ lines[0] }}
+                              </h4>
+                              <div class="result-content">
+                                {{ lines[1:] | join('\n') | safe }}
+                              </div>
+                            {% endif %}
                         </div>
-                        
-                        <!-- Ad Banner Below Each Result -->
-                        <script type="text/javascript">
-	atOptions = {
-		'key' : '2678a2490e729afaed09a2fe9863ec3b',
-		'format' : 'iframe',
-		'height' : 50,
-		'width' : 320,
-		'params' : {}
-	};
-</script>
-<script type="text/javascript" src="//marksdespitelinear.com/2678a2490e729afaed09a2fe9863ec3b/invoke.js"></script>
-</div>
                     </div>
                 {% endfor %}
+            </div>
+            
+            <!-- Bottom Ads Section -->
+            <div class="ads-container animate__animated animate__fadeIn">
+                <h3><i class="fas fa-bullhorn me-2"></i>Recommended For You</h3>
+                <div class="ads-placeholder">
+                    <!-- Ad Script 3 -->
+                    <script type="text/javascript">
+                        atOptions = {
+                            'key' : '2678a2490e729afaed09a2fe9863ec3b',
+                            'format' : 'iframe',
+                            'height' : 250,
+                            'width' : 300,
+                            'params' : {}
+                        };
+                    </script>
+                    <script type="text/javascript" src="//marksdespitelinear.com/2678a2490e729afaed09a2fe9863ec3b/invoke.js"></script>
+                </div>
             </div>
             
             <div class="mt-4 animate__animated animate__fadeIn">
@@ -428,17 +476,38 @@
                 </nav>
             </div>
         {% else %}
-            <div class="no-results animate__animated animate__fadeIn">
-                <div class="py-5">
-                    <i class="fas fa-search fa-4x mb-4" style="color: var(--accent);"></i>
-                    <h3>Sorry No results found for "<span class="search-query">{{query}}</span>"</h3>
-                    <p class="mb-4">Try different keywords or check back later</p>
-                    <a href="{{config.WEB_BASE_URL}}" class="btn action-btn me-2">
-                        <i class="fas fa-search me-2"></i> Search Again
-                    </a>
-                    <a href="https://t.me/+aH09R6aMoM81MWQ1" class="btn action-btn" style="background: var(--accent); border: none;">
-                        <i class="fab fa-telegram me-2"></i> Try Telegram Group
-                    </a>
+            <!-- No Results Section with Middle Ad -->
+            <div class="no-results-container">
+                <div class="no-results animate__animated animate__fadeIn">
+                    <div class="py-5">
+                        <i class="fas fa-search fa-4x mb-4" style="color: var(--accent);"></i>
+                        <h3>Sorry No results found for "<span class="search-query">{{query}}</span>"</h3>
+                        <p class="mb-4">Try different keywords or check back later</p>
+                        <a href="{{config.WEB_BASE_URL}}" class="btn action-btn me-2">
+                            <i class="fas fa-search me-2"></i> Search Again
+                        </a>
+                        <a href="https://t.me/+aH09R6aMoM81MWQ1" class="btn action-btn" style="background: var(--accent); border: none;">
+                            <i class="fab fa-telegram me-2"></i> Try Telegram Group
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Middle Ad placed in No Results section -->
+                <div class="ads-container animate__animated animate__fadeIn">
+                    <h3><i class="fas fa-star me-2"></i>You Might Like</h3>
+                    <div class="ads-placeholder">
+                        <!-- Ad Script 2 -->
+                        <script type="text/javascript">
+                            atOptions = {
+                                'key' : '2678a2490e729afaed09a2fe9863ec3b',
+                                'format' : 'iframe',
+                                'height' : 250,
+                                'width' : 300,
+                                'params' : {}
+                            };
+                        </script>
+                        <script type="text/javascript" src="//marksdespitelinear.com/2678a2490e729afaed09a2fe9863ec3b/invoke.js"></script>
+                    </div>
                 </div>
             </div>
         {% endif %}
