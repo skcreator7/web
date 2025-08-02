@@ -1,78 +1,63 @@
 import re
 from typing import List, Dict
-import logging
-from rapidfuzz import process
+from rapidfuzz import fuzz
+import nltk
+from nltk.corpus import stopwords
+from difflib import get_close_matches
 
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-)
-logger = logging.getLogger(__name__)
-
-BANNED_SUGGESTIONS = {"of", "the", "and", "a", "is", "in", "for", "on", "to", "at", "by", "it", "be"}
+nltk.download('stopwords', quiet=True)
+nltk.download('punkt', quiet=True)
 
 class SearchHelper:
     def __init__(self):
-        self.ignore_words = {
-            'movie', 'film', 'hd', 'full', 'part', 'scene', 'trailer',
-            'download', 'watch', 'free', 'online', 'stream', 'bluray',
-            'torrent', 'subtitle', 'print', 'quality', 'version', 'rip',
-            'dvd', 'web', 'brrip', 'yts', 'x264', 'x265', '1080p', '720p',
-            '480p', '4k', 'uhd', 'hindi', 'english', 'dual', 'audio'
-        }
+        self.search_index = set()
+        self.stop_words = set(stopwords.words('english')).union({
+            'movie', 'film', 'hd', '4k', 'official', 'trailer',
+            'full', 'latest', 'download', 'watch', 'new', 'free',
+            'bollywood', 'hollywood', 'south', 'dubbed', 'english',
+            'hindi', 'telugu', 'tamil', 'malayalam', 'kannada',
+            'bengali', 'marathi', 'urdu', 'punjabi', 'web', 'series',
+            'camrip', 'bluray', 'hdrip', 'dvdrip', 'webrip', 'print',
+            'dual', 'audio', 'exclusive', 'original', 'uncut'
+        })
+        self.blocked_terms = {'full', 'movie'}
 
-    def _clean_query(self, query: str) -> str:
-        year_match = re.search(r'(19|20)\d{2}', query)
-        year = year_match.group() if year_match else ""
+    def clean_query(self, query: str) -> str:
+        tokens = nltk.word_tokenize(query.lower())
+        tokens = [t for t in tokens if t not in self.stop_words or re.fullmatch(r'\d{4}', t)]
+        return ' '.join(tokens).strip()
 
-        words = re.findall(r'\b[a-z0-9]{2,}\b', query.lower())
-        cleaned_words = [word for word in words if word not in self.ignore_words]
+    def is_reserved_word_only(self, query: str) -> bool:
+        tokens = nltk.word_tokenize(query.lower())
+        return all(t in self.blocked_terms for t in tokens)
 
-        cleaned_query = ' '.join(cleaned_words)
-        if year:
-            cleaned_query = f"{cleaned_query} {year}" if cleaned_query else year
+    def exact_match(self, query: str, corpus: List[str]) -> List[Dict]:
+        query_lower = query.lower()
+        return [
+            {'original_text': text}
+            for text in corpus
+            if query_lower in text.lower()
+        ]
 
-        return cleaned_query.strip()
+    async def advanced_search(self, raw_query: str, corpus: List[str]) -> List[Dict]:
+        if self.is_reserved_word_only(raw_query):
+            return []
 
-    def _auto_correct(self, query: str, corpus: List[str]) -> str:
-        if len(query) <= 3:
-            return None
-
-        matches = process.extract(query, corpus, limit=1)
-        if matches and matches[0][1] >= 90:
-            corrected = matches[0][0].lower()
-            if corrected not in BANNED_SUGGESTIONS:
-                return corrected
-        return None
-
-    async def advanced_search(self, query: str, corpus: List[str]) -> List[Dict]:
-        cleaned_query = self._clean_query(query)
+        cleaned_query = self.clean_query(raw_query)
         if not cleaned_query:
             return []
 
-        results = []
-        for text in corpus:
-            if cleaned_query in text.lower():
-                results.append({
-                    'original_text': text,
-                    'score': 100,
-                    'match_type': 'exact'
-                })
+        matches = self.exact_match(cleaned_query, corpus)
 
-        # If no results, try auto-correct
-        if not results:
-            corrected = self._auto_correct(cleaned_query, corpus)
-            if corrected:
-                for text in corpus:
-                    if corrected in text.lower():
-                        results.append({
-                            'original_text': text,
-                            'score': 90,
-                            'match_type': f'corrected ({corrected})'
-                        })
+        if not matches and len(cleaned_query) >= 3:
+            corrected = safe_correct(cleaned_query, list({self.clean_query(text) for text in corpus}))
+            if corrected and corrected != cleaned_query:
+                matches = self.exact_match(corrected, corpus)
 
-        return results
+        return matches
 
-# Global instance
+def safe_correct(word: str, candidates: List[str], cutoff=0.8) -> str:
+    matches = get_close_matches(word, candidates, n=1, cutoff=cutoff)
+    return matches[0] if matches else word
+
 search_helper = SearchHelper()
