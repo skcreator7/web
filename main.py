@@ -4,9 +4,7 @@ from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, 
 from pyrogram.errors import FloodWait, RPCError
 import logging
 from configs import Config
-from imdb import IMDb
 import re
-from quart import Quart
 import html
 
 logging.basicConfig(
@@ -14,8 +12,6 @@ logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
 logger = logging.getLogger(__name__)
-
-ia = IMDb()
 
 class MovieBot(Client):
     async def start(self):
@@ -72,21 +68,6 @@ async def delete_message(bot, message, delay=180):
 async def schedule_deletion(bot, message, delay=180):
     asyncio.create_task(delete_message(bot, message, delay))
 
-async def search_imdb(query):
-    try:
-        if query.isdigit():
-            movie = ia.get_movie(query)
-            return [{"title": movie["title"], "year": movie.get("year", ""), "id": movie.movieID}]
-        movies = ia.search_movie(query, results=10)
-        return [{
-            "title": m["title"],
-            "year": f" - {m.get('year', '')}",
-            "id": m.movieID
-        } for m in movies]
-    except Exception as e:
-        logger.error(f"IMDb search error: {e}")
-        return []
-
 async def web_search(query, limit=50):
     if not User or not User.is_connected:
         try:
@@ -131,41 +112,24 @@ async def start_handler(client, message: Message):
 
 @Bot.on_message(filters.private & ~filters.command("start"))
 async def handle_search(client, message: Message):
-    search_msg = await message.reply("🔍 Searching...")
-    query = message.text.strip()
+    search_msg = await message.reply("🔍 Cleaning and searching...")
+    original_query = message.text.strip()
     
     try:
-        results = await web_search(query)
+        results = await web_search(original_query)
         if results:
-            text = f"<b>Results for '{query}':</b>\n\n{results[0]}"
-            buttons = [[InlineKeyboardButton("More Results", callback_data=f"more_{query}")]]
+            text = f"<b>Results for '{original_query}':</b>\n\n{results[0]}"
+            buttons = [[InlineKeyboardButton("More Results", callback_data=f"more_{original_query}")]]
             await search_msg.edit_text(
                 text,
                 reply_markup=InlineKeyboardMarkup(buttons),
                 disable_web_page_preview=False
             )
         else:
-            await show_imdb_suggestions(search_msg, query)
+            await search_msg.edit_text("❌ No results found after cleaning common terms. Try different keywords.")
     except Exception as e:
         logger.error(f"Search error: {e}")
         await search_msg.edit_text("⚠️ An error occurred. Please try again later.")
-        await schedule_deletion(client, search_msg)
-
-async def show_imdb_suggestions(message, query):
-    suggestions = await search_imdb(query)
-    if suggestions:
-        buttons = [
-            [InlineKeyboardButton(
-                f"{movie['title']} {movie.get('year', '')}",
-                callback_data=f"imdb_{movie['id']}"
-            )] for movie in suggestions
-        ]
-        await message.edit_text(
-            "Select a movie:",
-            reply_markup=InlineKeyboardMarkup(buttons)
-        )
-    else:
-        await message.edit_text("❌ No results found. Try different keywords.")
 
 @Bot.on_callback_query(filters.regex(r"^more_(.+)"))
 async def show_more_results(client, callback: CallbackQuery):
@@ -182,19 +146,6 @@ async def show_more_results(client, callback: CallbackQuery):
     except Exception as e:
         logger.error(f"More results error: {e}")
         await callback.message.edit_text("⚠️ Error loading more results")
-
-@Bot.on_callback_query(filters.regex(r"^imdb_(\d+)"))
-async def handle_imdb_selection(client, callback: CallbackQuery):
-    movie_id = callback.matches[0].group(1)
-    await callback.answer()
-    
-    try:
-        movie = ia.get_movie(movie_id)
-        text = f"🎬 <b>{movie['title']}</b> ({movie.get('year', 'N/A')})\n⭐ <b>Rating:</b> {movie.get('rating', 'N/A')}"
-        await callback.message.edit_text(text)
-    except Exception as e:
-        logger.error(f"IMDb error: {e}")
-        await callback.message.edit_text("⚠️ Error loading movie details")
 
 async def run_all():
     # Start web server in background
