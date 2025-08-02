@@ -97,3 +97,6 @@ class SearchHelper:
         results.sort(key=lambda x: (-x['score'], x['match_type'] == 'fuzzy'))
 
         return corrected_query, results
+
+# Global instance
+search_helper = SearchHelper()
