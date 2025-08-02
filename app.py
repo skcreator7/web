@@ -35,19 +35,19 @@ class Paginator:
         page_number = max(1, min(page_number, self.total_pages))
         start_index = (page_number - 1) * self.items_per_page
         end_index = min(start_index + self.items_per_page, self.total_items)
-        
+
         half_window = self.window_size // 2
         start_page = max(1, page_number - half_window)
         end_page = min(self.total_pages, start_page + self.window_size - 1)
-        
+
         if end_page - start_page + 1 < self.window_size:
             if page_number <= half_window:
                 end_page = min(self.window_size, self.total_pages)
             else:
                 start_page = max(1, end_page - self.window_size + 1)
-        
+
         page_numbers = list(range(start_page, end_page + 1))
-        
+
         return {
             'items': self.items[start_index:end_index],
             'current_page': page_number,
@@ -64,22 +64,21 @@ class Paginator:
             'items_per_page': self.items_per_page
         }
 
-async def web_search(query: str, limit: int = 50) -> Tuple[str, List[str]]:
-    """Auto-correcting search that returns (corrected_query, results)"""
+async def web_search(query: str, limit: int = 50) -> Tuple[str, str, List[str]]:
+    """Auto-correcting search that returns (original_query, corrected_query, results)"""
     from main import User  # Import here to avoid circular imports
-    
+
     if not User or not User.is_connected:
         try:
             if User:
                 await User.start()
             else:
                 logger.warning("User client not configured")
-                return query, []
+                return query, query, []
         except Exception as e:
             logger.error(f"Failed to start user client: {e}")
-            return query, []
-    
-    # Build search corpus from channels
+            return query, query, []
+
     corpus = []
     for channel in Config.CHANNEL_IDS:
         try:
@@ -90,21 +89,15 @@ async def web_search(query: str, limit: int = 50) -> Tuple[str, List[str]]:
         except Exception as e:
             logger.warning(f"Error building corpus from {channel}: {e}")
             continue
-    
-    # Build search index for auto-correction
+
     await search_helper.build_index(corpus)
-    
-    # Perform auto-correcting search
-    corrected_query, matches = await search_helper.advanced_search(query, corpus)
-    
-    # Format results
+    original_query, corrected_query, matches = await search_helper.advanced_search(query, corpus)
     formatted_results = [format_result(match['original_text']) for match in matches[:limit]]
-    
-    return corrected_query, formatted_results
+
+    return original_query, corrected_query, formatted_results
 
 @app.before_request
 async def track_visitor():
-    """Track visitor activity"""
     ip = request.headers.get('X-Forwarded-For', request.remote_addr)
     if ip:
         ip = ip.split(',')[0].strip()
@@ -112,7 +105,6 @@ async def track_visitor():
 
 @app.route('/')
 async def home():
-    """Main page with visitor counter"""
     return await render_template('index.html', config=Config)
 
 @app.route('/search')
@@ -120,23 +112,20 @@ async def search():
     query = request.args.get('query', '').strip()
     page = request.args.get('page', 1, type=int)
     per_page = request.args.get('per_page', 10, type=int)
-    
+
     if not query:
         return await render_template('index.html', config=Config)
-    
+
     try:
-        # Get auto-corrected results
-        corrected_query, results = await web_search(query)
-        
-        # Show correction message if query was changed
-        show_correction = corrected_query.lower() != query.lower()
-        
+        original_query, corrected_query, results = await web_search(query)
+        show_correction = corrected_query.lower() != original_query.lower()
+
         paginator = Paginator(results, items_per_page=per_page)
         page_data = paginator.get_page(page)
-        
+
         return await render_template(
             'results.html',
-            query=query,
+            query=original_query,
             corrected_query=corrected_query if show_correction else None,
             results=page_data['items'],
             total=len(results),
@@ -149,7 +138,6 @@ async def search():
 
 @app.route('/visitor_count')
 async def visitor_count():
-    """Endpoint for visitor count data"""
     cutoff = datetime.now().timestamp() - 1800
     active = {ip: ts for ip, ts in visitors.items() if ts > cutoff}
     visitors.clear()
@@ -161,12 +149,11 @@ async def visitor_count():
     })
 
 async def run_server():
-    """Configure and run the server"""
     config = HyperConfig()
     config.bind = [f"0.0.0.0:{Config.WEB_SERVER_PORT}"]
     config.startup_timeout = 30.0
     config.lifespan = "on"
-    
+
     logger.info(f"Starting server on port {Config.WEB_SERVER_PORT}")
     await serve(app, config)
 
