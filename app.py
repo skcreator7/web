@@ -8,7 +8,7 @@ from main import format_result
 import asyncio
 from datetime import datetime
 from collections import defaultdict
-from search_utils import search_helper
+from search_utils import search_helper, safe_correct  # ✅ Added safe_correct
 
 # Configure logging
 logging.basicConfig(
@@ -93,7 +93,7 @@ async def web_search(query: str, limit: int = 50) -> List[str]:
             continue
 
     matches = await search_helper.advanced_search(query, corpus)
-    return [format_result(match['original_text']) for match in matches[:limit]]
+    return [format_result(match['original_text']) for match in matches[:limit]], corpus
 
 @app.before_request
 async def track_visitor():
@@ -116,14 +116,22 @@ async def search():
         return await render_template('index.html', config=Config)
 
     try:
-        results = await web_search(query)
+        results, corpus = await web_search(query)
+
+        corrected_query = None
+        if not results:
+            corrected_query = safe_correct(query, corpus)
+            if corrected_query and corrected_query != query.lower():
+                logger.info(f"Trying corrected query: {corrected_query}")
+                results, _ = await web_search(corrected_query)
+
         paginator = Paginator(results, items_per_page=per_page)
         page_data = paginator.get_page(page)
 
         return await render_template(
             'results.html',
             query=query,
-            corrected_query=None,
+            corrected_query=corrected_query if corrected_query != query.lower() else None,
             results=page_data['items'],
             total=len(results),
             pagination=page_data,
