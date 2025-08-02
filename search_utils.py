@@ -4,11 +4,18 @@ from rapidfuzz import fuzz
 import nltk
 from nltk.corpus import stopwords
 from imdb import IMDb
+import logging
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
 
 # Download NLTK data
 nltk.download('stopwords', quiet=True)
 nltk.download('punkt', quiet=True)
-
 
 class SearchHelper:
     def __init__(self):
@@ -21,7 +28,7 @@ class SearchHelper:
         self.imdb_client = IMDb()
 
     async def build_index(self, corpus: List[str]):
-        """Corpus से searchable index तैयार करो।"""
+        """Build searchable index from corpus"""
         self.search_index.clear()
         for text in corpus:
             words = re.findall(r'\b[a-z0-9]{2,}\b', text.lower())
@@ -31,12 +38,12 @@ class SearchHelper:
 
     async def search(self, query: str, corpus: List[str]) -> Tuple[str, List[Dict]]:
         """
-        Fuzzy search (बिना auto-correct के)।
+        Fuzzy search
         Returns: (original_query, results)
         """
         query = query.strip().lower()
-
         results = []
+
         for text in corpus:
             text_lower = text.lower()
             ratio = fuzz.ratio(query, text_lower)
@@ -45,9 +52,9 @@ class SearchHelper:
 
             composite_score = (token_set * 0.5) + (partial * 0.3) + (ratio * 0.2)
 
-            if composite_score > 60:  # Tune threshold here
+            if composite_score > 60:  # Adjust threshold as needed
                 results.append({
-                    'text': text,
+                    'original_text': text,
                     'score': composite_score,
                     'match_type': 'fuzzy' if composite_score < 90 else 'exact'
                 })
@@ -56,20 +63,15 @@ class SearchHelper:
         return query, results
 
     async def correct_query_with_imdb(self, query: str) -> str:
-        """
-        IMDb से query correct करें।
-        """
+        """Correct query using IMDb"""
         try:
             results = self.imdb_client.search_movie(query)
             if results:
                 title = results[0]['title']
                 year = results[0].get('year')
-                corrected_title = f"{title} ({year})" if year else title
-                return corrected_title
+                return f"{title} ({year})" if year else title
         except Exception as e:
-            print("IMDb Error:", e)
-
-        # fallback: वही query लौटाओ
+            logger.error(f"IMDb Error: {e}")
         return query
 
     async def advanced_search(self, query: str, corpus: List[str]) -> Tuple[str, str, List[Dict]]:
@@ -82,6 +84,5 @@ class SearchHelper:
         _, results = await self.search(corrected, corpus)
         return original_query, corrected, results
 
-
-# ✅ Global instance
+# Global instance
 search_helper = SearchHelper()
