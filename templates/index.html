@@ -265,9 +265,10 @@
         }
         
         @keyframes countPulse {
-            0% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.05); opacity: 0.9; }
-            100% { transform: scale(1); opacity: 1; }
+            0%, 100% {
+                transform: scale(1); opacity: 1; }
+            50% {
+                transform: scale(1.05); opacity: 0.9; }
         }
         
         .live-badge {
@@ -285,6 +286,39 @@
             0% { opacity: 1; }
             50% { opacity: 0.7; }
             100% { opacity: 1; }
+        }
+        
+        /* Latest Posters Grid */
+        .posters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .poster-item {
+            position: relative;
+            border-radius: 8px;
+            overflow: hidden;
+            transition: all 0.3s;
+            aspect-ratio: 2/3;
+        }
+        
+        .poster-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        }
+        
+        .poster-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .poster-link {
+            display: block;
+            width: 100%;
+            height: 100%;
         }
         
         /* Responsive Adjustments */
@@ -309,6 +343,10 @@
             .visitor-count {
                 font-size: 0.8rem;
                 padding: 5px 10px;
+            }
+            
+            .posters-grid {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
             }
         }
     </style>
@@ -364,6 +402,21 @@
   <script async="async" data-cfasync="false" src="//marksdespitelinear.com/ac936d2c88be3888f29215610f4b6209/invoke.js"></script>
   <div id="container-ac936d2c88be3888f29215610f4b6209"></div>
 </div>
+
+<!-- Latest Posters Section -->
+<div class="section-box animate__animated animate__fadeIn">
+    <h2 class="text-center mb-4">Latest Uploads</h2>
+    <div class="posters-grid">
+        {% for poster in posters %}
+        <div class="poster-item animate__animated animate__fadeInUp" style="animation-delay: {{ loop.index0 * 0.1 }}s">
+            <a href="/search?query={{ poster.search_query | urlencode }}" class="poster-link">
+                <img src="/get_poster?file_id={{ poster.photo }}" alt="{{ poster.caption }}">
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
 <!-- Social Media Box -->
 <div class="section-box animate__animated animate__fadeInUp animate__delay-1s">
 <h4 class="text-center mb-4">Join Our Community</h4>
@@ -393,6 +446,7 @@
   </script>
   <script type="text/javascript" src="//marksdespitelinear.com/f05568f02d3e9f490a197f94d60bb29f/invoke.js"></script>
 </div>
+
 <!-- Tutorial Videos Section -->
 <div class="section-box animate__animated animate__fadeIn">
 <h2 class="text-center mb-4">Tutorial Videos</h2>
@@ -423,8 +477,6 @@
 </div>
 </div>
 </div>
-
-<!-- Ad above Why Choose Us -->
 
 <!-- Features Section -->
 <div class="section-box animate__animated animate__fadeIn">
