@@ -58,6 +58,38 @@
             text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
         }
 
+        /* Neon Animation for SK 4 FILM */
+        .neon-four {
+            display: inline-block;
+            color: #fff;
+            text-shadow: 
+                0 0 5px #fff,
+                0 0 10px #fff,
+                0 0 20px #0ff,
+                0 0 30px #0ff,
+                0 0 40px #0ff;
+            animation: neon-flicker 1.5s infinite alternate;
+        }
+
+        @keyframes neon-flicker {
+            0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+                text-shadow: 
+                    0 0 5px #fff,
+                    0 0 10px #fff,
+                    0 0 20px #0ff,
+                    0 0 30px #0ff,
+                    0 0 40px #0ff;
+            }
+            20%, 24%, 55% {
+                text-shadow: 
+                    0 0 2px #fff,
+                    0 0 5px #fff,
+                    0 0 10px #0ff,
+                    0 0 15px #0ff,
+                    0 0 20px #0ff;
+            }
+        }
+
         /* Result Items */
         .result-item {
             margin-bottom: 30px;
@@ -220,7 +252,7 @@
     <div class="container py-5">
         <div class="result-header animate__animated animate__fadeInDown">
             <div class="site-branding text-center mb-3">
-                <h1 class="animate__animated animate__pulse animate__infinite">SK4FiLM</h1>
+                <h1 class="animate__animated animate__pulse animate__infinite">SK <span class="neon-four">4</span> FILM</h1>
                 <p class="mb-0">Results for <strong class="text-warning">"{{query}}"</strong></p>
                 <p class="mb-0"><small>{{total}} results found</small></p>
             </div>
@@ -244,9 +276,6 @@
                                 <div class="text-content">
                                     {{ result.description | safe }}
                                 </div>
-                                <a href="{{ result.link }}" class="btn action-btn mt-3" target="_blank">
-                                    <i class="fas fa-external-link-alt me-2"></i> View Post
-                                </a>
                             </div>
                             
                         {% elif result.type == 'text' %}
@@ -256,9 +285,6 @@
                                 <div class="text-content">
                                     {{ result.content | safe }}
                                 </div>
-                                <a href="{{ result.link }}" class="btn action-btn mt-3" target="_blank">
-                                    <i class="fas fa-external-link-alt me-2"></i> View Post
-                                </a>
                             </div>
                         {% endif %}
                         
