@@ -385,19 +385,25 @@
 </form>
 <!-- Latest Uploads Section -->
 <div class="section-box animate__animated animate__fadeIn mt-4">
-    <h2 class="text-center mb-4">Latest Uploads</h2>
+    <h2 class="text-center mb-4">🔥Latest Uploads</h2>
     <div class="row g-4">
         {% for poster in posters %}
         <div class="col-6 col-md-3">
-            <div class="card bg-dark text-white h-100 border border-secondary" style="position: relative;">
-                <span class="badge bg-danger position-absolute top-0 end-0 m-2">🆕 New</span>
+            <div class="card bg-dark text-white h-100 border border-secondary">
+                <!-- 🆕 New badge outside image -->
+                <div class="d-flex justify-content-end mt-2 me-2">
+                    <span class="badge bg-danger">New</span>
+                </div>
+                
                 <a href="/search?query={{ poster.search_query | urlencode }}">
                     <img src="/get_poster?file_id={{ poster.photo }}" class="card-img-top" alt="{{ poster.caption }}">
                 </a>
+
                 <div class="card-body">
-                    <p class="card-text small">
-                        🎬 {{ poster.caption }}<br>
-                        🔍 <a href="https://sk4film.koyeb.app/search?query={{ poster.search_query | urlencode }}" class="text-info text-decoration-underline" target="_blank">Search {{ poster.search_query }}</a>
+                    <p class="card-text small mb-0">
+                        🎬 {{ poster.caption }}
+                        <br>
+                        🔍 <a href="https://sk4film.koyeb.app/search?query={{ poster.search_query | urlencode }}" class="text-info text-decoration-underline" target="_blank">Search</a>
                     </p>
                 </div>
             </div>
@@ -424,20 +430,6 @@
 	<div class="text-center my-4">
   <script async="async" data-cfasync="false" src="//marksdespitelinear.com/ac936d2c88be3888f29215610f4b6209/invoke.js"></script>
   <div id="container-ac936d2c88be3888f29215610f4b6209"></div>
-</div>
-
-<!-- Latest Posters Section -->
-<div class="section-box animate__animated animate__fadeIn">
-    <h2 class="text-center mb-4">Latest Uploads</h2>
-    <div class="posters-grid">
-        {% for poster in posters %}
-        <div class="poster-item animate__animated animate__fadeInUp" style="animation-delay: {{ loop.index0 * 0.1 }}s">
-            <a href="/search?query={{ poster.search_query | urlencode }}" class="poster-link">
-                <img src="/get_poster?file_id={{ poster.photo }}" alt="{{ poster.caption }}">
-            </a>
-        </div>
-        {% endfor %}
-    </div>
 </div>
 
 <!-- Social Media Box -->
