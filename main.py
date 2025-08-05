@@ -56,6 +56,7 @@ def format_result(text):
     return text
 
 async def web_search(query, limit=50):
+    """Search across both text and poster channels"""
     if not User or not User.is_connected:
         try:
             if User:
@@ -68,17 +69,37 @@ async def web_search(query, limit=50):
             return []
     
     results = []
-    for channel in Config.CHANNEL_IDS:
-        try:
-            async for msg in User.search_messages(channel, query=query, limit=limit):
-                content = msg.text or msg.caption
-                if content:
-                    results.append(format_result(content))
-        except Exception as e:
-            logger.warning(f"Error searching channel {channel}: {e}")
-            continue
     
-    return results
+    # Search in text channels
+    for channel_id in Config.TEXT_CHANNEL_IDS:
+        try:
+            async for msg in User.search_messages(channel_id, query=query, limit=limit):
+                if msg.text:  # Only text messages
+                    results.append({
+                        'type': 'text',
+                        'content': format_result(msg.text),
+                        'date': msg.date
+                    })
+        except Exception as e:
+            logger.warning(f"Error searching text channel {channel_id}: {e}")
+    
+    # Search in poster channel
+    try:
+        async for msg in User.search_messages(Config.POSTER_CHANNEL_ID, query=query, limit=limit):
+            if msg.caption and msg.photo:  # Only posts with both photo and caption
+                results.append({
+                    'type': 'poster',
+                    'content': format_result(msg.caption),
+                    'photo': msg.photo.file_id,
+                    'date': msg.date
+                })
+    except Exception as e:
+        logger.warning(f"Error searching poster channel: {e}")
+    
+    # Sort by date (newest first)
+    results.sort(key=lambda x: x['date'], reverse=True)
+    
+    return results[:limit]
 
 @Bot.on_message(filters.command("start") & filters.private)
 async def start_handler(client, message: Message):
@@ -98,21 +119,33 @@ async def start_handler(client, message: Message):
 
 @Bot.on_message(filters.private & ~filters.command("start"))
 async def handle_search(client, message: Message):
-    search_msg = await message.reply("🔍 Cleaning and searching...")
+    search_msg = await message.reply("🔍 Searching in all channels...")
     original_query = message.text.strip()
     
     try:
         results = await web_search(original_query)
         if results:
-            text = f"<b>Results for '{original_query}':</b>\n\n{results[0]}"
-            buttons = [[InlineKeyboardButton("More Results", callback_data=f"more_{original_query}")]]
-            await search_msg.edit_text(
-                text,
-                reply_markup=InlineKeyboardMarkup(buttons),
-                disable_web_page_preview=False
-            )
+            # Format the first result
+            first_result = results[0]
+            if first_result['type'] == 'poster':
+                text = f"<b>🎬 Poster Result:</b>\n\n{first_result['content']}"
+                buttons = [[InlineKeyboardButton("More Results", callback_data=f"more_{original_query}")]]
+                await search_msg.delete()  # Delete the searching message
+                await message.reply_photo(
+                    photo=first_result['photo'],
+                    caption=text,
+                    reply_markup=InlineKeyboardMarkup(buttons)
+                )
+            else:
+                text = f"<b>Results for '{original_query}':</b>\n\n{first_result['content']}"
+                buttons = [[InlineKeyboardButton("More Results", callback_data=f"more_{original_query}")]]
+                await search_msg.edit_text(
+                    text,
+                    reply_markup=InlineKeyboardMarkup(buttons),
+                    disable_web_page_preview=False
+                )
         else:
-            await search_msg.edit_text("❌ No results found after cleaning common terms. Try different keywords.")
+            await search_msg.edit_text("❌ No results found. Try different keywords.")
     except Exception as e:
         logger.error(f"Search error: {e}")
         await search_msg.edit_text("⚠️ An error occurred. Please try again later.")
@@ -125,8 +158,16 @@ async def show_more_results(client, callback: CallbackQuery):
     try:
         results = await web_search(query)
         if results:
+            # Format all results
+            formatted_results = []
+            for result in results:
+                if result['type'] == 'poster':
+                    formatted_results.append(f"🎬 <b>Poster:</b>\n{result['content']}")
+                else:
+                    formatted_results.append(result['content'])
+            
             await callback.message.edit_text(
-                f"<b>More results for '{query}':</b>\n\n{results[0]}",
+                f"<b>All results for '{query}':</b>\n\n" + "\n\n".join(formatted_results),
                 disable_web_page_preview=False
             )
     except Exception as e:
