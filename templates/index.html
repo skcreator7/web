@@ -425,20 +425,6 @@
   <div id="container-ac936d2c88be3888f29215610f4b6209"></div>
 </div>
 
-<!-- Latest Posters Section -->
-<div class="section-box animate__animated animate__fadeIn">
-    <h2 class="text-center mb-4">Latest Uploads</h2>
-    <div class="posters-grid">
-        {% for poster in posters %}
-        <div class="poster-item animate__animated animate__fadeInUp" style="animation-delay: {{ loop.index0 * 0.1 }}s">
-            <a href="/search?query={{ poster.search_query | urlencode }}" class="poster-link">
-                <img src="/get_poster?file_id={{ poster.photo }}" alt="{{ poster.caption }}">
-            </a>
-        </div>
-        {% endfor %}
-    </div>
-</div>
-
 <!-- Social Media Box -->
 <div class="section-box animate__animated animate__fadeInUp animate__delay-1s">
 <h4 class="text-center mb-4">Join Our Community</h4>
