@@ -1,16 +1,14 @@
-from typing import List
-from quart import Quart, render_template, request, jsonify
+from quart import Quart, render_template, request, jsonify, Response
 import logging
 from configs import Config
 from hypercorn.asyncio import serve
 from hypercorn.config import Config as HyperConfig
-from main import format_result
+from main import format_result, User
 import asyncio
 from datetime import datetime
 from collections import defaultdict
-from search_utils import search_helper, safe_correct  # ✅ Added safe_correct
+from search_utils import search_helper, safe_correct
 
-# Configure logging
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
@@ -20,7 +18,6 @@ logger = logging.getLogger(__name__)
 app = Quart(__name__)
 app.secret_key = Config.SECRET_KEY
 
-# Visitor tracking
 visitors = defaultdict(float)
 
 class Paginator:
@@ -64,12 +61,57 @@ class Paginator:
             'items_per_page': self.items_per_page
         }
 
-async def web_search(query: str, limit: int = 50) -> List[str]:
-    """Advanced search with query cleaning"""
-    from main import User
+async def web_search(query: str, limit: int = 50) -> tuple:
+    """Search across both text and poster channels"""
+    if not User or not User.is_connected:
+        try:
+            if User:
+                await User.start()
+            else:
+                logger.warning("User client not configured")
+                return [], []
+        except Exception as e:
+            logger.error(f"Failed to start user client: {e}")
+            return [], []
 
-    logger.info(f"Original query: {query}")
+    results = []
+    corpus = []
     
+    # Search in text channels
+    for channel_id in Config.TEXT_CHANNEL_IDS:
+        try:
+            async for msg in User.search_messages(channel_id, query=query, limit=200):
+                if msg.text:
+                    corpus.append(msg.text)
+                    results.append({
+                        'type': 'text',
+                        'content': format_result(msg.text),
+                        'date': msg.date
+                    })
+        except Exception as e:
+            logger.warning(f"Error searching text channel {channel_id}: {e}")
+    
+    # Search in poster channel
+    try:
+        async for msg in User.search_messages(Config.POSTER_CHANNEL_ID, query=query, limit=200):
+            if msg.caption and msg.photo:
+                corpus.append(msg.caption)
+                results.append({
+                    'type': 'poster',
+                    'content': format_result(msg.caption),
+                    'photo': msg.photo.file_id,
+                    'date': msg.date
+                })
+    except Exception as e:
+        logger.warning(f"Error searching poster channel: {e}")
+    
+    # Sort by date (newest first)
+    results.sort(key=lambda x: x['date'], reverse=True)
+    
+    return results[:limit], corpus
+
+async def get_latest_posters(limit=10):
+    """Get latest posters from poster channel"""
     if not User or not User.is_connected:
         try:
             if User:
@@ -81,19 +123,37 @@ async def web_search(query: str, limit: int = 50) -> List[str]:
             logger.error(f"Failed to start user client: {e}")
             return []
 
-    corpus = []
-    for channel in Config.CHANNEL_IDS:
-        try:
-            async for msg in User.search_messages(channel, query=query, limit=200):
-                content = msg.text or msg.caption
-                if content:
-                    corpus.append(content)
-        except Exception as e:
-            logger.warning(f"Error building corpus from {channel}: {e}")
-            continue
+    posters = []
+    try:
+        async for msg in User.get_chat_history(Config.POSTER_CHANNEL_ID, limit=limit):
+            if msg.photo and msg.caption:
+                posters.append({
+                    'photo': msg.photo.file_id,
+                    'caption': msg.caption,
+                    'date': msg.date,
+                    'search_query': msg.caption.split('\n')[0]  # First line as search query
+                })
+    except Exception as e:
+        logger.error(f"Error getting posters: {e}")
+    
+    return posters
 
-    matches = await search_helper.advanced_search(query, corpus)
-    return [format_result(match['original_text']) for match in matches[:limit]], corpus
+@app.route('/get_poster')
+async def get_poster():
+    """Endpoint to serve poster images"""
+    file_id = request.args.get('file_id')
+    if not file_id:
+        return jsonify({'status': 'error', 'message': 'No file_id provided'}), 400
+    
+    try:
+        if not User or not User.is_connected:
+            await User.start()
+        
+        file = await User.download_media(file_id, in_memory=True)
+        return Response(file.getvalue(), mimetype='image/jpeg')
+    except Exception as e:
+        logger.error(f"Error getting poster: {e}")
+        return jsonify({'status': 'error', 'message': str(e)}), 500
 
 @app.before_request
 async def track_visitor():
@@ -104,7 +164,8 @@ async def track_visitor():
 
 @app.route('/')
 async def home():
-    return await render_template('index.html', config=Config)
+    posters = await get_latest_posters()
+    return await render_template('index.html', config=Config, posters=posters)
 
 @app.route('/search')
 async def search():
@@ -113,10 +174,12 @@ async def search():
     per_page = request.args.get('per_page', 10, type=int)
 
     if not query:
-        return await render_template('index.html', config=Config)
+        posters = await get_latest_posters()
+        return await render_template('index.html', config=Config, posters=posters)
 
     try:
         results, corpus = await web_search(query)
+        posters = await get_latest_posters()
 
         corrected_query = None
         if not results:
@@ -136,7 +199,8 @@ async def search():
             total=len(results),
             pagination=page_data,
             config=Config,
-            year=datetime.now().year
+            year=datetime.now().year,
+            posters=posters
         )
     except Exception as e:
         logger.error(f"Search error: {e}")
