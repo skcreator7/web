@@ -8,9 +8,12 @@ class Config:
     BOT_SESSION_NAME = os.environ.get("BOT_SESSION_NAME", "SK4FiLM")
     USER_SESSION_STRING = os.environ.get("USER_SESSION_STRING", "")
     
-    # Channels
-    CHANNEL_IDS = [-1001891090100, -1002024811395]
-    UPDATES_CHANNEL = os.environ.get("UPDATES_CHANNEL", "sk4film")
+    # Channels Configuration
+    TEXT_CHANNEL_IDS = [
+        -1001891090100,  # Main text channel 1
+        -1002024811395   # Main text channel 2
+    ]
+    POSTER_CHANNEL_ID = -1002752786200  # Channel for posters only
     
     # Web
     SECRET_KEY = os.environ.get("SECRET_KEY", "your-secret-key-here")
