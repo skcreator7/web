@@ -385,31 +385,28 @@
 </form>
 <!-- Latest Uploads Section -->
 <div class="section-box animate__animated animate__fadeIn mt-4">
-    <h2 class="text-center mb-4">🔥Latest Uploads</h2>
-    <div class="row g-4">
-        {% for poster in posters %}
-        <div class="col-6 col-md-3">
-            <div class="card bg-dark text-white h-100 border border-secondary">
-                <!-- 🆕 New badge outside image -->
-                <div class="d-flex justify-content-end mt-2 me-2">
-                    <span class="badge bg-danger">New</span>
-                </div>
-                
-                <a href="/search?query={{ poster.search_query | urlencode }}">
-                    <img src="/get_poster?file_id={{ poster.photo }}" class="card-img-top" alt="{{ poster.caption }}">
-                </a>
-
-                <div class="card-body">
-                    <p class="card-text small mb-0">
-                        🎬 {{ poster.caption }}
-                        <br>
-                        🔍 <a href="https://sk4film.koyeb.app/search?query={{ poster.search_query | urlencode }}" class="text-info text-decoration-underline" target="_blank">Search</a>
-                    </p>
-                </div>
-            </div>
+  <h2 class="text-center mb-4">🔥 Latest Uploads</h2>
+  <div class="row g-4">
+    {% for poster in posters %}
+    <div class="col-6 col-md-3">
+      <div class="card bg-dark text-white h-100 border border-secondary position-relative">
+        <div class="position-absolute top-0 start-0 m-2 z-1">
+          <span class="badge bg-danger">New</span>
         </div>
-        {% endfor %}
+        <a href="/search?query={{ poster.search_query | urlencode }}">
+          <img src="/get_poster?file_id={{ poster.photo }}" class="card-img-top" alt="{{ poster.caption }}">
+        </a>
+        <div class="card-body">
+          <p class="card-text small mb-0">
+            <a href="https://sk4film.koyeb.app/search?query={{ poster.search_query | urlencode }}" class="text-info text-decoration-underline" target="_blank">
+              🎬 {{ poster.caption }}
+            </a>
+          </p>
+        </div>
+      </div>
     </div>
+    {% endfor %}
+  </div>
 </div>
 
 <!-- Ad below search bar -->
