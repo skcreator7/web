@@ -13,7 +13,7 @@ class Config:
         -1001891090100,  # Main text channel 1
         -1002024811395   # Main text channel 2
     ]
-    POSTER_CHANNEL_ID = -1002752786200  # Channel for posters only
+    POSTER_CHANNEL_ID = -1002708802395  # Channel for posters only
     
     # Web
     SECRET_KEY = os.environ.get("SECRET_KEY", "your-secret-key-here")
@@ -27,3 +27,4 @@ class Config:
     🎬 I'm <b>SK4Film Search Bot</b>
     🔍 Send me any movie name to search!
     """
+
