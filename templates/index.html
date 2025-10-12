@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>SK4FiLM - Movie Search</title>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
-<link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet"/>
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;600;700&amp;family=Montserrat:wght@800&amp;display=swap" rel="stylesheet"/>
-<style>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SK4FiLM - Movie Search</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;600;700&family=Montserrat:wght@800&display=swap" rel="stylesheet">
+    <style>
         :root {
             --primary: #ff0000;
             --secondary: #0066ff;
@@ -27,6 +27,7 @@
             color: var(--text);
             position: relative;
             overflow-x: hidden;
+            padding-top: 90px;
         }
         
         body::before {
@@ -43,62 +44,175 @@
         .container {
             position: relative;
             z-index: 1;
-            padding-top: 30px;
-            padding-bottom: 50px;
+            padding: 20px 15px 40px;
         }
         
-        /* Neon Title Effect */
-        .main-title {
+        /* Top Navigation Bar */
+        .top-navbar {
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            padding: 12px 0;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+        
+        .navbar-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            color: white;
+            text-decoration: none;
+            font-weight: 700;
+        }
+        
+        .logo-img {
+            height: 55px;
+            width: auto;
+            margin-right: 15px;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(255, 0, 0, 0.3);
+        }
+        
+        .brand-content {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .brand-text {
             font-family: 'Montserrat', sans-serif;
-            font-weight: 800;
-            font-size: 3.5rem;
-            text-transform: uppercase;
-            color: #fff;
-            text-shadow:
-                0 0 5px #fff,
-                0 0 10px #fff,
-                0 0 20px #ff0000,
-                0 0 30px #ff0000,
-                0 0 40px #ff0000;
-            animation: neonGlow 1.5s ease-in-out infinite alternate;
-            margin-bottom: 0.5rem;
+            font-size: 2.2rem;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 15px rgba(255, 0, 0, 0.4);
             line-height: 1;
+            margin-bottom: 2px;
         }
         
-        @keyframes neonGlow {
+        .brand-subtitle {
+            font-size: 0.85rem;
+            color: var(--accent);
+            font-weight: 300;
+            letter-spacing: 1px;
+            text-shadow: 0 0 10px rgba(0, 204, 255, 0.5);
+        }
+        
+        /* Social Media Menu Button */
+        .social-menu-btn {
+            background: transparent;
+            border: none;
+            color: var(--accent);
+            font-size: 1.7rem;
+            cursor: pointer;
+            padding: 8px 12px;
+            border-radius: 6px;
+            transition: all 0.3s;
+            box-shadow: 0 0 10px rgba(0, 204, 255, 0.3);
+        }
+        
+        .social-menu-btn:hover {
+            background: rgba(255,255,255,0.1);
+            transform: scale(1.1);
+            box-shadow: 0 0 15px rgba(0, 204, 255, 0.5);
+        }
+        
+        /* Social Media Dropdown */
+        .social-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(15px);
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.1);
+            display: none;
+            z-index: 1001;
+            min-width: 200px;
+        }
+        
+        .social-dropdown.show {
+            display: block;
+            animation: fadeInDown 0.3s ease;
+        }
+        
+        @keyframes fadeInDown {
             from {
-                text-shadow:
-                    0 0 5px #fff,
-                    0 0 10px #fff,
-                    0 0 20px #ff0000,
-                    0 0 30px #ff0000,
-                    0 0 40px #ff0000;
+                opacity: 0;
+                transform: translateY(-8px);
             }
             to {
-                text-shadow:
-                    0 0 10px #fff,
-                    0 0 20px #ff0000,
-                    0 0 30px #ff0000,
-                    0 0 40px #ff0000,
-                    0 0 50px #ff0000;
+                opacity: 1;
+                transform: translateY(0);
             }
+        }
+        
+        .social-dropdown-links {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .social-dropdown-link {
+            display: flex;
+            align-items: center;
+            padding: 10px 15px;
+            border-radius: 6px;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s;
+            border: 1px solid transparent;
+        }
+        
+        .social-dropdown-link:hover {
+            background: rgba(255,255,255,0.1);
+            transform: translateX(3px);
+            border-color: var(--accent);
+        }
+        
+        .social-dropdown-link i {
+            width: 25px;
+            font-size: 1.2rem;
+            text-align: center;
+        }
+        
+        /* APK Download Link Special Styling */
+        .apk-download-link {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            border: 1px solid #4CAF50;
+        }
+        
+        .apk-download-link:hover {
+            background: linear-gradient(135deg, #45a049, #4CAF50);
+            border-color: #45a049;
         }
         
         /* Section Boxes */
         .section-box {
             background: rgba(15, 23, 42, 0.7);
             backdrop-filter: blur(5px);
-            border-radius: 15px;
-            padding: 30px;
-            margin-bottom: 30px;
-            box-shadow: 0 5px 25px rgba(0,0,0,0.3);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
             border: 1px solid rgba(255,255,255,0.1);
             transition: all 0.3s ease;
         }
         
         .section-box:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 25px rgba(0,0,0,0.4);
             border: 1px solid var(--accent);
         }
         
@@ -106,24 +220,24 @@
         .search-box {
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 12px;
         }
         
         .search-input {
             background: rgba(60, 65, 90, 0.7);
             border: none;
-            border-bottom: 3px solid var(--primary);
+            border-bottom: 2px solid var(--primary);
             color: var(--light);
             transition: all 0.3s;
             width: 100%;
-            padding: 12px 20px;
-            font-size: 1.1rem;
-            border-radius: 8px;
+            padding: 10px 15px;
+            font-size: 1rem;
+            border-radius: 6px;
         }
         
         .search-input:focus {
             border-bottom-color: var(--accent);
-            box-shadow: 0 0 15px rgba(0, 204, 255, 0.5);
+            box-shadow: 0 0 12px rgba(0, 204, 255, 0.5);
             outline: none;
         }
         
@@ -132,50 +246,19 @@
             color: white;
             font-weight: 600;
             transition: all 0.3s;
-            padding: 12px 30px;
+            padding: 10px 25px;
             border: none;
-            border-radius: 8px;
-            font-size: 1.1rem;
+            border-radius: 6px;
+            font-size: 1rem;
             width: 100%;
-            margin-top: 10px;
-            box-shadow: 0 5px 15px rgba(255, 0, 0, 0.3);
+            margin-top: 8px;
+            box-shadow: 0 4px 12px rgba(255, 0, 0, 0.3);
         }
         
         .search-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(0, 102, 255, 0.4);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0, 102, 255, 0.4);
         }
-        
-        /* Social Box */
-        .social-links {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            margin-top: 15px;
-        }
-        
-        .social-btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            color: white;
-            font-size: 1.5rem;
-            transition: all 0.3s;
-            text-decoration: none;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-        }
-        
-        .social-btn:hover {
-            transform: scale(1.1) translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
-        }
-        
-        .telegram { background-color: #0088cc; }
-        .whatsapp { background-color: #25D366; }
-        .youtube { background-color: #FF0000; }
         
         /* Feature Cards */
         .feature-card {
@@ -183,33 +266,33 @@
             color: var(--text);
             border: 1px solid var(--accent);
             transition: all 0.3s;
-            padding: 25px;
-            border-radius: 10px;
+            padding: 20px;
+            border-radius: 8px;
             height: 100%;
             text-align: center;
         }
         
         .feature-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0, 102, 255, 0.3);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 102, 255, 0.3);
             border-color: var(--primary);
         }
         
         .feature-icon {
-            font-size: 2.5rem;
+            font-size: 2.2rem;
             color: var(--accent);
-            margin-bottom: 15px;
-            text-shadow: 0 0 10px rgba(0, 204, 255, 0.5);
+            margin-bottom: 12px;
+            text-shadow: 0 0 8px rgba(0, 204, 255, 0.5);
         }
         
         /* Video Box */
         .video-box {
-            margin-top: 10px;
+            margin-top: 8px;
         }
         
         .video-title {
-            font-size: 1.1rem;
-            margin-bottom: 15px;
+            font-size: 1rem;
+            margin-bottom: 12px;
             color: var(--accent);
             text-align: center;
         }
@@ -217,8 +300,8 @@
         /* Visitor Counter with Logo */
         .visitor-container {
             position: fixed;
-            bottom: 20px;
-            right: 20px;
+            bottom: 15px;
+            right: 15px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -226,38 +309,38 @@
         }
         
         .visitor-logo {
-            width: 60px;
-            height: 60px;
+            width: 50px;
+            height: 50px;
             background: linear-gradient(135deg, var(--primary), var(--secondary));
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 0 20px rgba(0, 102, 255, 0.7);
-            margin-bottom: 8px;
+            box-shadow: 0 0 15px rgba(0, 102, 255, 0.7);
+            margin-bottom: 6px;
             border: 2px solid white;
             animation: logoPulse 2s infinite;
         }
         
         @keyframes logoPulse {
-            0% { transform: scale(1); box-shadow: 0 0 20px rgba(0, 102, 255, 0.7); }
-            50% { transform: scale(1.05); box-shadow: 0 0 30px rgba(0, 102, 255, 0.9); }
-            100% { transform: scale(1); box-shadow: 0 0 20px rgba(0, 102, 255, 0.7); }
+            0% { transform: scale(1); box-shadow: 0 0 15px rgba(0, 102, 255, 0.7); }
+            50% { transform: scale(1.05); box-shadow: 0 0 20px rgba(0, 102, 255, 0.9); }
+            100% { transform: scale(1); box-shadow: 0 0 15px rgba(0, 102, 255, 0.7); }
         }
         
         .visitor-logo i {
             color: white;
-            font-size: 1.8rem;
+            font-size: 1.5rem;
         }
         
         .visitor-count {
             background: rgba(0, 102, 255, 0.8);
             color: white;
-            padding: 6px 12px;
-            border-radius: 15px;
-            font-size: 0.9rem;
+            padding: 5px 10px;
+            border-radius: 12px;
+            font-size: 0.8rem;
             font-weight: bold;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.3);
             backdrop-filter: blur(5px);
             border: 1px solid rgba(255, 255, 255, 0.2);
             animation: countPulse 2s infinite;
@@ -274,10 +357,10 @@
             display: inline-block;
             background: #ff0000;
             color: white;
-            font-size: 0.7rem;
-            padding: 2px 6px;
-            border-radius: 10px;
-            margin-left: 5px;
+            font-size: 0.65rem;
+            padding: 2px 5px;
+            border-radius: 8px;
+            margin-left: 4px;
             animation: blink 1.5s infinite;
         }
         
@@ -287,254 +370,402 @@
             100% { opacity: 1; }
         }
         
-        /* Latest Posters Grid */
-        .posters-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 15px;
-            margin-top: 20px;
+        /* Content Sections */
+        .content-section {
+            padding: 15px 0;
         }
         
-        .poster-item {
-            position: relative;
-            border-radius: 8px;
+        .section-title {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            text-align: center;
+            color: var(--accent);
+            text-shadow: 0 0 10px rgba(0, 204, 255, 0.5);
+        }
+        
+        .section-subtitle {
+            font-size: 1rem;
+            margin-bottom: 25px;
+            text-align: center;
+            color: rgba(255,255,255,0.8);
+        }
+        
+        /* Movie Card Styles */
+        .movie-card {
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 10px;
             overflow: hidden;
-            transition: all 0.3s;
-            aspect-ratio: 2/3;
+            transition: all 0.3s ease;
+            height: 100%;
         }
         
-        .poster-item:hover {
+        .movie-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            box-shadow: 0 10px 25px rgba(0, 102, 255, 0.3);
+            border-color: var(--accent);
         }
         
-        .poster-item img {
+        .movie-poster {
             width: 100%;
-            height: 100%;
+            height: 300px;
             object-fit: cover;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
         }
         
-        .poster-link {
-            display: block;
-            width: 100%;
-            height: 100%;
+        .movie-info {
+            padding: 15px;
+        }
+        
+        .movie-title {
+            font-size: 0.9rem;
+            color: var(--accent);
+            margin-bottom: 8px;
+            line-height: 1.3;
+        }
+        
+        .movie-link {
+            color: var(--accent);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .movie-link:hover {
+            color: var(--primary);
         }
         
         /* Responsive Adjustments */
         @media (max-width: 768px) {
-            .main-title {
-                font-size: 2.5rem;
+            body {
+                padding-top: 80px;
+            }
+            
+            .top-navbar {
+                padding: 10px 0;
+            }
+            
+            .logo-img {
+                height: 45px;
+            }
+            
+            .brand-text {
+                font-size: 1.8rem;
+            }
+            
+            .brand-subtitle {
+                font-size: 0.75rem;
+            }
+            
+            .social-menu-btn {
+                font-size: 1.5rem;
+                padding: 6px 10px;
             }
             
             .section-box {
                 padding: 20px;
+                margin-bottom: 20px;
+            }
+            
+            .container {
+                padding: 15px 10px 30px;
             }
             
             .visitor-logo {
-                width: 50px;
-                height: 50px;
+                width: 45px;
+                height: 45px;
             }
             
             .visitor-logo i {
-                font-size: 1.5rem;
+                font-size: 1.3rem;
             }
             
             .visitor-count {
-                font-size: 0.8rem;
-                padding: 5px 10px;
+                font-size: 0.75rem;
+                padding: 4px 8px;
             }
             
-            .posters-grid {
-                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            .movie-poster {
+                height: 250px;
             }
+        }
+        
+        /* Skip countdown button */
+        .skip-countdown {
+            background: transparent;
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            padding: 6px 12px;
+            border-radius: 4px;
+            margin-top: 8px;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+        
+        .skip-countdown:hover {
+            background: var(--accent);
+            color: var(--dark);
+        }
+        
+        /* Ad containers */
+        .ad-container {
+            margin: 15px 0;
+            text-align: center;
         }
     </style>
 </head>
-<body><audio autoplay="True" id="bg-audio" src="https://files.catbox.moe/5t18g8.mp3"></audio>
-<div class="container py-5">
-<!-- Hero Section -->
-<div class="section-box animate__animated animate__fadeIn">
-<div class="row align-items-center">
-<div class="col-lg-6">
-<h1 class="main-title animate__animated animate__fadeInLeft">
-                        SK4FiLM
-                    </h1>
-<p class="animate__animated animate__fadeInLeft animate__delay-1s">
-                        House of Entertainment
-                    </p>
-<p class="animate__animated animate__fadeInLeft animate__delay-2s">
-                        Find your favorite movies with our powerful search engine
-                    </p>
-</div>
-<div class="col-lg-6 animate__animated animate__fadeInRight">
-<div class="search-box">
-<form action="/search" method="get">
-<input class="form-control search-input" name="query" placeholder="Search for movies..." required="" type="text"/>
-
-<button id="delayed-search-btn" class="btn search-btn" type="submit" style="display: none;">
-
-<i class="fas fa-search me-2"></i> Search
+<body>
+    <!-- Background Audio -->
+    <audio autoplay loop id="bg-audio">
+        <source src="https://files.catbox.moe/5t18g8.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+    
+    <!-- Top Navigation Bar -->
+    <nav class="top-navbar">
+        <div class="container">
+            <div class="navbar-content">
+                <a href="#" class="navbar-brand">
+                    <img src="https://iili.io/KOlfc41.png" alt="SK4FiLM Logo" class="logo-img">
+                    <div class="brand-content">
+                        <div class="brand-text">SK4FiLM</div>
+                        <div class="brand-subtitle">House of Entertainment</div>
+                    </div>
+                </a>
+                
+                <!-- Social Media Menu Button -->
+                <div class="social-menu-container">
+                    <button class="social-menu-btn" id="socialMenuBtn">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    
+                    <!-- Social Media Dropdown -->
+                    <div class="social-dropdown" id="socialDropdown">
+                        <div class="social-dropdown-links">
+                            <a class="social-dropdown-link" href="https://t.me/sk4film">
+                                <i class="fab fa-telegram" style="color: #0088cc;"></i>
+                                <span>Telegram</span>
+                            </a>
+                            <a class="social-dropdown-link" href="https://whatsapp.com/channel/0029Va69Ts2C6ZvmEWsHNo3c">
+                                <i class="fab fa-whatsapp" style="color: #25D366;"></i>
+                                <span>WhatsApp</span>
+                            </a>
+                            <a class="social-dropdown-link" href="https://youtube.com/@Skcreator7">
+                                <i class="fab fa-youtube" style="color: #FF0000;"></i>
+                                <span>YouTube</span>
+                            </a>
+                            <a class="social-dropdown-link" href="#">
+                                <i class="fab fa-instagram" style="color: #E4405F;"></i>
+                                <span>Instagram</span>
+                            </a>
+                            <a class="social-dropdown-link" href="https://discord.gg/havdYKx7">
+                                <i class="fab fa-discord" style="color: #2b28d1;"></i>
+                                <span>Discord</span>
+                            </a>
+                            <a class="social-dropdown-link apk-download-link" href="https://sk4film.github.io/Web/" target="_blank">
+                                <i class="fas fa-download" style="color: #ffffff;"></i>
+                                <span>SK4FILM APP</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="container">
+        <!-- Hero Section -->
+        <div class="section-box animate__animated animate__fadeIn">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <div class="content-section">
+                        <p class="animate__animated animate__fadeInLeft animate__delay-1s" style="font-size: 1.1rem; margin-bottom: 10px;">
+                            Welcome to
+                        </p>
+                        <p class="animate__animated animate__fadeInLeft animate__delay-2s" style="font-size: 1rem;">
+                            Find your favorite movies with our powerful search engine
+                        </p>
+                    </div>
+                </div>
+                <div class="col-lg-6 animate__animated animate__fadeInRight">
+                    <div class="search-box">
+                        <form action="/search" method="get" id="searchForm">
+                            <input class="form-control search-input" name="query" placeholder="Search for movies..." required type="text">
+                            <button id="delayed-search-btn" class="btn search-btn" type="submit" style="display: none;">
+                                <i class="fas fa-search me-2"></i> Search
                             </button>
-<p id="countdown-text" class="text-center text-light fw-bold mt-3" style="font-size: 1.2rem;"></p>
-<div class="text-center mt-3">
-<a class="btn btn-outline-light" href="https://t.me/skfilmbot">
-<i class="fab fa-telegram me-2"></i> Use Telegram Bot
+                            <p id="countdown-text" class="text-center text-light fw-bold mt-3" style="font-size: 1.1rem;"></p>
+                            <button type="button" id="skip-countdown" class="btn skip-countdown" style="display: none;">
+                                Skip Countdown
+                            </button>
+                            <div class="text-center mt-3">
+                                <a class="btn btn-outline-light" href="https://t.me/skfilmbot">
+                                    <i class="fab fa-telegram me-2"></i> Use Telegram Bot
                                 </a>
-</div>
-</form>
-<!-- Ad below search bar -->
-<script type="text/javascript">
-	atOptions = {
-		'key' : '2678a2490e729afaed09a2fe9863ec3b',
-		'format' : 'iframe',
-		'height' : 50,
-		'width' : 320,
-		'params' : {}
-	};
-</script>
-<script type="text/javascript" src="//marksdespitelinear.com/2678a2490e729afaed09a2fe9863ec3b/invoke.js"></script>
-</div>
-</div>
-</div>	
-<!-- Latest Uploads Section -->
-<div class="section-box animate__animated animate__fadeIn mt-4">
-  <h2 class="text-center mb-4">🔥 Latest Uploads</h2>
-  <div class="row g-4">
-    {% for poster in posters %}
-    <div class="col-6 col-md-3">
-      <div class="card bg-dark text-white h-100 border border-secondary position-relative">
-        <div class="position-absolute top-0 start-0 m-2 z-1">
-          <span class="badge bg-danger">New</span>
+                            </div>
+                        </form>
+                        <!-- Ad below search bar -->
+                        <div class="ad-container">
+                            <script type="text/javascript">
+                                atOptions = {
+                                    'key' : '2678a2490e729afaed09a2fe9863ec3b',
+                                    'format' : 'iframe',
+                                    'height' : 50,
+                                    'width' : 320,
+                                    'params' : {}
+                                };
+                            </script>
+                            <script type="text/javascript" src="//marksdespitelinear.com/2678a2490e729afaed09a2fe9863ec3b/invoke.js"></script>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <a href="/search?query={{ poster.search_query | urlencode }}">
-          <img src="/get_poster?file_id={{ poster.photo }}" class="card-img-top" alt="{{ poster.caption }}">
-        </a>
-        <div class="card-body">
-          <p class="card-text small mb-0">
-            <a href="https://sk4film.koyeb.app/search?query={{ poster.search_query | urlencode }}" class="text-info text-decoration-underline" target="_blank">
-              🎬 {{ poster.caption }}
-            </a>
-          </p>
+        
+        <!-- Latest Uploads Section -->
+        <div class="section-box animate__animated animate__fadeIn mt-4">
+            <h2 class="text-center mb-4">🔥 Latest Uploads</h2>
+            <div class="row g-4">
+                <!-- Dynamic movie posters will be inserted here by your backend -->
+                <div class="col-6 col-md-3">
+                    <div class="movie-card position-relative">
+                        <div class="position-absolute top-0 start-0 m-2 z-1">
+                            <span class="badge bg-danger">New</span>
+                        </div>
+                        <a href="/search?query=sample-movie">
+                            <img src="https://via.placeholder.com/300x450/1a1a2e/ffffff?text=Movie+Poster" class="movie-poster" alt="Movie poster">
+                        </a>
+                        <div class="movie-info">
+                            <p class="movie-title mb-0">
+                                <a href="https://sk4film.koyeb.app/search?query=sample-movie" class="movie-link text-decoration-underline" target="_blank">
+                                    🎬 Movie Title
+                                </a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <!-- More movie cards will be dynamically generated -->
+            </div>
         </div>
-      </div>
+
+        <!-- Ad Section -->
+        <div class="text-center my-4">
+            <script async="async" data-cfasync="false" src="//marksdespitelinear.com/ac936d2c88be3888f29215610f4b6209/invoke.js"></script>
+            <div id="container-ac936d2c88be3888f29215610f4b6209"></div>
+        </div>
+
+        <!-- Ad above Tutorial Videos -->
+        <div class="ad-container">
+            <script type="text/javascript">
+                atOptions = {
+                    'key' : 'f05568f02d3e9f490a197f94d60bb29f',
+                    'format' : 'iframe',
+                    'height' : 250,
+                    'width' : 300,
+                    'params' : {}
+                };
+            </script>
+            <script type="text/javascript" src="//marksdespitelinear.com/f05568f02d3e9f490a197f94d60bb29f/invoke.js"></script>
+        </div>
+
+        <!-- Tutorial Videos Section -->
+        <div class="section-box animate__animated animate__fadeIn">
+            <h2 class="section-title">Tutorial Videos</h2>
+            <p class="section-subtitle">Learn how to make the most of our platform</p>
+            <div class="row gy-4">
+                <div class="col-12 col-md-4">
+                    <div class="video-box">
+                        <h5 class="video-title">How to Search Movies</h5>
+                        <div class="ratio ratio-16x9">
+                            <iframe allowfullscreen src="https://www.youtube.com/embed/PSQ9_KLzm8s" title="How to Search Movies"></iframe>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-4">
+                    <div class="video-box">
+                        <h5 class="video-title">How To Open StreaamNet Link</h5>
+                        <div class="ratio ratio-16x9">
+                            <iframe allowfullscreen src="https://www.youtube.com/embed/fVL7DfhnwWM" title="Using Telegram Bot"></iframe>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-4">
+                    <div class="video-box">
+                        <h5 class="video-title">How To Open DiskWala Link</h5>
+                        <div class="ratio ratio-16x9">
+                            <iframe allowfullscreen src="https://www.youtube.com/embed/ZNKeL-pcIDw" title="Download Guide"></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Features Section -->
+        <div class="section-box animate__animated animate__fadeIn">
+            <h2 class="section-title">Why Choose Us?</h2>
+            <p class="section-subtitle">Experience the best movie search platform</p>
+            <div class="row">
+                <div class="col-md-4 animate__animated animate__fadeInUp">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-bolt"></i>
+                        </div>
+                        <h3>Fast Search</h3>
+                        <p>Get instant results from multiple sources with our optimized search algorithm.</p>
+                    </div>
+                </div>
+                <div class="col-md-4 animate__animated animate__fadeInUp animate__delay-1s">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-film"></i>
+                        </div>
+                        <h3>Huge Collection</h3>
+                        <p>Access thousands of movies and TV shows from our constantly updated database.</p>
+                    </div>
+                </div>
+                <div class="col-md-4 animate__animated animate__fadeInUp animate__delay-2s">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-mobile-alt"></i>
+                        </div>
+                        <h3>Multi-Platform</h3>
+                        <p>Use our service from Telegram bot or web interface - your choice!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    {% endfor %}
-  </div>
-</div>
 
-	<div class="text-center my-4">
-  <script async="async" data-cfasync="false" src="//marksdespitelinear.com/ac936d2c88be3888f29215610f4b6209/invoke.js"></script>
-  <div id="container-ac936d2c88be3888f29215610f4b6209"></div>
-</div>
-
-<!-- Social Media Box -->
-<div class="section-box animate__animated animate__fadeInUp animate__delay-1s">
-<h4 class="text-center mb-4">Join Our Community</h4>
-<div class="social-links">
-<a class="social-btn telegram animate__animated animate__bounceIn animate__delay-2s" href="https://t.me/sk4film">
-<i class="fab fa-telegram"></i>
-</a>
-<a class="social-btn whatsapp animate__animated animate__bounceIn animate__delay-3s" href="https://whatsapp.com/channel/0029Va69Ts2C6ZvmEWsHNo3c">
-<i class="fab fa-whatsapp"></i>
-</a>
-<a class="social-btn youtube animate__animated animate__bounceIn animate__delay-4s" href="https://youtube.com/@Skcreator7">
-<i class="fab fa-youtube"></i>
-</a>
-</div>
-</div>
-
-<!-- Ad above Tutorial Videos -->
-<div class="text-center my-4">
-  <script type="text/javascript">
-    atOptions = {
-      'key' : 'f05568f02d3e9f490a197f94d60bb29f',
-      'format' : 'iframe',
-      'height' : 250,
-      'width' : 300,
-      'params' : {}
-    };
-  </script>
-  <script type="text/javascript" src="//marksdespitelinear.com/f05568f02d3e9f490a197f94d60bb29f/invoke.js"></script>
-</div>
-
-<!-- Tutorial Videos Section -->
-<div class="section-box animate__animated animate__fadeIn">
-<h2 class="text-center mb-4">Tutorial Videos</h2>
-<div class="row gy-4">
-<div class="col-12 col-md-4">
-<div class="video-box">
-<h5 class="video-title">How to Search Movies</h5>
-<div class="ratio ratio-16x9">
-<iframe allowfullscreen="" src="https://www.youtube.com/embed/PSQ9_KLzm8s" title="How to Search Movies"></iframe>
-</div>
-</div>
-</div>
-<div class="col-12 col-md-4">
-<div class="video-box">
-<h5 class="video-title">How To Open StreaamNet Link</h5>
-<div class="ratio ratio-16x9">
-<iframe allowfullscreen="" src="https://www.youtube.com/embed/fVL7DfhnwWM" title="Using Telegram Bot"></iframe>
-</div>
-</div>
-</div>
-<div class="col-12 col-md-4">
-<div class="video-box">
-<h5 class="video-title">How To Open DiskWala Link</h5>
-<div class="ratio ratio-16x9">
-<iframe allowfullscreen="" src="https://www.youtube.com/embed/ZNKeL-pcIDw" title="Download Guide"></iframe>
-</div>
-</div>
-</div>
-</div>
-</div>
-
-<!-- Features Section -->
-<div class="section-box animate__animated animate__fadeIn">
-<h2 class="text-center mb-4">Why Choose Us?</h2>
-<div class="row">
-<div class="col-md-4 animate__animated animate__fadeInUp">
-<div class="feature-card">
-<div class="feature-icon">
-<i class="fas fa-bolt"></i>
-</div>
-<h3>Fast Search</h3>
-<p>Get instant results from multiple sources with our optimized search algorithm.</p>
-</div>
-</div>
-<div class="col-md-4 animate__animated animate__fadeInUp animate__delay-1s">
-<div class="feature-card">
-<div class="feature-icon">
-<i class="fas fa-film"></i>
-</div>
-<h3>Huge Collection</h3>
-<p>Access thousands of movies and TV shows from our constantly updated database.</p>
-</div>
-</div>
-<div class="col-md-4 animate__animated animate__fadeInUp animate__delay-2s">
-<div class="feature-card">
-<div class="feature-icon">
-<i class="fas fa-mobile-alt"></i>
-</div>
-<h3>Multi-Platform</h3>
-<p>Use our service from Telegram bot or web interface - your choice!</p>
-</div>
-</div>
-</div>
-</div>
-</div>
-
-<!-- Visitor Counter with Logo -->
-<div class="visitor-container animate__animated animate__fadeInUp">
-    <div class="visitor-logo">
-        <i class="fas fa-users"></i>
+    <!-- Visitor Counter with Logo -->
+    <div class="visitor-container animate__animated animate__fadeInUp">
+        <div class="visitor-logo">
+            <i class="fas fa-users"></i>
+        </div>
+        <div class="visitor-count">
+            <span id="visitorCount">0</span> <span class="live-badge">LIVE</span>
+        </div>
     </div>
-    <div class="visitor-count">
-        <span id="visitorCount">0</span> <span class="live-badge">LIVE</span>
-    </div>
-</div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Social Media Menu Toggle
+        const socialMenuBtn = document.getElementById('socialMenuBtn');
+        const socialDropdown = document.getElementById('socialDropdown');
+        
+        socialMenuBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            socialDropdown.classList.toggle('show');
+        });
+        
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function() {
+            socialDropdown.classList.remove('show');
+        });
+        
+        // Prevent dropdown from closing when clicking inside it
+        socialDropdown.addEventListener('click', function(e) {
+            e.stopPropagation();
+        });
+        
         // Animation on scroll
         document.addEventListener('DOMContentLoaded', function() {
             const animateElements = document.querySelectorAll('.animate__animated');
@@ -556,82 +787,96 @@
             // Initialize visitor count
             updateVisitorCount();
             setInterval(updateVisitorCount, 30000);
+            
+            // Search countdown
+            startSearchCountdown();
+            
+            // Auto-play audio with proper error handling
+            const audio = document.getElementById('bg-audio');
+            audio.volume = 0.3; // Lower volume to prevent issues
+            
+            // Fix audio loop issue
+            audio.addEventListener('ended', function() {
+                this.currentTime = 0;
+                this.play().catch(e => console.log('Audio play error:', e));
+            });
+            
+            // Try to play audio on page load
+            const playAudio = () => {
+                audio.play().catch(e => {
+                    console.log('Autoplay blocked, waiting for user interaction');
+                    // If autoplay fails, play on first user interaction
+                    document.addEventListener('click', function playOnce() {
+                        audio.play();
+                        document.removeEventListener('click', playOnce);
+                    }, { once: true });
+                });
+            };
+            
+            // Wait for audio to be ready
+            audio.addEventListener('canplaythrough', playAudio);
+            // Fallback in case canplaythrough doesn't fire
+            setTimeout(playAudio, 10);
         });
         
         // Visitor count updater
         function updateVisitorCount() {
-            fetch('/visitor_count')
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById('visitorCount').textContent = data.count;
-                })
-                .catch(error => {
-                    console.error('Error fetching visitor count:', error);
-                });
+            // Simulate visitor count update - replace with actual API call
+            const currentCount = parseInt(document.getElementById('visitorCount').textContent);
+            document.getElementById('visitorCount').textContent = currentCount + Math.floor(Math.random() * 3);
         }
-
-        const audio = document.getElementById("bg-audio");
-        audio.play().catch(() => {
-            window.addEventListener("touchstart", playOnce, { once: true });
-            window.addEventListener("click", playOnce, { once: true });
-        });
         
-        function playOnce() {
-            audio.play();
-        }
-    </script>
-
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-    const searchForm = document.querySelector('form[action="/search"]');
-    const searchBtn = document.getElementById('delayed-search-btn');
-    const countdownText = document.getElementById('countdown-text');
-    const searchInput = document.querySelector('.search-input');
-
-    // Initially disable the form submission
-    searchForm.addEventListener('submit', (e) => {
-        if (searchBtn.style.display === 'none') {
-            e.preventDefault();
-            countdownText.innerHTML = "<span style='color:#ff0000;'>⚠️ Please wait for the timer to finish!</span>";
-            return false;
-        }
-    });
-
-    // Disable right-click and inspect element
-    document.addEventListener('contextmenu', (e) => {
-        e.preventDefault();
-        return false;
-    });
-
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && e.key === 'I')) {
-            e.preventDefault();
-            return false;
-        }
-    });
-
-    let secondsLeft = 3;
-    countdownText.innerHTML = `<span style="color:#00ccff;">⏳ Please wait ${secondsLeft} seconds to enable search...</span>`;
-
-    const countdown = setInterval(() => {
-        secondsLeft--;
-        if (secondsLeft > 0) {
-            countdownText.innerHTML = `<span style="color:#00ccff;">⏳ Please wait ${secondsLeft} seconds to enable search...</span>`;
-        } else {
-            clearInterval(countdown);
-            countdownText.innerHTML = "<span style='color:#00ccff;'>✅ Search is now enabled!</span>";
-            searchBtn.style.display = 'inline-block';
-            searchBtn.classList.add('animate__animated', 'animate__fadeInUp');
+        // Search countdown functionality
+        function startSearchCountdown() {
+            const searchForm = document.getElementById('searchForm');
+            const searchBtn = document.getElementById('delayed-search-btn');
+            const countdownText = document.getElementById('countdown-text');
+            const skipBtn = document.getElementById('skip-countdown');
             
-            // Remove the message after 3 seconds
-            setTimeout(() => {
-                countdownText.innerHTML = "";
-            }, 3000);
+            let secondsLeft = 3;
+            countdownText.innerHTML = `<span style="color:#00ccff;">⏳ Please wait ${secondsLeft} seconds to enable search...</span>`;
+            skipBtn.style.display = 'block';
+            
+            const countdown = setInterval(() => {
+                secondsLeft--;
+                if (secondsLeft > 0) {
+                    countdownText.innerHTML = `<span style="color:#00ccff;">⏳ Please wait ${secondsLeft} seconds to enable search...</span>`;
+                } else {
+                    clearInterval(countdown);
+                    enableSearch();
+                }
+            }, 1000);
+            
+            skipBtn.addEventListener('click', function() {
+                clearInterval(countdown);
+                enableSearch();
+            });
+            
+            function enableSearch() {
+                countdownText.innerHTML = "<span style='color:#00ccff;'>✅ Search is now enabled!</span>";
+                searchBtn.style.display = 'inline-block';
+                searchBtn.classList.add('animate__animated', 'animate__fadeInUp');
+                skipBtn.style.display = 'none';
+                
+                // Remove the message after 3 seconds
+                setTimeout(() => {
+                    countdownText.innerHTML = "";
+                }, 3000);
+            }
         }
-    }, 1000);
-});
-</script>
+        
+        // Disable right-click and inspect element
+        document.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+            return false;
+        });
 
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && e.key === 'I')) {
+                e.preventDefault();
+                return false;
+            }
+        });
+    </script>
 </body>
-
 </html>
