@@ -489,23 +489,6 @@
             }
         }
         
-        /* Skip countdown button */
-        .skip-countdown {
-            background: transparent;
-            border: 1px solid var(--accent);
-            color: var(--accent);
-            padding: 6px 12px;
-            border-radius: 4px;
-            margin-top: 8px;
-            transition: all 0.3s;
-            font-size: 0.9rem;
-        }
-        
-        .skip-countdown:hover {
-            background: var(--accent);
-            color: var(--dark);
-        }
-        
         /* Ad containers */
         .ad-container {
             margin: 15px 0;
@@ -514,8 +497,8 @@
     </style>
 </head>
 <body>
-    <!-- Background Audio -->
-    <audio autoplay loop id="bg-audio">
+    <!-- Background Audio (Play Once) -->
+    <audio autoplay id="bg-audio">
         <source src="https://files.catbox.moe/5t18g8.mp3" type="audio/mpeg">
         Your browser does not support the audio element.
     </audio>
@@ -557,13 +540,13 @@
                                 <i class="fab fa-instagram" style="color: #E4405F;"></i>
                                 <span>Instagram</span>
                             </a>
-                            <a class="social-dropdown-link" href="https://discord.gg/havdYKx7">
-                                <i class="fab fa-discord" style="color: #2b28d1;"></i>
+                            <a class="social-dropdown-link" href="#">
+                                <i class="fab fa-discord" style="color: #2824f2;"></i>
                                 <span>Discord</span>
                             </a>
                             <a class="social-dropdown-link apk-download-link" href="https://sk4film.github.io/Web/" target="_blank">
                                 <i class="fas fa-download" style="color: #ffffff;"></i>
-                                <span>SK4FILM APP</span>
+                                <span>SK4FILM App</span>
                             </a>
                         </div>
                     </div>
@@ -590,12 +573,8 @@
                     <div class="search-box">
                         <form action="/search" method="get" id="searchForm">
                             <input class="form-control search-input" name="query" placeholder="Search for movies..." required type="text">
-                            <button id="delayed-search-btn" class="btn search-btn" type="submit" style="display: none;">
+                            <button class="btn search-btn" type="submit">
                                 <i class="fas fa-search me-2"></i> Search
-                            </button>
-                            <p id="countdown-text" class="text-center text-light fw-bold mt-3" style="font-size: 1.1rem;"></p>
-                            <button type="button" id="skip-countdown" class="btn skip-countdown" style="display: none;">
-                                Skip Countdown
                             </button>
                             <div class="text-center mt-3">
                                 <a class="btn btn-outline-light" href="https://t.me/skfilmbot">
@@ -625,25 +604,25 @@
         <div class="section-box animate__animated animate__fadeIn mt-4">
             <h2 class="text-center mb-4">🔥 Latest Uploads</h2>
             <div class="row g-4">
-                <!-- Dynamic movie posters will be inserted here by your backend -->
+                {% for poster in posters %}
                 <div class="col-6 col-md-3">
-                    <div class="movie-card position-relative">
+                    <div class="card bg-dark text-white h-100 border border-secondary position-relative">
                         <div class="position-absolute top-0 start-0 m-2 z-1">
                             <span class="badge bg-danger">New</span>
                         </div>
-                        <a href="/search?query=sample-movie">
-                            <img src="https://via.placeholder.com/300x450/1a1a2e/ffffff?text=Movie+Poster" class="movie-poster" alt="Movie poster">
+                        <a href="/search?query={{ poster.search_query | urlencode }}">
+                            <img src="/get_poster?file_id={{ poster.photo }}" class="card-img-top" alt="{{ poster.caption }}">
                         </a>
-                        <div class="movie-info">
-                            <p class="movie-title mb-0">
-                                <a href="https://sk4film.koyeb.app/search?query=sample-movie" class="movie-link text-decoration-underline" target="_blank">
-                                    🎬 Movie Title
+                        <div class="card-body">
+                            <p class="card-text small mb-0">
+                                <a href="https://sk4film.koyeb.app/search?query={{ poster.search_query | urlencode }}" class="text-info text-decoration-underline" target="_blank">
+                                    🎬 {{ poster.caption }}
                                 </a>
                             </p>
                         </div>
                     </div>
                 </div>
-                <!-- More movie cards will be dynamically generated -->
+                {% endfor %}
             </div>
         </div>
 
@@ -788,35 +767,19 @@
             updateVisitorCount();
             setInterval(updateVisitorCount, 30000);
             
-            // Search countdown
-            startSearchCountdown();
-            
-            // Auto-play audio with proper error handling
+            // Auto-play audio once
             const audio = document.getElementById('bg-audio');
-            audio.volume = 0.3; // Lower volume to prevent issues
-            
-            // Fix audio loop issue
-            audio.addEventListener('ended', function() {
-                this.currentTime = 0;
-                this.play().catch(e => console.log('Audio play error:', e));
-            });
+            audio.volume = 0.3;
             
             // Try to play audio on page load
-            const playAudio = () => {
-                audio.play().catch(e => {
-                    console.log('Autoplay blocked, waiting for user interaction');
-                    // If autoplay fails, play on first user interaction
-                    document.addEventListener('click', function playOnce() {
-                        audio.play();
-                        document.removeEventListener('click', playOnce);
-                    }, { once: true });
-                });
-            };
-            
-            // Wait for audio to be ready
-            audio.addEventListener('canplaythrough', playAudio);
-            // Fallback in case canplaythrough doesn't fire
-            setTimeout(playAudio, 10);
+            audio.play().catch(e => {
+                console.log('Autoplay blocked, waiting for user interaction');
+                // If autoplay fails, play on first user interaction
+                document.addEventListener('click', function playOnce() {
+                    audio.play();
+                    document.removeEventListener('click', playOnce);
+                }, { once: true });
+            });
         });
         
         // Visitor count updater
@@ -824,45 +787,6 @@
             // Simulate visitor count update - replace with actual API call
             const currentCount = parseInt(document.getElementById('visitorCount').textContent);
             document.getElementById('visitorCount').textContent = currentCount + Math.floor(Math.random() * 3);
-        }
-        
-        // Search countdown functionality
-        function startSearchCountdown() {
-            const searchForm = document.getElementById('searchForm');
-            const searchBtn = document.getElementById('delayed-search-btn');
-            const countdownText = document.getElementById('countdown-text');
-            const skipBtn = document.getElementById('skip-countdown');
-            
-            let secondsLeft = 3;
-            countdownText.innerHTML = `<span style="color:#00ccff;">⏳ Please wait ${secondsLeft} seconds to enable search...</span>`;
-            skipBtn.style.display = 'block';
-            
-            const countdown = setInterval(() => {
-                secondsLeft--;
-                if (secondsLeft > 0) {
-                    countdownText.innerHTML = `<span style="color:#00ccff;">⏳ Please wait ${secondsLeft} seconds to enable search...</span>`;
-                } else {
-                    clearInterval(countdown);
-                    enableSearch();
-                }
-            }, 1000);
-            
-            skipBtn.addEventListener('click', function() {
-                clearInterval(countdown);
-                enableSearch();
-            });
-            
-            function enableSearch() {
-                countdownText.innerHTML = "<span style='color:#00ccff;'>✅ Search is now enabled!</span>";
-                searchBtn.style.display = 'inline-block';
-                searchBtn.classList.add('animate__animated', 'animate__fadeInUp');
-                skipBtn.style.display = 'none';
-                
-                // Remove the message after 3 seconds
-                setTimeout(() => {
-                    countdownText.innerHTML = "";
-                }, 3000);
-            }
         }
         
         // Disable right-click and inspect element
