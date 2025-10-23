@@ -110,7 +110,7 @@ async def web_search(query: str, limit: int = 50) -> tuple:
     
     return results[:limit], corpus
 
-async def get_latest_posters(limit=10):
+async def get_latest_posters(limit=20):
     """Get latest posters from poster channel"""
     if not User or not User.is_connected:
         try:
