@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SK4FiLM - Movie Search</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;600;700&family=Montserrat:wght@800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #ff0000;
+            --secondary: #0066ff;
+            --accent: #00ccff;
+            --dark: #0a0a0a;
+            --darker: #000000;
+            --light: #ffffff;
+            --text: #f8f9fa;
+        }
+        
+        body {
+            background: url('https://i.postimg.cc/T2mcBGtv/pxfuel-2.jpg') no-repeat center center fixed;
+            background-size: cover;
+            min-height: 100vh;
+            font-family: 'Josefin Sans', sans-serif;
+            color: var(--text);
+            position: relative;
+            overflow-x: hidden;
+            padding-top: 90px;
+        }
+        
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 10, 10, 0.7);
+            z-index: -1;
+        }
+        
+        .container {
+            position: relative;
+            z-index: 1;
+            padding: 20px 15px 40px;
+        }
+        
+        /* Top Navigation Bar */
+        .top-navbar {
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            padding: 12px 0;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+        
+        .navbar-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            color: white;
+            text-decoration: none;
+            font-weight: 700;
+        }
+        
+        .logo-img {
+            height: 55px;
+            width: auto;
+            margin-right: 15px;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(255, 0, 0, 0.3);
+        }
+        
+        .brand-content {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .brand-text {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 2.2rem;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 15px rgba(255, 0, 0, 0.4);
+            line-height: 1;
+            margin-bottom: 2px;
+        }
+        
+        .brand-subtitle {
+            font-size: 0.85rem;
+            color: var(--accent);
+            font-weight: 300;
+            letter-spacing: 1px;
+            text-shadow: 0 0 10px rgba(0, 204, 255, 0.5);
+        }
+        
+        /* Social Media Menu Button */
+        .social-menu-btn {
+            background: transparent;
+            border: none;
+            color: var(--accent);
+            font-size: 1.7rem;
+            cursor: pointer;
+            padding: 8px 12px;
+            border-radius: 6px;
+            transition: all 0.3s;
+            box-shadow: 0 0 10px rgba(0, 204, 255, 0.3);
+        }
+        
+        .social-menu-btn:hover {
+            background: rgba(255,255,255,0.1);
+            transform: scale(1.1);
+            box-shadow: 0 0 15px rgba(0, 204, 255, 0.5);
+        }
+        
+        /* Social Media Dropdown */
+        .social-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(15px);
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.1);
+            display: none;
+            z-index: 1001;
+            min-width: 200px;
+        }
+        
+        .social-dropdown.show {
+            display: block;
+            animation: fadeInDown 0.3s ease;
+        }
+        
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-8px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .social-dropdown-links {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .social-dropdown-link {
+            display: flex;
+            align-items: center;
+            padding: 10px 15px;
+            border-radius: 6px;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s;
+            border: 1px solid transparent;
+        }
+        
+        .social-dropdown-link:hover {
+            background: rgba(255,255,255,0.1);
+            transform: translateX(3px);
+            border-color: var(--accent);
+        }
+        
+        .social-dropdown-link i {
+            width: 25px;
+            font-size: 1.2rem;
+            text-align: center;
+        }
+        
+        /* APK Download Link Special Styling */
+        .apk-download-link {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            border: 1px solid #4CAF50;
+        }
+        
+        .apk-download-link:hover {
+            background: linear-gradient(135deg, #45a049, #4CAF50);
+            border-color: #45a049;
+        }
+        
+        /* Section Boxes */
+        .section-box {
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(5px);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .section-box:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 25px rgba(0,0,0,0.4);
+            border: 1px solid var(--accent);
+        }
+        
+        /* Search Box */
+        .search-box {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .search-input {
+            background: rgba(60, 65, 90, 0.7);
+            border: none;
+            border-bottom: 2px solid var(--primary);
+            color: var(--light);
+            transition: all 0.3s;
+            width: 100%;
+            padding: 10px 15px;
+            font-size: 1rem;
+            border-radius: 6px;
+        }
+        
+        .search-input:focus {
+            border-bottom-color: var(--accent);
+            box-shadow: 0 0 12px rgba(0, 204, 255, 0.5);
+            outline: none;
+        }
+        
+        .search-btn {
+            background: linear-gradient(50deg, var(--primary), var(--secondary));
+            color: white;
+            font-weight: 600;
+            transition: all 0.3s;
+            padding: 10px 25px;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            width: 100%;
+            margin-top: 8px;
+            box-shadow: 0 4px 12px rgba(255, 0, 0, 0.3);
+        }
+        
+        .search-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0, 102, 255, 0.4);
+        }
+        
+        /* Feature Cards */
+        .feature-card {
+            background: rgba(30, 41, 59, 0.7);
+            color: var(--text);
+            border: 1px solid var(--accent);
+            transition: all 0.3s;
+            padding: 20px;
+            border-radius: 8px;
+            height: 100%;
+            text-align: center;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 102, 255, 0.3);
+            border-color: var(--primary);
+        }
+        
+        .feature-icon {
+            font-size: 2.2rem;
+            color: var(--accent);
+            margin-bottom: 12px;
+            text-shadow: 0 0 8px rgba(0, 204, 255, 0.5);
+        }
+        
+        /* Video Box */
+        .video-box {
+            margin-top: 8px;
+        }
+        
+        .video-title {
+            font-size: 1rem;
+            margin-bottom: 12px;
+            color: var(--accent);
+            text-align: center;
+        }
+        
+        /* Visitor Counter with Logo */
+        .visitor-container {
+            position: fixed;
+            bottom: 15px;
+            right: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        .visitor-logo {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 15px rgba(0, 102, 255, 0.7);
+            margin-bottom: 6px;
+            border: 2px solid white;
+            animation: logoPulse 2s infinite;
+        }
+        
+        @keyframes logoPulse {
+            0% { transform: scale(1); box-shadow: 0 0 15px rgba(0, 102, 255, 0.7); }
+            50% { transform: scale(1.05); box-shadow: 0 0 20px rgba(0, 102, 255, 0.9); }
+            100% { transform: scale(1); box-shadow: 0 0 15px rgba(0, 102, 255, 0.7); }
+        }
+        
+        .visitor-logo i {
+            color: white;
+            font-size: 1.5rem;
+        }
+        
+        .visitor-count {
+            background: rgba(0, 102, 255, 0.8);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            animation: countPulse 2s infinite;
+        }
+        
+        @keyframes countPulse {
+            0%, 100% {
+                transform: scale(1); opacity: 1; }
+            50% {
+                transform: scale(1.05); opacity: 0.9; }
+        }
+        
+        .live-badge {
+            display: inline-block;
+            background: #ff0000;
+            color: white;
+            font-size: 0.65rem;
+            padding: 2px 5px;
+            border-radius: 8px;
+            margin-left: 4px;
+            animation: blink 1.5s infinite;
+        }
+        
+        @keyframes blink {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+        
+        /* Content Sections */
+        .content-section {
+            padding: 15px 0;
+        }
+        
+        .section-title {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            text-align: center;
+            color: var(--accent);
+            text-shadow: 0 0 10px rgba(0, 204, 255, 0.5);
+        }
+        
+        .section-subtitle {
+            font-size: 1rem;
+            margin-bottom: 25px;
+            text-align: center;
+            color: rgba(255,255,255,0.8);
+        }
+        
+        /* Movie Card Styles */
+        .movie-card {
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+        
+        .movie-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 102, 255, 0.3);
+            border-color: var(--accent);
+        }
+        
+        .movie-poster {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .movie-info {
+            padding: 15px;
+        }
+        
+        .movie-title {
+            font-size: 0.9rem;
+            color: var(--accent);
+            margin-bottom: 8px;
+            line-height: 1.3;
+        }
+        
+        .movie-link {
+            color: var(--accent);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .movie-link:hover {
+            color: var(--primary);
+        }
+        
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            body {
+                padding-top: 80px;
+            }
+            
+            .top-navbar {
+                padding: 10px 0;
+            }
+            
+            .logo-img {
+                height: 45px;
+            }
+            
+            .brand-text {
+                font-size: 1.8rem;
+            }
+            
+            .brand-subtitle {
+                font-size: 0.75rem;
+            }
+            
+            .social-menu-btn {
+                font-size: 1.5rem;
+                padding: 6px 10px;
+            }
+            
+            .section-box {
+                padding: 20px;
+                margin-bottom: 20px;
+            }
+            
+            .container {
+                padding: 15px 10px 30px;
+            }
+            
+            .visitor-logo {
+                width: 45px;
+                height: 45px;
+            }
+            
+            .visitor-logo i {
+                font-size: 1.3rem;
+            }
+            
+            .visitor-count {
+                font-size: 0.75rem;
+                padding: 4px 8px;
+            }
+            
+            .movie-poster {
+                height: 250px;
+            }
+        }
+        
+        /* Ad containers */
+        .ad-container {
+            margin: 15px 0;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Audio (Play Once) -->
+    <audio autoplay id="bg-audio">
+        <source src="https://files.catbox.moe/5t18g8.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+    
+    <!-- Top Navigation Bar -->
+    <nav class="top-navbar">
+        <div class="container">
+            <div class="navbar-content">
+                <a href="#" class="navbar-brand">
+                    <img src="https://iili.io/KOlfc41.png" alt="SK4FiLM Logo" class="logo-img">
+                    <div class="brand-content">
+                        <div class="brand-text">SK4FiLM</div>
+                        <div class="brand-subtitle">House of Entertainment</div>
+                    </div>
+                </a>
+                
+                <!-- Social Media Menu Button -->
+                <div class="social-menu-container">
+                    <button class="social-menu-btn" id="socialMenuBtn">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    
+                    <!-- Social Media Dropdown -->
+                    <div class="social-dropdown" id="socialDropdown">
+                        <div class="social-dropdown-links">
+                            <a class="social-dropdown-link" href="https://t.me/sk4film">
+                                <i class="fab fa-telegram" style="color: #0088cc;"></i>
+                                <span>Telegram</span>
+                            </a>
+                            <a class="social-dropdown-link" href="https://whatsapp.com/channel/0029Va69Ts2C6ZvmEWsHNo3c">
+                                <i class="fab fa-whatsapp" style="color: #25D366;"></i>
+                                <span>WhatsApp</span>
+                            </a>
+                            <a class="social-dropdown-link" href="https://youtube.com/@Skcreator7">
+                                <i class="fab fa-youtube" style="color: #FF0000;"></i>
+                                <span>YouTube</span>
+                            </a>
+                            <a class="social-dropdown-link" href="#">
+                                <i class="fab fa-instagram" style="color: #E4405F;"></i>
+                                <span>Instagram</span>
+                            </a>
+                            <a class="social-dropdown-link" href="#">
+                                <i class="fab fa-discord" style="color: #2824f2;"></i>
+                                <span>Discord</span>
+                            </a>
+                            <a class="social-dropdown-link apk-download-link" href="https://sk4film.github.io/Web/" target="_blank">
+                                <i class="fas fa-download" style="color: #ffffff;"></i>
+                                <span>SK4FILM App</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="container">
+        <!-- Hero Section -->
+        <div class="section-box animate__animated animate__fadeIn">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <div class="content-section">
+                        <p class="animate__animated animate__fadeInLeft animate__delay-1s" style="font-size: 1.1rem; margin-bottom: 10px;">
+                            Welcome to
+                        </p>
+                        <p class="animate__animated animate__fadeInLeft animate__delay-2s" style="font-size: 1rem;">
+                            Find your favorite movies with our powerful search engine
+                        </p>
+                    </div>
+                </div>
+                <div class="col-lg-6 animate__animated animate__fadeInRight">
+                    <div class="search-box">
+                        <form action="/search" method="get" id="searchForm">
+                            <input class="form-control search-input" name="query" placeholder="Search for movies..." required type="text">
+                            <button class="btn search-btn" type="submit">
+                                <i class="fas fa-search me-2"></i> Search
+                            </button>
+                            <div class="text-center mt-3">
+                                <a class="btn btn-outline-light" href="https://t.me/skfilmbot">
+                                    <i class="fab fa-telegram me-2"></i> Use Telegram Bot
+                                </a>
+                            </div>
+                        </form>
+                        <!-- Ad below search bar -->
+                        <div class="ad-container">
+                            <script type="text/javascript">
+                                atOptions = {
+                                    'key' : '2678a2490e729afaed09a2fe9863ec3b',
+                                    'format' : 'iframe',
+                                    'height' : 50,
+                                    'width' : 320,
+                                    'params' : {}
+                                };
+                            </script>
+                            <script type="text/javascript" src="//marksdespitelinear.com/2678a2490e729afaed09a2fe9863ec3b/invoke.js"></script>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Latest Uploads Section -->
+        <div class="section-box animate__animated animate__fadeIn mt-4">
+            <h2 class="text-center mb-4">🔥 Latest Uploads</h2>
+            <div class="row g-4">
+                {% for poster in posters %}
+                <div class="col-6 col-md-3">
+                    <div class="card bg-dark text-white h-100 border border-secondary position-relative">
+                        <div class="position-absolute top-0 start-0 m-2 z-1">
+                            <span class="badge bg-danger">New</span>
+                        </div>
+                        <a href="/search?query={{ poster.search_query | urlencode }}">
+                            <img src="/get_poster?file_id={{ poster.photo }}" class="card-img-top" alt="{{ poster.caption }}">
+                        </a>
+                        <div class="card-body">
+                            <p class="card-text small mb-0">
+                                <a href="https://sk4film.koyeb.app/search?query={{ poster.search_query | urlencode }}" class="text-info text-decoration-underline" target="_blank">
+                                    🎬 {{ poster.caption }}
+                                </a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Ad Section -->
+        <div class="text-center my-4">
+            <script async="async" data-cfasync="false" src="//marksdespitelinear.com/ac936d2c88be3888f29215610f4b6209/invoke.js"></script>
+            <div id="container-ac936d2c88be3888f29215610f4b6209"></div>
+        </div>
+
+        <!-- Ad above Tutorial Videos -->
+        <div class="ad-container">
+            <script type="text/javascript">
+                atOptions = {
+                    'key' : 'f05568f02d3e9f490a197f94d60bb29f',
+                    'format' : 'iframe',
+                    'height' : 250,
+                    'width' : 300,
+                    'params' : {}
+                };
+            </script>
+            <script type="text/javascript" src="//marksdespitelinear.com/f05568f02d3e9f490a197f94d60bb29f/invoke.js"></script>
+        </div>
+
+        <!-- Tutorial Videos Section -->
+        <div class="section-box animate__animated animate__fadeIn">
+            <h2 class="section-title">Tutorial Videos</h2>
+            <p class="section-subtitle">Learn how to make the most of our platform</p>
+            <div class="row gy-4">
+                <div class="col-12 col-md-4">
+                    <div class="video-box">
+                        <h5 class="video-title">How to Search Movies</h5>
+                        <div class="ratio ratio-16x9">
+                            <iframe allowfullscreen src="https://www.youtube.com/embed/PSQ9_KLzm8s" title="How to Search Movies"></iframe>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-4">
+                    <div class="video-box">
+                        <h5 class="video-title">How To Open StreaamNet Link</h5>
+                        <div class="ratio ratio-16x9">
+                            <iframe allowfullscreen src="https://www.youtube.com/embed/fVL7DfhnwWM" title="Using Telegram Bot"></iframe>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-4">
+                    <div class="video-box">
+                        <h5 class="video-title">How To Open DiskWala Link</h5>
+                        <div class="ratio ratio-16x9">
+                            <iframe allowfullscreen src="https://www.youtube.com/embed/ZNKeL-pcIDw" title="Download Guide"></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        
+    </div>
+
+    <!-- Visitor Counter with Logo -->
+    <div class="visitor-container animate__animated animate__fadeInUp">
+        <div class="visitor-logo">
+            <i class="fas fa-users"></i>
+        </div>
+        <div class="visitor-count">
+            <span id="visitorCount">0</span> <span class="live-badge">LIVE</span>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Social Media Menu Toggle
+        const socialMenuBtn = document.getElementById('socialMenuBtn');
+        const socialDropdown = document.getElementById('socialDropdown');
+        
+        socialMenuBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            socialDropdown.classList.toggle('show');
+        });
+        
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function() {
+            socialDropdown.classList.remove('show');
+        });
+        
+        // Prevent dropdown from closing when clicking inside it
+        socialDropdown.addEventListener('click', function(e) {
+            e.stopPropagation();
+        });
+        
+        // Animation on scroll
+        document.addEventListener('DOMContentLoaded', function() {
+            const animateElements = document.querySelectorAll('.animate__animated');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const animation = entry.target.dataset.animate || 'animate__fadeInUp';
+                        entry.target.classList.add(animation);
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.1 });
+            
+            animateElements.forEach(el => {
+                observer.observe(el);
+            });
+            
+            // Initialize visitor count
+            updateVisitorCount();
+            setInterval(updateVisitorCount, 30000);
+            
+            // Auto-play audio once
+            const audio = document.getElementById('bg-audio');
+            audio.volume = 0.3;
+            
+            // Try to play audio on page load
+            audio.play().catch(e => {
+                console.log('Autoplay blocked, waiting for user interaction');
+                // If autoplay fails, play on first user interaction
+                document.addEventListener('click', function playOnce() {
+                    audio.play();
+                    document.removeEventListener('click', playOnce);
+                }, { once: true });
+            });
+        });
+        
+        // Visitor count updater
+        function updateVisitorCount() {
+            // Simulate visitor count update - replace with actual API call
+            const currentCount = parseInt(document.getElementById('visitorCount').textContent);
+            document.getElementById('visitorCount').textContent = currentCount + Math.floor(Math.random() * 3);
+        }
+        
+        // Disable right-click and inspect element
+        document.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+            return false;
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && e.key === 'I')) {
+                e.preventDefault();
+                return false;
+            }
+        });
+    </script>
+
+<script type='text/javascript' src='//marksdespitelinear.com/4d/c6/da/4dc6dabceaaf4da8861d6078c354d497.js'></script>
+</body>
+</html>
