@@ -91,15 +91,24 @@ async def api_search():
 
 @api.get("/api/get_poster")
 async def api_get_poster():
+    chat_id = request.args.get("chat_id", type=int)
+    message_id = request.args.get("message_id", type=int)
     file_id = request.args.get("file_id")
-    if not file_id:
-        return jsonify({"status": "error", "message": "file_id required"}), 400
+    if not (chat_id and message_id) and not file_id:
+        return jsonify({"status":"error","message":"chat_id+message_id or file_id required"}), 400
+    await ensure_user()
     try:
-        await ensure_user()
-        f = await User.download_media(file_id, in_memory=True)
-        return Response(f.getvalue(), mimetype="image/jpeg")
+        if chat_id and message_id:
+            msg = await User.get_messages(chat_id, message_id)
+            media = await User.download_media(msg, in_memory=True)
+        else:
+            try:
+                media = await User.download_media(file_id, in_memory=True)
+            except Exception:
+                return jsonify({"status":"error","message":"expired reference; pass chat_id & message_id"}), 400
+        return Response(media.getvalue(), mimetype="image/jpeg")
     except Exception as e:
-        return jsonify({"status": "error", "message": str(e)}), 500
+        return jsonify({"status":"error","message":str(e)}), 500
 
 if __name__ == "__main__":
     # For local test only; in Koyeb set entrypoint to: python -u main_api.py
