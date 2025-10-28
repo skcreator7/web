@@ -1,6 +1,6 @@
-# app.py (Vercel)
+# app.py (Vercel web)
 from quart import Quart, render_template, request, jsonify, redirect, url_for
-import os, logging, asyncio
+import os, logging
 import httpx
 from datetime import datetime
 from collections import defaultdict
@@ -13,7 +13,7 @@ app = Quart(__name__, template_folder="templates")
 app.secret_key = Config.SECRET_KEY
 
 KOYEB_API_BASE = os.environ.get("KOYEB_API_BASE")  # e.g., https://sk4film.koyeb.app
-KOYEB_API_TOKEN = os.environ.get("KOYEB_API_TOKEN")  # if you secure with token (optional)
+KOYEB_API_TOKEN = os.environ.get("KOYEB_API_TOKEN")
 POSTER_BASE_URL = os.environ.get("POSTER_BASE_URL") or KOYEB_API_BASE
 
 visitors = defaultdict(float)
@@ -63,7 +63,6 @@ async def search():
         logger.error(f"search error: {e}")
         return await render_template("error.html", error=str(e), config=Config, year=datetime.now().year), 500
 
-    # Pagination (client-side slice)
     total = len(results)
     total_pages = max(1, (total + per_page - 1) // per_page)
     page = max(1, min(page, total_pages))
@@ -82,7 +81,6 @@ async def search():
         "end_index": end
     }
 
-    # Latest posters side panel
     posters = []
     try:
         async with httpx.AsyncClient(timeout=10) as client:
@@ -107,11 +105,15 @@ async def search():
 
 @app.get("/get_poster")
 async def get_poster():
+    chat_id = request.args.get("chat_id")
+    message_id = request.args.get("message_id")
     file_id = request.args.get("file_id")
-    if not file_id:
-        return jsonify({"status": "error", "message": "file_id required"}), 400
-    # Redirect to Koyeb image endpoint to stream directly from worker
-    return redirect(f"{POSTER_BASE_URL}/api/get_poster?file_id={file_id}")
+    if chat_id and message_id:
+        return redirect(f"{POSTER_BASE_URL}/api/get_poster?chat_id={chat_id}&message_id={message_id}")
+    if file_id:
+        # legacy fallback; may expire
+        return redirect(f"{POSTER_BASE_URL}/api/get_poster?file_id={file_id}")
+    return jsonify({"status": "error", "message": "chat_id+message_id or file_id required"}), 400
 
 @app.get("/visitor_count")
 async def visitor_count():
