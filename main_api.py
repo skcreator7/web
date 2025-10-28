@@ -1,6 +1,7 @@
 # main_api.py (Koyeb)
 import os
 import logging
+import asyncio
 from typing import Dict, Any, List
 from quart import Quart, request, jsonify, Response
 from configs import Config
@@ -14,9 +15,31 @@ logger = logging.getLogger("sk4film-api")
 
 api = Quart(__name__)
 
+API_TOKEN = os.environ.get("KOYEB_API_TOKEN")
+
+def check_auth(req) -> bool:
+    if not API_TOKEN:
+        return True
+    return req.headers.get("Authorization") == f"Bearer {API_TOKEN}"
+
+@api.before_request
+async def guard():
+    if request.path.startswith("/api/health"):
+        return
+    if not check_auth(request):
+        return jsonify({"status": "error", "message": "unauthorized"}), 401
+
 async def ensure_user():
-    if not getattr(User, "is_connected", False):
-        await User.start()
+    if getattr(User, "is_connected", False):
+        return
+    for i in range(3):
+        try:
+            await User.start()
+            return
+        except Exception as e:
+            logger.warning(f"User.start retry {i+1}: {e}")
+            await asyncio.sleep(2 * (i + 1))
+    raise RuntimeError("User client failed to start after retries")
 
 @api.get("/api/health")
 async def health():
@@ -36,7 +59,9 @@ async def posters_latest():
                         "photo": msg.photo.file_id,
                         "caption": msg.caption,
                         "date": msg.date.isoformat(),
-                        "search_query": msg.caption.split("\n")[0]
+                        "search_query": msg.caption.split("\n")[0],
+                        "chat_id": msg.chat.id,
+                        "message_id": msg.id
                     })
     except Exception as e:
         logger.error(f"posters_latest: {e}")
@@ -58,7 +83,13 @@ async def api_search():
             async for msg in User.search_messages(cid, query=q, limit=200):
                 if msg.text:
                     corpus.append(msg.text)
-                    results.append({"type": "text", "content": format_result(msg.text), "date": msg.date.isoformat()})
+                    results.append({
+                        "type": "text",
+                        "content": format_result(msg.text),
+                        "date": msg.date.isoformat(),
+                        "chat_id": msg.chat.id,
+                        "message_id": msg.id
+                    })
         except Exception as e:
             logger.warning(f"text search {cid}: {e}")
     # poster channel
@@ -72,21 +103,18 @@ async def api_search():
                         "type": "poster",
                         "content": format_result(msg.caption),
                         "photo": msg.photo.file_id,
-                        "date": msg.date.isoformat()
+                        "date": msg.date.isoformat(),
+                        "chat_id": msg.chat.id,
+                        "message_id": msg.id
                     })
     except Exception as e:
         logger.warning(f"poster search: {e}")
     # sort desc by date
     results.sort(key=lambda x: x["date"], reverse=True)
     out = results[:limit]
-    # optional correction
     corrected = None
     if not out:
         corrected = safe_correct(q, corpus)
-        if corrected and corrected != q.lower():
-            # attempt corrected search quickly with fewer limits
-            # (omitted for brevity; client can call again with corrected)
-            pass
     return jsonify({"status": "success", "items": out, "corrected": corrected})
 
 @api.get("/api/get_poster")
@@ -111,5 +139,6 @@ async def api_get_poster():
         return jsonify({"status":"error","message":str(e)}), 500
 
 if __name__ == "__main__":
-    # For local test only; in Koyeb set entrypoint to: python -u main_api.py
+    # Local test only; on Koyeb set entrypoint to Hypercorn:
+    # hypercorn main_api:api --bind 0.0.0.0:8000 --workers 1
     api.run(host="0.0.0.0", port=int(os.environ.get("PORT", 8000)))
