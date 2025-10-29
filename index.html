@@ -5,6 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SK4FiLM - Movie Search</title>
     <meta name="google-adsense-account" content="ca-pub-5244164301170945">
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5244164301170945" crossorigin="anonymous"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-XXXXXXXXXX');
+    </script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
@@ -439,6 +447,10 @@
         .ad-container {
             margin: 15px 0;
             text-align: center;
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+            padding: 10px;
+            border: 1px solid rgba(255,255,255,0.1);
         }
         
         .ad-placeholder {
@@ -448,6 +460,19 @@
             padding: 20px;
             text-align: center;
             color: var(--accent);
+        }
+        
+        /* Auto Ads Styling */
+        .auto-ads-container {
+            margin: 20px 0;
+            text-align: center;
+            min-height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255,255,255,0.02);
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.1);
         }
         
         /* Disclaimer */
@@ -515,6 +540,10 @@
             .movie-poster {
                 height: 250px;
             }
+            
+            .ad-container {
+                padding: 5px;
+            }
         }
     </style>
 </head>
@@ -578,6 +607,21 @@
     </nav>
     
     <div class="container">
+        <!-- Auto Ads - Top -->
+        <div class="auto-ads-container">
+            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5244164301170945" crossorigin="anonymous"></script>
+            <!-- Auto Ads -->
+            <ins class="adsbygoogle"
+                style="display:block"
+                data-ad-client="ca-pub-5244164301170945"
+                data-ad-slot="1234567890"
+                data-ad-format="auto"
+                data-full-width-responsive="true"></ins>
+            <script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+        </div>
+
         <!-- Hero Section -->
         <div class="section-box animate__animated animate__fadeIn">
             <div class="row align-items-center">
@@ -604,13 +648,14 @@
                                 </a>
                             </div>
                         </form>
+                        
                         <!-- Ad below search bar -->
                         <div class="ad-container">
                             <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5244164301170945" crossorigin="anonymous"></script>
                             <ins class="adsbygoogle"
                                 style="display:block"
                                 data-ad-client="ca-pub-5244164301170945"
-                                data-ad-slot="1234567890"
+                                data-ad-slot="1234567891"
                                 data-ad-format="auto"
                                 data-full-width-responsive="true"></ins>
                             <script>
@@ -622,15 +667,15 @@
             </div>
         </div>
         
-        <!-- Ad Section -->
-        <div class="text-center my-4">
+        <!-- In-Content Ad 1 -->
+        <div class="ad-container">
             <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5244164301170945" crossorigin="anonymous"></script>
             <ins class="adsbygoogle"
                 style="display:block"
                 data-ad-format="fluid"
                 data-ad-layout-key="-gw-3+1f-3d+2z"
                 data-ad-client="ca-pub-5244164301170945"
-                data-ad-slot="1234567890"></ins>
+                data-ad-slot="1234567892"></ins>
             <script>
                 (adsbygoogle = window.adsbygoogle || []).push({});
             </script>
@@ -649,13 +694,13 @@
             </div>
         </div>
 
-        <!-- Ad above Tutorial Videos -->
+        <!-- In-Content Ad 2 -->
         <div class="ad-container">
             <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5244164301170945" crossorigin="anonymous"></script>
             <ins class="adsbygoogle"
                 style="display:block"
                 data-ad-client="ca-pub-5244164301170945"
-                data-ad-slot="1234567890"
+                data-ad-slot="1234567893"
                 data-ad-format="auto"
                 data-full-width-responsive="true"></ins>
             <script>
@@ -695,6 +740,20 @@
             </div>
         </div>
 
+        <!-- In-Content Ad 3 -->
+        <div class="ad-container">
+            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5244164301170945" crossorigin="anonymous"></script>
+            <ins class="adsbygoogle"
+                style="display:block"
+                data-ad-client="ca-pub-5244164301170945"
+                data-ad-slot="1234567894"
+                data-ad-format="auto"
+                data-full-width-responsive="true"></ins>
+            <script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+        </div>
+
         <!-- Features Section -->
         <div class="section-box animate__animated animate__fadeIn">
             <h2 class="section-title">Why Choose SK4FiLM?</h2>
@@ -729,18 +788,34 @@
             </div>
         </div>
 
-        <!-- Bottom Ad -->
-        <div class="ad-container">
+        <!-- Bottom Auto Ads -->
+        <div class="auto-ads-container">
             <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5244164301170945" crossorigin="anonymous"></script>
+            <!-- Auto Ads -->
             <ins class="adsbygoogle"
                 style="display:block"
                 data-ad-client="ca-pub-5244164301170945"
-                data-ad-slot="1234567890"
+                data-ad-slot="1234567895"
                 data-ad-format="auto"
                 data-full-width-responsive="true"></ins>
             <script>
                 (adsbygoogle = window.adsbygoogle || []).push({});
             </script>
+        </div>
+
+        <!-- Fixed Bottom Ad (Sticky) -->
+        <div class="ad-container fixed-bottom-ad" style="position: fixed; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.9); z-index: 999; padding: 10px; display: none;">
+            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5244164301170945" crossorigin="anonymous"></script>
+            <ins class="adsbygoogle"
+                style="display:block"
+                data-ad-client="ca-pub-5244164301170945"
+                data-ad-slot="1234567896"
+                data-ad-format="auto"
+                data-full-width-responsive="true"></ins>
+            <script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+            <button onclick="closeStickyAd()" style="position: absolute; top: 5px; right: 5px; background: red; color: white; border: none; border-radius: 50%; width: 20px; height: 20px; font-size: 12px;">×</button>
         </div>
 
         <!-- Disclaimer -->
@@ -763,6 +838,12 @@
     <script>
         // Backend API URL
         const BACKEND_URL = 'https://sk4film.koyeb.app';
+        
+        // Google AdSense Auto Ads
+        window.google_adsense_slot = "1234567890";
+        window.google_ad_client = "ca-pub-5244164301170945";
+        window.google_ad_host = "pub-5244164301170945";
+        window.google_ad_host_channel = "1234567890";
         
         // Social Media Menu Toggle
         const socialMenuBtn = document.getElementById('socialMenuBtn');
@@ -918,11 +999,23 @@
             displaySearchResults(mockResults, query);
         }
         
+        // Sticky ad functions
+        function showStickyAd() {
+            setTimeout(() => {
+                document.querySelector('.fixed-bottom-ad').style.display = 'block';
+            }, 10000); // Show after 10 seconds
+        }
+        
+        function closeStickyAd() {
+            document.querySelector('.fixed-bottom-ad').style.display = 'none';
+        }
+        
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
             loadLatestPosters();
             updateVisitorCount();
             setInterval(updateVisitorCount, 30000);
+            showStickyAd();
             
             // Auto-play audio once
             const audio = document.getElementById('bg-audio');
