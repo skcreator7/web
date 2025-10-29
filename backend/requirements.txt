@@ -1,0 +1,5 @@
+quart==0.18.4
+hypercorn==0.14.4
+pyrogram==2.0.106
+TgCrypto==1.2.5
+flask==2.3.3
