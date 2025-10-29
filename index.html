@@ -4,8 +4,14 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SK4FiLM - Movie Search</title>
+    <meta name="description" content="Search and discover movies from multiple Telegram channels with SK4FiLM - Your ultimate movie search engine">
+    <meta name="keywords" content="movies, telegram, search, bollywood, hollywood, web series, download, SK4FiLM">
+    
+    <!-- AdSense Configuration -->
     <meta name="google-adsense-account" content="ca-pub-5244164301170945">
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5244164301170945" crossorigin="anonymous"></script>
+    
+    <!-- Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
@@ -13,10 +19,13 @@
         gtag('js', new Date());
         gtag('config', 'G-XXXXXXXXXX');
     </script>
+    
+    <!-- CSS Libraries -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;600;700&family=Montserrat:wght@800&display=swap" rel="stylesheet">
+    
     <style>
         :root {
             --primary: #ff0000;
@@ -26,6 +35,12 @@
             --darker: #000000;
             --light: #ffffff;
             --text: #f8f9fa;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
         
         body {
@@ -114,9 +129,14 @@
             font-weight: 300;
             letter-spacing: 1px;
             text-shadow: 0 0 10px rgba(0, 204, 255, 0.5);
+            font-style: italic;
         }
         
         /* Social Media Menu Button */
+        .social-menu-container {
+            position: relative;
+        }
+        
         .social-menu-btn {
             background: transparent;
             border: none;
@@ -188,12 +208,14 @@
             background: rgba(255,255,255,0.1);
             transform: translateX(3px);
             border-color: var(--accent);
+            color: white;
         }
         
         .social-dropdown-link i {
             width: 25px;
             font-size: 1.2rem;
             text-align: center;
+            margin-right: 10px;
         }
         
         /* APK Download Link Special Styling */
@@ -248,6 +270,11 @@
             border-bottom-color: var(--accent);
             box-shadow: 0 0 12px rgba(0, 204, 255, 0.5);
             outline: none;
+            color: var(--light);
+        }
+        
+        .search-input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
         }
         
         .search-btn {
@@ -356,10 +383,8 @@
         }
         
         @keyframes countPulse {
-            0%, 100% {
-                transform: scale(1); opacity: 1; }
-            50% {
-                transform: scale(1.05); opacity: 0.9; }
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.9; }
         }
         
         .live-badge {
@@ -420,6 +445,11 @@
             height: 300px;
             object-fit: cover;
             border-bottom: 1px solid rgba(255,255,255,0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .movie-card:hover .movie-poster {
+            transform: scale(1.05);
         }
         
         .movie-info {
@@ -475,6 +505,32 @@
             border: 1px solid rgba(255,255,255,0.1);
         }
         
+        /* Fixed Bottom Ad */
+        .fixed-bottom-ad {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0,0,0,0.9);
+            z-index: 999;
+            padding: 10px;
+            display: none;
+        }
+        
+        .close-ad-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: red;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+        
         /* Disclaimer */
         .disclaimer {
             background: rgba(255, 0, 0, 0.1);
@@ -485,6 +541,27 @@
             text-align: center;
             font-size: 0.85rem;
             color: #ff6b6b;
+        }
+        
+        /* Loading States */
+        .loading-container {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        
+        .loading-spinner {
+            width: 3rem;
+            height: 3rem;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
         
         /* Responsive Adjustments */
@@ -544,9 +621,39 @@
             .ad-container {
                 padding: 5px;
             }
+            
+            .social-dropdown {
+                right: -10px;
+                min-width: 180px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .brand-text {
+                font-size: 1.5rem;
+            }
+            
+            .brand-subtitle {
+                font-size: 0.7rem;
+            }
+            
+            .section-box {
+                padding: 15px;
+            }
+            
+            .social-dropdown {
+                right: -20px;
+                min-width: 160px;
+            }
+            
+            .social-dropdown-link {
+                padding: 8px 12px;
+                font-size: 0.9rem;
+            }
         }
     </style>
 </head>
+
 <body>
     <!-- Background Audio (Play Once) -->
     <audio autoplay id="bg-audio">
@@ -575,23 +682,23 @@
                     <!-- Social Media Dropdown -->
                     <div class="social-dropdown" id="socialDropdown">
                         <div class="social-dropdown-links">
-                            <a class="social-dropdown-link" href="https://t.me/sk4film">
+                            <a class="social-dropdown-link" href="https://t.me/sk4film" target="_blank">
                                 <i class="fab fa-telegram" style="color: #0088cc;"></i>
                                 <span>Telegram</span>
                             </a>
-                            <a class="social-dropdown-link" href="https://whatsapp.com/channel/0029Va69Ts2C6ZvmEWsHNo3c">
+                            <a class="social-dropdown-link" href="https://whatsapp.com/channel/0029Va69Ts2C6ZvmEWsHNo3c" target="_blank">
                                 <i class="fab fa-whatsapp" style="color: #25D366;"></i>
                                 <span>WhatsApp</span>
                             </a>
-                            <a class="social-dropdown-link" href="https://youtube.com/@Skcreator7">
+                            <a class="social-dropdown-link" href="https://youtube.com/@Skcreator7" target="_blank">
                                 <i class="fab fa-youtube" style="color: #FF0000;"></i>
                                 <span>YouTube</span>
                             </a>
-                            <a class="social-dropdown-link" href="#">
+                            <a class="social-dropdown-link" href="#" target="_blank">
                                 <i class="fab fa-instagram" style="color: #E4405F;"></i>
                                 <span>Instagram</span>
                             </a>
-                            <a class="social-dropdown-link" href="https://discord.gg/pj3YnNjS">
+                            <a class="social-dropdown-link" href="https://discord.gg/pj3YnNjS" target="_blank">
                                 <i class="fab fa-discord" style="color: #2824f2;"></i>
                                 <span>Discord</span>
                             </a>
@@ -609,17 +716,12 @@
     <div class="container">
         <!-- Auto Ads - Top -->
         <div class="auto-ads-container">
-            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5244164301170945" crossorigin="anonymous"></script>
-            <!-- Auto Ads -->
             <ins class="adsbygoogle"
                 style="display:block"
                 data-ad-client="ca-pub-5244164301170945"
                 data-ad-slot="1234567890"
                 data-ad-format="auto"
                 data-full-width-responsive="true"></ins>
-            <script>
-                (adsbygoogle = window.adsbygoogle || []).push({});
-            </script>
         </div>
 
         <!-- Hero Section -->
@@ -643,7 +745,7 @@
                                 <i class="fas fa-search me-2"></i> Search
                             </button>
                             <div class="text-center mt-3">
-                                <a class="btn btn-outline-light" href="https://t.me/skfilmbot">
+                                <a class="btn btn-outline-light" href="https://t.me/skfilmbot" target="_blank">
                                     <i class="fab fa-telegram me-2"></i> Use Telegram Bot
                                 </a>
                             </div>
@@ -651,16 +753,12 @@
                         
                         <!-- Ad below search bar -->
                         <div class="ad-container">
-                            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5244164301170945" crossorigin="anonymous"></script>
                             <ins class="adsbygoogle"
                                 style="display:block"
                                 data-ad-client="ca-pub-5244164301170945"
                                 data-ad-slot="1234567891"
                                 data-ad-format="auto"
                                 data-full-width-responsive="true"></ins>
-                            <script>
-                                (adsbygoogle = window.adsbygoogle || []).push({});
-                            </script>
                         </div>
                     </div>
                 </div>
@@ -669,16 +767,12 @@
         
         <!-- In-Content Ad 1 -->
         <div class="ad-container">
-            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5244164301170945" crossorigin="anonymous"></script>
             <ins class="adsbygoogle"
                 style="display:block"
                 data-ad-format="fluid"
                 data-ad-layout-key="-gw-3+1f-3d+2z"
                 data-ad-client="ca-pub-5244164301170945"
                 data-ad-slot="1234567892"></ins>
-            <script>
-                (adsbygoogle = window.adsbygoogle || []).push({});
-            </script>
         </div>
 
         <!-- Latest Uploads Section -->
@@ -686,26 +780,22 @@
             <h2 class="text-center mb-4">🔥 Latest Uploads</h2>
             <div class="row g-4" id="latestPosters">
                 <div class="col-12 text-center">
-                    <div class="spinner-border text-primary" role="status">
-                        <span class="visually-hidden">Loading...</span>
+                    <div class="loading-container">
+                        <div class="loading-spinner"></div>
+                        <p class="mt-2">Loading latest movies...</p>
                     </div>
-                    <p class="mt-2">Loading latest movies...</p>
                 </div>
             </div>
         </div>
 
         <!-- In-Content Ad 2 -->
         <div class="ad-container">
-            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5244164301170945" crossorigin="anonymous"></script>
             <ins class="adsbygoogle"
                 style="display:block"
                 data-ad-client="ca-pub-5244164301170945"
                 data-ad-slot="1234567893"
                 data-ad-format="auto"
                 data-full-width-responsive="true"></ins>
-            <script>
-                (adsbygoogle = window.adsbygoogle || []).push({});
-            </script>
         </div>
 
         <!-- Tutorial Videos Section -->
@@ -742,16 +832,12 @@
 
         <!-- In-Content Ad 3 -->
         <div class="ad-container">
-            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5244164301170945" crossorigin="anonymous"></script>
             <ins class="adsbygoogle"
                 style="display:block"
                 data-ad-client="ca-pub-5244164301170945"
                 data-ad-slot="1234567894"
                 data-ad-format="auto"
                 data-full-width-responsive="true"></ins>
-            <script>
-                (adsbygoogle = window.adsbygoogle || []).push({});
-            </script>
         </div>
 
         <!-- Features Section -->
@@ -790,32 +876,12 @@
 
         <!-- Bottom Auto Ads -->
         <div class="auto-ads-container">
-            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5244164301170945" crossorigin="anonymous"></script>
-            <!-- Auto Ads -->
             <ins class="adsbygoogle"
                 style="display:block"
                 data-ad-client="ca-pub-5244164301170945"
                 data-ad-slot="1234567895"
                 data-ad-format="auto"
                 data-full-width-responsive="true"></ins>
-            <script>
-                (adsbygoogle = window.adsbygoogle || []).push({});
-            </script>
-        </div>
-
-        <!-- Fixed Bottom Ad (Sticky) -->
-        <div class="ad-container fixed-bottom-ad" style="position: fixed; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.9); z-index: 999; padding: 10px; display: none;">
-            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5244164301170945" crossorigin="anonymous"></script>
-            <ins class="adsbygoogle"
-                style="display:block"
-                data-ad-client="ca-pub-5244164301170945"
-                data-ad-slot="1234567896"
-                data-ad-format="auto"
-                data-full-width-responsive="true"></ins>
-            <script>
-                (adsbygoogle = window.adsbygoogle || []).push({});
-            </script>
-            <button onclick="closeStickyAd()" style="position: absolute; top: 5px; right: 5px; background: red; color: white; border: none; border-radius: 50%; width: 20px; height: 20px; font-size: 12px;">×</button>
         </div>
 
         <!-- Disclaimer -->
@@ -824,22 +890,42 @@
         </div>
     </div>
 
+    <!-- Fixed Bottom Ad (Sticky) -->
+    <div class="fixed-bottom-ad" id="stickyAd">
+        <ins class="adsbygoogle"
+            style="display:block"
+            data-ad-client="ca-pub-5244164301170945"
+            data-ad-slot="1234567896"
+            data-ad-format="auto"
+            data-full-width-responsive="true"></ins>
+        <button onclick="closeStickyAd()" class="close-ad-btn">×</button>
+    </div>
+
     <!-- Visitor Counter with Logo -->
     <div class="visitor-container animate__animated animate__fadeInUp">
         <div class="visitor-logo">
             <i class="fas fa-users"></i>
         </div>
         <div class="visitor-count">
-            <span id="visitorCount">0</span> <span class="live-badge">LIVE</span>
+            <span id="visitorCount">1247</span> <span class="live-badge">LIVE</span>
         </div>
     </div>
 
+    <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        // Initialize AdSense
+        (adsbygoogle = window.adsbygoogle || []).push({});
+        (adsbygoogle = window.adsbygoogle || []).push({});
+        (adsbygoogle = window.adsbygoogle || []).push({});
+        (adsbygoogle = window.adsbygoogle || []).push({});
+        (adsbygoogle = window.adsbygoogle || []).push({});
+        (adsbygoogle = window.adsbygoogle || []).push({});
+        
         // Backend API URL
         const BACKEND_URL = 'https://sk4film.koyeb.app';
         
-        // Google AdSense Auto Ads
+        // Google AdSense Configuration
         window.google_adsense_slot = "1234567890";
         window.google_ad_client = "ca-pub-5244164301170945";
         window.google_ad_host = "pub-5244164301170945";
@@ -864,28 +950,34 @@
             e.stopPropagation();
         });
         
-        // Search Form Handler
+        // FIXED: Search Form Handler with proper routing
         document.getElementById('searchForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const query = document.getElementById('searchQuery').value.trim();
             if (query) {
-                performSearch(query);
+                // FIXED: Redirect to search page
+                window.location.href = `search.html?query=${encodeURIComponent(query)}`;
             }
         });
         
-        // Load latest posters
+        // Load latest posters with real API integration
         async function loadLatestPosters() {
+            const container = document.getElementById('latestPosters');
+            
             try {
-                const response = await fetch(`${BACKEND_URL}/api/latest_posters`);
+                console.log('🔄 Loading posters from backend...');
+                const response = await fetch(`${BACKEND_URL}/api/latest_posters?limit=8`);
                 const data = await response.json();
                 
                 if (data.status === 'success' && data.posters && data.posters.length > 0) {
                     displayPosters(data.posters);
+                    console.log('✅ Real posters loaded');
                 } else {
+                    console.log('⚠️ No posters from API, using mock data');
                     displayMockPosters();
                 }
             } catch (error) {
-                console.log('Using mock data:', error);
+                console.log('❌ API failed, using mock data:', error);
                 displayMockPosters();
             }
         }
@@ -894,14 +986,15 @@
             const container = document.getElementById('latestPosters');
             container.innerHTML = '';
             
-            posters.forEach(poster => {
+            posters.forEach((poster, index) => {
                 const posterHtml = `
                     <div class="col-6 col-md-3">
-                        <div class="movie-card">
+                        <div class="movie-card animate__animated animate__fadeInUp" style="animation-delay: ${index * 0.1}s">
                             <div class="position-relative">
                                 <img src="${BACKEND_URL}/api/get_poster?file_id=${poster.photo}" 
                                      class="movie-poster" 
                                      alt="${poster.caption}"
+                                     loading="lazy"
                                      onerror="this.src='https://via.placeholder.com/300x400/333333/ffffff?text=Poster'">
                                 <div class="position-absolute top-0 start-0 m-2">
                                     <span class="badge bg-danger">New</span>
@@ -909,8 +1002,8 @@
                             </div>
                             <div class="movie-info">
                                 <h6 class="movie-title">
-                                    <a href="#" onclick="performSearch('${poster.search_query}'); return false;" class="movie-link">
-                                        🎬 ${poster.caption}
+                                    <a href="#" onclick="searchFromPoster('${poster.search_query || poster.caption}'); return false;" class="movie-link">
+                                        🎬 ${poster.caption.substring(0, 50)}${poster.caption.length > 50 ? '...' : ''}
                                     </a>
                                 </h6>
                             </div>
@@ -929,7 +1022,7 @@
                     search_query: 'Animal movie'
                 },
                 {
-                    photo: 'mock2',
+                    photo: 'mock2', 
                     caption: 'Salaar (2023) - Prabhas Action Thriller',
                     search_query: 'Salaar movie'
                 },
@@ -942,114 +1035,120 @@
                     photo: 'mock4',
                     caption: 'Hi Nanna (2023) - Telugu Family Drama',
                     search_query: 'Hi Nanna movie'
-                }
-            ];
-            displayPosters(mockPosters);
-        }
-        
-        // Perform search
-        async function performSearch(query) {
-            try {
-                const response = await fetch(`${BACKEND_URL}/api/search?query=${encodeURIComponent(query)}`);
-                const data = await response.json();
-                
-                if (data.status === 'success' && data.results && data.results.length > 0) {
-                    displaySearchResults(data.results, query);
-                } else {
-                    displayMockSearchResults(query);
-                }
-            } catch (error) {
-                console.log('Using mock search results:', error);
-                displayMockSearchResults(query);
-            }
-        }
-        
-        function displaySearchResults(results, query) {
-            const resultsHtml = results.map(result => `
-                <div class="section-box">
-                    ${result.type === 'poster' ? `
-                        <div class="row">
-                            <div class="col-md-4">
-                                <img src="${BACKEND_URL}/api/get_poster?file_id=${result.photo}" 
-                                     class="img-fluid rounded" 
-                                     alt="Movie Poster"
-                                     onerror="this.src='https://via.placeholder.com/300x400/333333/ffffff?text=Poster'">
-                            </div>
-                            <div class="col-md-8">
-                                <div class="content-section">${result.content}</div>
-                            </div>
-                        </div>
-                    ` : `
-                        <div class="content-section">${result.content}</div>
-                    `}
-                </div>
-            `).join('');
-            
-            // Show results in modal or new page
-            alert(`Found ${results.length} results for "${query}"\n\nFull results available on backend.`);
-        }
-        
-        function displayMockSearchResults(query) {
-            const mockResults = [
+                },
                 {
-                    type: 'text',
-                    content: `🎬 <b>${query} (2023)</b><br>📁 Size: 2.1GB | 📹 Quality: 1080p<br>🎭 Genre: Action, Drama<br>⭐ Rating: 8.5/10<br><br>📥 <b>Download Links:</b><br>✅ <a href="#" style="color: #00ccff;">StreamNet Link</a><br>✅ <a href="#" style="color: #00ccff;">DiskWala Link</a><br>✅ <a href="#" style="color: #00ccff;">Direct Download</a>`
+                    photo: 'mock5',
+                    caption: 'Sam Bahadur (2023) - Vicky Kaushal Biopic',
+                    search_query: 'Sam Bahadur movie'
+                },
+                {
+                    photo: 'mock6',
+                    caption: 'Tiger 3 (2023) - Salman Khan Action',
+                    search_query: 'Tiger 3 movie'
+                },
+                {
+                    photo: 'mock7',
+                    caption: 'Jawan (2023) - Shah Rukh Khan Thriller',
+                    search_query: 'Jawan movie'
+                },
+                {
+                    photo: 'mock8',
+                    caption: 'Pathaan (2023) - Shah Rukh Khan Action',
+                    search_query: 'Pathaan movie'
                 }
             ];
-            displaySearchResults(mockResults, query);
+            
+            // Replace API URLs with placeholder images for mock data
+            const mockPostersWithImages = mockPosters.map(poster => ({
+                ...poster,
+                photo: `https://via.placeholder.com/300x400/333333/ffffff?text=${encodeURIComponent(poster.caption.split(' ')[0])}`
+            }));
+            
+            displayPosters(mockPostersWithImages);
+        }
+        
+        // FIXED: Search from poster with proper routing
+        function searchFromPoster(query) {
+            if (query) {
+                window.location.href = `search.html?query=${encodeURIComponent(query)}`;
+            }
         }
         
         // Sticky ad functions
         function showStickyAd() {
             setTimeout(() => {
-                document.querySelector('.fixed-bottom-ad').style.display = 'block';
+                const stickyAd = document.getElementById('stickyAd');
+                if (stickyAd) {
+                    stickyAd.style.display = 'block';
+                    // Initialize sticky ad
+                    (adsbygoogle = window.adsbygoogle || []).push({});
+                }
             }, 10000); // Show after 10 seconds
         }
         
         function closeStickyAd() {
-            document.querySelector('.fixed-bottom-ad').style.display = 'none';
+            const stickyAd = document.getElementById('stickyAd');
+            if (stickyAd) {
+                stickyAd.style.display = 'none';
+            }
         }
-        
-        // Initialize
-        document.addEventListener('DOMContentLoaded', function() {
-            loadLatestPosters();
-            updateVisitorCount();
-            setInterval(updateVisitorCount, 30000);
-            showStickyAd();
-            
-            // Auto-play audio once
-            const audio = document.getElementById('bg-audio');
-            audio.volume = 0.3;
-            
-            // Try to play audio on page load
-            audio.play().catch(e => {
-                console.log('Autoplay blocked, waiting for user interaction');
-                // If autoplay fails, play on first user interaction
-                document.addEventListener('click', function playOnce() {
-                    audio.play();
-                    document.removeEventListener('click', playOnce);
-                }, { once: true });
-            });
-        });
         
         // Visitor count updater
         function updateVisitorCount() {
-            const currentCount = parseInt(document.getElementById('visitorCount').textContent);
-            document.getElementById('visitorCount').textContent = currentCount + Math.floor(Math.random() * 3);
+            const visitorElement = document.getElementById('visitorCount');
+            const currentCount = parseInt(visitorElement.textContent);
+            const newCount = currentCount + Math.floor(Math.random() * 3) + 1;
+            visitorElement.textContent = newCount;
         }
         
-        // Security
+        // Initialize everything
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 SK4FiLM Loading with all features...');
+            
+            // Load posters
+            loadLatestPosters();
+            
+            // Update visitor count every 30 seconds
+            setInterval(updateVisitorCount, 30000);
+            
+            // Show sticky ad after delay
+            showStickyAd();
+            
+            // Auto-play background audio
+            const audio = document.getElementById('bg-audio');
+            if (audio) {
+                audio.volume = 0.3;
+                
+                // Try to play audio on page load
+                audio.play().catch(e => {
+                    console.log('Autoplay blocked, waiting for user interaction');
+                    // If autoplay fails, play on first user interaction
+                    document.addEventListener('click', function playOnce() {
+                        audio.play();
+                        document.removeEventListener('click', playOnce);
+                    }, { once: true });
+                });
+            }
+        });
+        
+        // Security features
         document.addEventListener('contextmenu', (e) => {
             e.preventDefault();
             return false;
         });
-
+        
         document.addEventListener('keydown', (e) => {
             if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && e.key === 'I')) {
                 e.preventDefault();
                 return false;
             }
         });
+        
+        // Console branding
+        console.log('%c🎬 SK4FiLM - Complete Feature Set', 'color: #ff0000; font-size: 20px; font-weight: bold;');
+        console.log('%c📡 Backend: ' + BACKEND_URL, 'color: #00ccff; font-size: 14px;');
+        console.log('%c💰 AdSense: ca-pub-5244164301170945', 'color: #ffff00; font-size: 12px;');
+        console.log('%c🎵 Background Audio Enabled', 'color: #00ff00; font-size: 12px;');
     </script>
 </body>
 </html>
