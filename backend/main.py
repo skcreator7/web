@@ -16,7 +16,7 @@ class Config:
     BOT_TOKEN = os.environ.get("BOT_TOKEN", "")
     USER_SESSION_STRING = os.environ.get("USER_SESSION_STRING", "")
     
-    # Channel IDs - Your actual Telegram channels
+    # Channel IDs - CORRECT FORMAT
     TEXT_CHANNEL_IDS = [-1001891090100, -1002024811395]
     POSTER_CHANNEL_ID = -1002708802395
     
@@ -60,7 +60,7 @@ def format_result(text):
     return text
 
 async def initialize_telegram():
-    """Initialize Telegram client"""
+    """Initialize Telegram client and verify channel access"""
     global User, bot_started
     
     try:
@@ -83,6 +83,9 @@ async def initialize_telegram():
         me = await User.get_me()
         logger.info(f"✅ Logged in as: {me.first_name} (@{me.username})")
         
+        # Verify channel access
+        await verify_channel_access()
+        
         bot_started = True
         return True
         
@@ -96,8 +99,27 @@ async def initialize_telegram():
         logger.error(f"❌ Failed to initialize Telegram client: {e}")
         return False
 
+async def verify_channel_access():
+    """Verify access to all channels"""
+    logger.info("🔍 Verifying channel access...")
+    
+    channels_to_check = Config.TEXT_CHANNEL_IDS + [Config.POSTER_CHANNEL_ID]
+    
+    for channel_id in channels_to_check:
+        try:
+            chat = await User.get_chat(channel_id)
+            logger.info(f"✅ Access to channel {channel_id}: {chat.title}")
+        except errors.ChannelInvalid:
+            logger.error(f"❌ Invalid channel ID: {channel_id}")
+        except errors.ChannelPrivate:
+            logger.error(f"❌ Private channel: {channel_id} - Need to join first")
+        except errors.ChatWriteForbidden:
+            logger.error(f"❌ No read permission for channel: {channel_id}")
+        except Exception as e:
+            logger.error(f"❌ Error accessing channel {channel_id}: {e}")
+
 async def search_text_channels(query, limit=20):
-    """Search in text channels"""
+    """Search in text channels with proper error handling"""
     results = []
     
     for channel_id in Config.TEXT_CHANNEL_IDS:
@@ -109,14 +131,13 @@ async def search_text_channels(query, limit=20):
                 query=query,
                 limit=limit
             ):
-                if message.text and query.lower() in message.text.lower():
+                if message.text:
                     results.append({
                         'type': 'text',
                         'content': format_result(message.text),
                         'date': message.date.isoformat() if message.date else datetime.now().isoformat(),
                         'message_id': message.id,
-                        'channel_id': channel_id,
-                        'has_media': bool(message.media)
+                        'channel_id': channel_id
                     })
                     
             logger.info(f"✅ Found {len(results)} results in channel {channel_id}")
@@ -125,13 +146,15 @@ async def search_text_channels(query, limit=20):
             logger.error(f"❌ No permission to read channel: {channel_id}")
         except errors.ChannelInvalid:
             logger.error(f"❌ Invalid channel: {channel_id}")
+        except errors.ChannelPrivate:
+            logger.error(f"❌ Private channel: {channel_id} - Join required")
         except Exception as e:
             logger.error(f"❌ Error searching channel {channel_id}: {e}")
     
     return results
 
 async def search_poster_channel(query, limit=20):
-    """Search in poster channel"""
+    """Search in poster channel with proper error handling"""
     results = []
     
     try:
@@ -142,7 +165,7 @@ async def search_poster_channel(query, limit=20):
             query=query,
             limit=limit
         ):
-            if message.caption and query.lower() in message.caption.lower():
+            if message.caption:
                 result = {
                     'type': 'poster',
                     'content': format_result(message.caption),
@@ -154,16 +177,10 @@ async def search_poster_channel(query, limit=20):
                 # Add photo if available
                 if message.photo:
                     result['photo'] = message.photo.file_id
-                    result['photo_width'] = message.photo.width
-                    result['photo_height'] = message.photo.height
-                
-                # Add document if available
-                if message.document:
-                    result['document'] = {
-                        'file_id': message.document.file_id,
-                        'file_name': message.document.file_name,
-                        'file_size': message.document.file_size
-                    }
+                    result['has_poster'] = True
+                else:
+                    result['has_poster'] = False
+                    result['photo'] = f"text_result_{message.id}"
                 
                 results.append(result)
                 
@@ -173,6 +190,8 @@ async def search_poster_channel(query, limit=20):
         logger.error(f"❌ No permission to read poster channel: {Config.POSTER_CHANNEL_ID}")
     except errors.ChannelInvalid:
         logger.error(f"❌ Invalid poster channel: {Config.POSTER_CHANNEL_ID}")
+    except errors.ChannelPrivate:
+        logger.error(f"❌ Private poster channel: {Config.POSTER_CHANNEL_ID} - Join required")
     except Exception as e:
         logger.error(f"❌ Error searching poster channel: {e}")
     
@@ -185,11 +204,9 @@ async def web_search(query, limit=50):
     
     logger.info(f"🎬 Starting REAL search for: '{query}'")
     
-    # Search in both text and poster channels concurrently
-    text_results, poster_results = await asyncio.gather(
-        search_text_channels(query, limit//2),
-        search_poster_channel(query, limit//2)
-    )
+    # Search in both text and poster channels
+    text_results = await search_text_channels(query, limit//2)
+    poster_results = await search_poster_channel(query, limit//2)
     
     # Combine results
     all_results = text_results + poster_results
@@ -202,7 +219,7 @@ async def web_search(query, limit=50):
     return all_results[:limit]
 
 async def get_latest_posters(limit=12):
-    """Get real latest posters from Telegram channel"""
+    """Get real latest posters from Telegram channel with error handling"""
     if not User or not bot_started:
         raise Exception("Telegram client not initialized.")
     
@@ -213,35 +230,39 @@ async def get_latest_posters(limit=12):
         
         async for message in User.get_chat_history(
             chat_id=Config.POSTER_CHANNEL_ID,
-            limit=limit * 2  # Get more to filter only posters
+            limit=limit
         ):
-            if message.photo and message.caption and len(posters) < limit:
+            if message.caption:
                 poster = {
-                    'photo': message.photo.file_id,
                     'caption': message.caption,
                     'search_query': message.caption.split('\n')[0] if message.caption else "Movie",
                     'date': message.date.isoformat() if message.date else datetime.now().isoformat(),
-                    'message_id': message.id,
-                    'photo_width': message.photo.width,
-                    'photo_height': message.photo.height
+                    'message_id': message.id
                 }
                 
-                # Extract movie name from caption for better search
-                if message.caption:
-                    # Try to find movie name in caption (first line usually)
-                    lines = message.caption.split('\n')
-                    if lines and len(lines[0]) > 0:
-                        poster['search_query'] = lines[0].strip()
+                # Add photo if available
+                if message.photo:
+                    poster['photo'] = message.photo.file_id
+                    poster['has_poster'] = True
+                else:
+                    poster['has_poster'] = False
+                    poster['photo'] = f"text_poster_{message.id}"
                 
                 posters.append(poster)
                 
         logger.info(f"✅ Found {len(posters)} real posters")
         
+    except errors.ChannelPrivate:
+        logger.error(f"❌ Private channel: {Config.POSTER_CHANNEL_ID} - Join required")
+        raise Exception(f"Please join the channel first: {Config.POSTER_CHANNEL_ID}")
+    except errors.ChatWriteForbidden:
+        logger.error(f"❌ No read permission for channel: {Config.POSTER_CHANNEL_ID}")
+        raise Exception(f"No permission to read channel: {Config.POSTER_CHANNEL_ID}")
     except Exception as e:
         logger.error(f"❌ Error fetching posters: {e}")
         raise
     
-    return posters
+    return posters[:limit]
 
 # CORS setup
 @app.after_request
@@ -258,19 +279,13 @@ async def home():
     status = {
         "status": "healthy" if bot_started else "error",
         "service": "SK4FiLM Real Search API",
-        "version": "3.0.0",
+        "version": "3.1.0",
         "timestamp": datetime.now().isoformat(),
         "telegram_status": "connected" if bot_started else "disconnected",
         "search_mode": "REAL_DATA",
         "channels_configured": {
-            "text_channels": len(Config.TEXT_CHANNEL_IDS),
+            "text_channels": Config.TEXT_CHANNEL_IDS,
             "poster_channel": Config.POSTER_CHANNEL_ID
-        },
-        "endpoints": {
-            "/health": "Service health check",
-            "/api/search?query=moviename": "Real movie search",
-            "/api/latest_posters": "Real latest posters",
-            "/api/get_poster?file_id=xxx": "Get poster image"
         }
     }
     return jsonify(status)
@@ -290,7 +305,7 @@ async def api_health():
     """API health check"""
     return jsonify({
         "status": "healthy" if bot_started else "unhealthy",
-        "api_version": "3.0.0",
+        "api_version": "3.1.0",
         "telegram_connected": bot_started,
         "search_mode": "REAL_DATA_ONLY",
         "timestamp": datetime.now().isoformat()
@@ -409,6 +424,22 @@ async def api_get_poster():
                 "message": "File ID parameter is required"
             }), 400
         
+        # Handle text-only results (no actual poster)
+        if file_id.startswith('text_'):
+            # Return a simple placeholder for text results
+            placeholder_svg = f'''
+            <svg width="300" height="400" xmlns="http://www.w3.org/2000/svg">
+                <rect width="100%" height="100%" fill="#1a1a2e"/>
+                <text x="50%" y="50%" text-anchor="middle" dy="0" fill="white" font-family="Arial" font-size="16">
+                    Text Result
+                </text>
+                <text x="50%" y="60%" text-anchor="middle" dy="0" fill="#666" font-family="Arial" font-size="12">
+                    No Poster Available
+                </text>
+            </svg>
+            '''
+            return Response(placeholder_svg, mimetype='image/svg+xml')
+        
         if not User or not bot_started:
             return jsonify({
                 "status": "error",
@@ -429,18 +460,23 @@ async def api_get_poster():
             file_data.getvalue(),
             mimetype='image/jpeg',
             headers={
-                'Cache-Control': 'public, max-age=86400',  # Cache for 1 day
+                'Cache-Control': 'public, max-age=86400',
                 'Content-Disposition': f'inline; filename="sk4film_poster.jpg"'
             }
         )
         
     except Exception as e:
         logger.error(f"❌ Get Poster Error: {e}")
-        return jsonify({
-            "status": "error",
-            "message": "Failed to download poster",
-            "error": str(e)
-        }), 500
+        # Return error placeholder
+        error_svg = '''
+        <svg width="300" height="400" xmlns="http://www.w3.org/2000/svg">
+            <rect width="100%" height="100%" fill="#1a1a2e"/>
+            <text x="50%" y="50%" text-anchor="middle" dy="0" fill="white" font-family="Arial" font-size="14">
+                Error Loading Image
+            </text>
+        </svg>
+        '''
+        return Response(error_svg, mimetype='image/svg+xml')
 
 @app.route('/api/test_channels')
 async def api_test_channels():
@@ -450,34 +486,41 @@ async def api_test_channels():
     
     channel_status = {}
     
-    # Test text channels
-    for channel_id in Config.TEXT_CHANNEL_IDS:
+    # Test all channels
+    all_channels = Config.TEXT_CHANNEL_IDS + [Config.POSTER_CHANNEL_ID]
+    
+    for channel_id in all_channels:
         try:
             chat = await User.get_chat(channel_id)
-            channel_status[f"text_channel_{channel_id}"] = {
+            channel_status[str(channel_id)] = {
                 "accessible": True,
                 "title": chat.title,
-                "members_count": getattr(chat, 'members_count', 'Unknown')
+                "type": str(chat.type),
+                "username": getattr(chat, 'username', 'Private')
+            }
+        except errors.ChannelPrivate:
+            channel_status[str(channel_id)] = {
+                "accessible": False,
+                "error": "Private channel - Join required",
+                "solution": f"Join the channel first: {channel_id}"
+            }
+        except errors.ChatWriteForbidden:
+            channel_status[str(channel_id)] = {
+                "accessible": False,
+                "error": "No read permission",
+                "solution": "Ensure bot/user has read permissions"
+            }
+        except errors.ChannelInvalid:
+            channel_status[str(channel_id)] = {
+                "accessible": False,
+                "error": "Invalid channel ID",
+                "solution": "Check channel ID format"
             }
         except Exception as e:
-            channel_status[f"text_channel_{channel_id}"] = {
+            channel_status[str(channel_id)] = {
                 "accessible": False,
                 "error": str(e)
             }
-    
-    # Test poster channel
-    try:
-        chat = await User.get_chat(Config.POSTER_CHANNEL_ID)
-        channel_status["poster_channel"] = {
-            "accessible": True,
-            "title": chat.title,
-            "members_count": getattr(chat, 'members_count', 'Unknown')
-        }
-    except Exception as e:
-        channel_status["poster_channel"] = {
-            "accessible": False,
-            "error": str(e)
-        }
     
     return jsonify({
         "status": "success",
@@ -523,11 +566,6 @@ if __name__ == "__main__":
         config.workers = 1
         
         logger.info(f"🎯 Server starting on http://0.0.0.0:{Config.WEB_SERVER_PORT}")
-        logger.info("📊 Real Search Endpoints:")
-        logger.info("   GET /api/search?query=moviename - Real Telegram search")
-        logger.info("   GET /api/latest_posters - Real posters from channel")
-        logger.info("   GET /api/test_channels - Test channel access")
-        logger.info("   GET /health - Health check")
         
         # Start the server
         asyncio.run(serve(app, config))
