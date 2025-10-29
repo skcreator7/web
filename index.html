@@ -864,14 +864,15 @@
             e.stopPropagation();
         });
         
-        // Search Form Handler
-        document.getElementById('searchForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const query = document.getElementById('searchQuery').value.trim();
-            if (query) {
-                performSearch(query);
-            }
-        });
+        // Search Form Handler - Update करें
+document.getElementById('searchForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const query = document.getElementById('searchQuery').value.trim();
+    if (query) {
+        // Redirect to search results page
+        window.location.href = `search.html?query=${encodeURIComponent(query)}`;
+    }
+});
         
         // Load latest posters
         async function loadLatestPosters() {
