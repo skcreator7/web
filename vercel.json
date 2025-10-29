@@ -4,12 +4,56 @@
     {
       "src": "index.html",
       "use": "@vercel/static"
+    },
+    {
+      "src": "search.html", 
+      "use": "@vercel/static"
     }
   ],
   "routes": [
     {
+      "src": "/search",
+      "dest": "/search.html"
+    },
+    {
+      "src": "/search.html",
+      "dest": "/search.html"
+    },
+    {
+      "src": "/",
+      "dest": "/index.html"
+    },
+    {
       "src": "/(.*)",
       "dest": "/index.html"
     }
-  ]
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=3600"
+        },
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        },
+        {
+          "key": "Access-Control-Allow-Methods",
+          "value": "GET, POST, PUT, DELETE, OPTIONS"
+        },
+        {
+          "key": "Access-Control-Allow-Headers",
+          "value": "Content-Type, Authorization"
+        }
+      ]
+    }
+  ],
+  "functions": {
+    "app.py": {
+      "runtime": "python3.9"
+    }
+  }
 }
