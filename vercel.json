@@ -21,18 +21,6 @@
       "dest": "/search.html"
     },
     {
-      "src": "/favicon.ico",
-      "dest": "/favicon.ico"
-    },
-    {
-      "src": "/robots.txt",
-      "dest": "/robots.txt"
-    },
-    {
-      "src": "/sitemap.xml",
-      "dest": "/sitemap.xml"
-    },
-    {
       "src": "/",
       "dest": "/index.html"
     },
@@ -64,28 +52,12 @@
           "value": "1; mode=block"
         },
         {
-          "key": "Referrer-Policy",
-          "value": "strict-origin-when-cross-origin"
-        },
-        {
-          "key": "Permissions-Policy",
-          "value": "geolocation=(), microphone=(), camera=()"
-        }
-      ]
-    },
-    {
-      "source": "/(.*\\.(html|css|js|png|jpg|jpeg|gif|ico|svg))",
-      "headers": [
-        {
           "key": "Cache-Control",
-          "value": "public, max-age=3600, immutable"
+          "value": "public, max-age=3600"
         }
       ]
     }
   ],
   "trailingSlash": false,
-  "cleanUrls": true,
-  "github": {
-    "silent": true
-  }
+  "cleanUrls": true
 }
