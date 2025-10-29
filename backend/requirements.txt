@@ -1,7 +1,8 @@
-hypercorn==0.14.4
-pyrogram==2.0.106
-TgCrypto==1.2.5
 Flask==2.2.5
 Quart==0.18.4
 blinker==1.5
-
+quart==0.18.4
+hypercorn==0.14.4
+pyrogram==2.0.106
+TgCrypto==1.2.5
+python-dotenv==1.0.0
