@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SK4FiLM - Movie Search</title>
+    <meta name="description" content="Search and discover movies from multiple Telegram channels">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSI+PHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjZmYwMDAwIi8+PHRleHQgeD0iMTYiIHk9IjIwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5TPC90ZXh0Pjwvc3ZnPg==">
+    
+    <!-- AdSense -->
+    <meta name="google-adsense-account" content="ca-pub-5244164301170945">
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5244164301170945" crossorigin="anonymous"></script>
+    
+    <!-- CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;600;700&family=Montserrat:wght@800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #ff0000;
+            --secondary: #0066ff;
+            --accent: #00ccff;
+            --dark: #0a0a0a;
+            --text: #f8f9fa;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #000000 0%, #1a1a2e 50%, #16213e 100%);
+            min-height: 100vh;
+            font-family: 'Josefin Sans', sans-serif;
+            color: var(--text);
+            overflow-x: hidden;
+        }
+        
+        .hero-section {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+            position: relative;
+        }
+        
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('https://i.postimg.cc/T2mcBGtv/pxfuel-2.jpg') no-repeat center center;
+            background-size: cover;
+            opacity: 0.3;
+            z-index: -1;
+        }
+        
+        .logo-text {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 800;
+            font-size: clamp(2.5rem, 8vw, 5rem);
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px rgba(255, 0, 0, 0.5);
+            margin-bottom: 1rem;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+        
+        @keyframes glow {
+            from { filter: drop-shadow(0 0 20px rgba(255, 0, 0, 0.5)); }
+            to { filter: drop-shadow(0 0 30px rgba(0, 204, 255, 0.5)); }
+        }
+        
+        .tagline {
+            font-size: clamp(1.2rem, 4vw, 1.8rem);
+            color: var(--accent);
+            margin-bottom: 3rem;
+            font-style: italic;
+            opacity: 0.9;
+        }
+        
+        .search-container {
+            max-width: 600px;
+            width: 100%;
+            margin-bottom: 4rem;
+        }
+        
+        .search-form {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .search-input {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50px;
+            color: white;
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            flex: 1;
+            min-width: 250px;
+            transition: all 0.3s ease;
+        }
+        
+        .search-input:focus {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: var(--primary);
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.3);
+            color: white;
+            outline: none;
+        }
+        
+        .search-input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .search-btn {
+            background: linear-gradient(45deg, var(--primary), #cc0000);
+            border: none;
+            border-radius: 50px;
+            padding: 1rem 2rem;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+        
+        .search-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(255, 0, 0, 0.4);
+            background: linear-gradient(45deg, #cc0000, var(--primary));
+        }
+        
+        .features {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+        
+        .feature-badge {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 25px;
+            padding: 0.8rem 1.5rem;
+            color: white;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        
+        .movies-section {
+            padding: 4rem 0;
+            background: rgba(0, 0, 0, 0.3);
+        }
+        
+        .section-title {
+            font-size: clamp(2rem, 6vw, 3rem);
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 3rem;
+            color: white;
+        }
+        
+        .poster-card {
+            background: rgba(0, 0, 0, 0.8);
+            border-radius: 15px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            height: 100%;
+        }
+        
+        .poster-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 35px rgba(255, 0, 0, 0.4);
+            border-color: var(--primary);
+        }
+        
+        .poster-image {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+        
+        .poster-card:hover .poster-image {
+            transform: scale(1.05);
+        }
+        
+        .poster-info {
+            padding: 1rem;
+        }
+        
+        .poster-title {
+            color: white;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+            line-height: 1.3;
+        }
+        
+        .poster-date {
+            color: var(--accent);
+            font-size: 0.8rem;
+            margin-bottom: 1rem;
+        }
+        
+        .loading-container, .error-container {
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+        
+        .loading-spinner {
+            width: 3rem;
+            height: 3rem;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .footer {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 2rem 0;
+            text-align: center;
+            border-top: 1px solid rgba(255, 0, 0, 0.3);
+        }
+        
+        @media (max-width: 768px) {
+            .search-form {
+                flex-direction: column;
+            }
+            
+            .search-input {
+                min-width: 100%;
+            }
+            
+            .features {
+                gap: 1rem;
+            }
+            
+            .feature-badge {
+                font-size: 0.8rem;
+                padding: 0.6rem 1.2rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <h1 class="logo-text">SK4FiLM</h1>
+            <p class="tagline">House of Entertainment</p>
+            
+            <div class="search-container">
+                <form id="searchForm" class="search-form">
+                    <input type="text" id="searchInput" class="search-input" 
+                           placeholder="Search for movies, web series..." required>
+                    <button type="submit" class="search-btn">
+                        <i class="fas fa-search me-2"></i>Search
+                    </button>
+                </form>
+            </div>
+            
+            <div class="features">
+                <div class="feature-badge">
+                    <i class="fas fa-rocket me-2"></i>Fast Search
+                </div>
+                <div class="feature-badge">
+                    <i class="fas fa-download me-2"></i>Direct Links
+                </div>
+                <div class="feature-badge">
+                    <i class="fas fa-mobile-alt me-2"></i>Mobile Friendly
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Latest Movies -->
+    <section class="movies-section">
+        <div class="container">
+            <h2 class="section-title">Latest Movies</h2>
+            <div id="latest-posters" class="row g-4">
+                <div class="loading-container">
+                    <div class="loading-spinner"></div>
+                    <h4>Loading latest movies...</h4>
+                    <p class="text-muted">Connecting to SK4FiLM API...</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 text-md-start">
+                    <h5 class="text-light">SK4FiLM</h5>
+                    <p class="text-muted mb-0">Your ultimate movie search engine.</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <p class="text-muted mb-0">&copy; 2024 SK4FiLM. All rights reserved.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Configuration
+        const CONFIG = {
+            BACKEND_URL: 'https://sk4film.koyeb.app',
+            TIMEOUT: 10000,
+            RETRY_ATTEMPTS: 3
+        };
+        
+        // Utility functions
+        const utils = {
+            escapeHtml: (text) => {
+                if (!text) return '';
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            },
+            
+            formatDate: (dateString) => {
+                if (!dateString) return 'Recently';
+                const date = new Date(dateString);
+                const now = new Date();
+                const diffTime = Math.abs(now - date);
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                
+                if (diffDays === 1) return 'Today';
+                if (diffDays === 2) return 'Yesterday';
+                if (diffDays <= 7) return `${diffDays} days ago`;
+                
+                return date.toLocaleDateString('en-US', { 
+                    month: 'short', 
+                    day: 'numeric'
+                });
+            },
+            
+            apiCall: async (endpoint, options = {}) => {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), CONFIG.TIMEOUT);
+                
+                try {
+                    const response = await fetch(`${CONFIG.BACKEND_URL}${endpoint}`, {
+                        ...options,
+                        signal: controller.signal,
+                        headers: {
+                            'Content-Type': 'application/json',
+                            ...options.headers
+                        }
+                    });
+                    
+                    clearTimeout(timeoutId);
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    }
+                    
+                    return await response.json();
+                    
+                } catch (error) {
+                    clearTimeout(timeoutId);
+                    if (error.name === 'AbortError') {
+                        throw new Error('Request timeout');
+                    }
+                    throw error;
+                }
+            }
+        };
+        
+        // Search functionality
+        function searchMovie(query) {
+            if (!query?.trim()) {
+                alert('Please enter a search term');
+                return;
+            }
+            
+            window.location.href = `/search?query=${encodeURIComponent(query.trim())}`;
+        }
+        
+        // Poster loading
+        async function loadLatestPosters() {
+            const postersContainer = document.getElementById('latest-posters');
+            
+            try {
+                console.log('🔄 Loading posters from:', CONFIG.BACKEND_URL);
+                
+                // Show loading
+                postersContainer.innerHTML = `
+                    <div class="loading-container">
+                        <div class="loading-spinner"></div>
+                        <h4>Loading latest movies...</h4>
+                        <p class="text-muted">Connecting to SK4FiLM API...</p>
+                    </div>
+                `;
+                
+                // Check backend health
+                await utils.apiCall('/health');
+                console.log('✅ Backend health check passed');
+                
+                // Load posters
+                const data = await utils.apiCall('/api/latest_posters?limit=8');
+                console.log('✅ Posters loaded:', data);
+                
+                if (data.status === 'success' && data.posters?.length > 0) {
+                    displayPosters(data.posters);
+                } else {
+                    showMessage('info', 'No movies available from Telegram channels', 'Please check back later.');
+                }
+                
+            } catch (error) {
+                console.error('❌ Loading failed:', error);
+                showMessage('error', 'Connection Error', `Unable to connect: ${error.message}`);
+            }
+        }
+        
+        function displayPosters(posters) {
+            const postersContainer = document.getElementById('latest-posters');
+            
+            const html = posters.map((poster, index) => `
+                <div class="col-lg-3 col-md-4 col-sm-6">
+                    <div class="poster-card" style="animation-delay: ${index * 0.1}s">
+                        <img src="${CONFIG.BACKEND_URL}/api/get_poster?file_id=${poster.photo}" 
+                             alt="Movie Poster" class="poster-image"
+                             loading="lazy"
+                             onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjMwMCIgZmlsbD0iIzMzMyI+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZpbGw9IiNmZmYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPk5vIFBvc3RlcjwvdGV4dD48L3N2Zz4='" />
+                        <div class="poster-info">
+                            <h6 class="poster-title">${utils.escapeHtml(poster.caption.substring(0, 60))}...</h6>
+                            <div class="poster-date">
+                                <i class="fas fa-calendar-alt me-1"></i>${utils.formatDate(poster.date)}
+                            </div>
+                            <button class="btn btn-primary btn-sm w-100" onclick="searchMovie('${utils.escapeHtml(poster.search_query)}')">
+                                <i class="fas fa-search me-1"></i>Search Movie
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            
+            postersContainer.innerHTML = html;
+        }
+        
+        function showMessage(type, title, message) {
+            const iconClass = type === 'error' ? 'fas fa-exclamation-triangle text-danger' : 
+                             type === 'info' ? 'fas fa-info-circle text-info' : 
+                             'fas fa-film text-warning';
+            
+            document.getElementById('latest-posters').innerHTML = `
+                <div class="error-container">
+                    <div class="mb-3">
+                        <i class="${iconClass} fa-4x"></i>
+                    </div>
+                    <h4>${title}</h4>
+                    <p class="text-muted">${message}</p>
+                    <button class="btn btn-primary" onclick="loadLatestPosters()">
+                        <i class="fas fa-redo me-2"></i>Try Again
+                    </button>
+                </div>
+            `;
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 SK4FiLM Frontend Loading');
+            console.log('📡 Backend API:', CONFIG.BACKEND_URL);
+            
+            // Load posters
+            loadLatestPosters();
+            
+            // Auto-refresh every 10 minutes
+            setInterval(loadLatestPosters, 600000);
+            
+            // Search form handler
+            const searchForm = document.getElementById('searchForm');
+            if (searchForm) {
+                searchForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    const query = document.getElementById('searchInput').value.trim();
+                    searchMovie(query);
+                });
+            }
+        });
+        
+        // Console branding
+        console.log('%c🎬 SK4FiLM - Production Ready', 'color: #ff0000; font-size: 16px; font-weight: bold;');
+    </script>
+</body>
+</html>
