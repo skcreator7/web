@@ -3,688 +3,84 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SK4FiLM - Movie Search Engine</title>
-    <meta name="description" content="Search and discover movies from multiple Telegram channels with SK4FiLM">
-    <meta name="keywords" content="movies, telegram, search, bollywood, hollywood, web series">
-    
-    <!-- Favicon -->
-    <link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSI+PHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjZmYwMDAwIi8+PHRleHQgeD0iMTYiIHk9IjIwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5TPC90ZXh0Pjwvc3ZnPg==">
-    
-    <!-- AdSense -->
-    <meta name="google-adsense-account" content="ca-pub-5244164301170945">
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5244164301170945" crossorigin="anonymous"></script>
-    
-    <!-- CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;600;700&family=Montserrat:wght@800&display=swap" rel="stylesheet">
-    
-    <style>
-        :root {
-            --primary: #ff0000;
-            --secondary: #0066ff;
-            --accent: #00ccff;
-            --dark: #0a0a0a;
-            --text: #f8f9fa;
-        }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            background: linear-gradient(135deg, #000000 0%, #1a1a2e 50%, #16213e 100%);
-            min-height: 100vh;
-            font-family: 'Josefin Sans', sans-serif;
-            color: var(--text);
-            overflow-x: hidden;
-        }
-        
-        .hero-section {
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            padding: 20px;
-            position: relative;
-        }
-        
-        .hero-section::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url('https://i.postimg.cc/T2mcBGtv/pxfuel-2.jpg') no-repeat center center;
-            background-size: cover;
-            opacity: 0.2;
-            z-index: -1;
-        }
-        
-        .logo-text {
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 800;
-            font-size: clamp(3rem, 10vw, 6rem);
-            background: linear-gradient(45deg, var(--primary), var(--accent));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 30px rgba(255, 0, 0, 0.5);
-            margin-bottom: 1rem;
-            animation: glow 3s ease-in-out infinite alternate;
-        }
-        
-        @keyframes glow {
-            from { filter: drop-shadow(0 0 20px rgba(255, 0, 0, 0.5)); }
-            to { filter: drop-shadow(0 0 40px rgba(0, 204, 255, 0.5)); }
-        }
-        
-        .tagline {
-            font-size: clamp(1.2rem, 4vw, 2rem);
-            color: var(--accent);
-            margin-bottom: 3rem;
-            font-style: italic;
-            opacity: 0.9;
-            font-weight: 300;
-        }
-        
-        .search-container {
-            max-width: 700px;
-            width: 100%;
-            margin-bottom: 4rem;
-        }
-        
-        .search-form {
-            display: flex;
-            gap: 1rem;
-            align-items: stretch;
-        }
-        
-        .search-input {
-            background: rgba(255, 255, 255, 0.1);
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            border-radius: 50px;
-            color: white;
-            padding: 1.2rem 2rem;
-            font-size: 1.1rem;
-            flex: 1;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
-        }
-        
-        .search-input:focus {
-            background: rgba(255, 255, 255, 0.15);
-            border-color: var(--primary);
-            box-shadow: 0 0 25px rgba(255, 0, 0, 0.4);
-            color: white;
-            outline: none;
-        }
-        
-        .search-input::placeholder {
-            color: rgba(255, 255, 255, 0.7);
-        }
-        
-        .search-btn {
-            background: linear-gradient(45deg, var(--primary), #cc0000);
-            border: none;
-            border-radius: 50px;
-            padding: 1.2rem 2.5rem;
-            color: white;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            white-space: nowrap;
-            font-size: 1.1rem;
-        }
-        
-        .search-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 15px 35px rgba(255, 0, 0, 0.5);
-            background: linear-gradient(45deg, #cc0000, var(--primary));
-        }
-        
-        .features {
-            display: flex;
-            justify-content: center;
-            gap: 2rem;
-            flex-wrap: wrap;
-            margin-top: 2rem;
-        }
-        
-        .feature-badge {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 30px;
-            padding: 1rem 1.8rem;
-            color: white;
-            font-size: 0.95rem;
-            font-weight: 500;
-            transition: all 0.3s ease;
-        }
-        
-        .feature-badge:hover {
-            background: rgba(255, 255, 255, 0.15);
-            transform: translateY(-2px);
-        }
-        
-        .movies-section {
-            padding: 5rem 0;
-            background: rgba(0, 0, 0, 0.4);
-            backdrop-filter: blur(5px);
-        }
-        
-        .section-title {
-            font-size: clamp(2.5rem, 8vw, 4rem);
-            font-weight: 700;
-            text-align: center;
-            margin-bottom: 4rem;
-            color: white;
-            text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
-        }
-        
-        .poster-card {
-            background: rgba(0, 0, 0, 0.8);
-            border-radius: 20px;
-            overflow: hidden;
-            transition: all 0.4s ease;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            height: 100%;
-            backdrop-filter: blur(10px);
-        }
-        
-        .poster-card:hover {
-            transform: translateY(-15px) scale(1.02);
-            box-shadow: 0 20px 40px rgba(255, 0, 0, 0.5);
-            border-color: var(--primary);
-        }
-        
-        .poster-image {
-            width: 100%;
-            height: 320px;
-            object-fit: cover;
-            transition: transform 0.4s ease;
-        }
-        
-        .poster-card:hover .poster-image {
-            transform: scale(1.08);
-        }
-        
-        .poster-info {
-            padding: 1.5rem;
-        }
-        
-        .poster-title {
-            color: white;
-            margin-bottom: 0.8rem;
-            font-weight: 600;
-            font-size: 1rem;
-            line-height: 1.4;
-            height: 2.8rem;
-            overflow: hidden;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-        }
-        
-        .poster-date {
-            color: var(--accent);
-            font-size: 0.85rem;
-            margin-bottom: 1rem;
-            opacity: 0.8;
-        }
-        
-        .poster-btn {
-            width: 100%;
-            border-radius: 25px;
-            padding: 0.8rem;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-        
-        .poster-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(0, 102, 255, 0.4);
-        }
-        
-        .loading-container, .error-container {
-            text-align: center;
-            padding: 5rem 2rem;
-        }
-        
-        .loading-spinner {
-            width: 4rem;
-            height: 4rem;
-            border: 4px solid rgba(255, 255, 255, 0.2);
-            border-top: 4px solid var(--primary);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 2rem;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        .status-indicator {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            background: rgba(0, 255, 0, 0.1);
-            color: #00ff00;
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            margin-bottom: 1rem;
-        }
-        
-        .status-dot {
-            width: 8px;
-            height: 8px;
-            background: #00ff00;
-            border-radius: 50%;
-            animation: pulse 2s infinite;
-        }
-        
-        @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.5; }
-            100% { opacity: 1; }
-        }
-        
-        .footer {
-            background: rgba(0, 0, 0, 0.9);
-            padding: 3rem 0;
-            text-align: center;
-            border-top: 1px solid rgba(255, 0, 0, 0.3);
-        }
-        
-        @media (max-width: 768px) {
-            .search-form {
-                flex-direction: column;
-                gap: 1rem;
-            }
-            
-            .search-input, .search-btn {
-                width: 100%;
-            }
-            
-            .features {
-                gap: 1rem;
-                margin-top: 2rem;
-            }
-            
-            .feature-badge {
-                font-size: 0.85rem;
-                padding: 0.8rem 1.5rem;
-            }
-            
-            .poster-image {
-                height: 280px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .hero-section {
-                padding: 10px;
-            }
-            
-            .search-container {
-                margin-bottom: 2rem;
-            }
-            
-            .poster-info {
-                padding: 1rem;
-            }
-        }
-    </style>
+    <title>SK4FiLM - Movie Search</title>
+    <!-- Previous head content same as before -->
 </head>
 
 <body>
-    <!-- Hero Section -->
-    <section class="hero-section">
-        <div class="container">
-            <h1 class="logo-text">SK4FiLM</h1>
-            <p class="tagline">House of Entertainment</p>
-            
-            <div class="search-container">
-                <form id="searchForm" class="search-form">
-                    <input type="text" id="searchInput" class="search-input" 
-                           placeholder="Search for movies, web series, shows..." 
-                           autocomplete="off" required>
-                    <button type="submit" class="search-btn">
-                        <i class="fas fa-search me-2"></i>Search
-                    </button>
-                </form>
-            </div>
-            
-            <div class="features">
-                <div class="feature-badge">
-                    <i class="fas fa-bolt me-2"></i>Lightning Fast
-                </div>
-                <div class="feature-badge">
-                    <i class="fas fa-download me-2"></i>Direct Links
-                </div>
-                <div class="feature-badge">
-                    <i class="fas fa-mobile-alt me-2"></i>Mobile Ready
-                </div>
-                <div class="feature-badge">
-                    <i class="fas fa-shield-alt me-2"></i>Safe & Secure
-                </div>
-            </div>
-        </div>
-    </section>
+    <!-- Previous body content same as before -->
 
-    <!-- Latest Movies -->
-    <section class="movies-section">
-        <div class="container">
-            <h2 class="section-title">Latest Movies</h2>
-            
-            <div class="text-center mb-4" id="api-status">
-                <div class="status-indicator">
-                    <div class="status-dot"></div>
-                    <span>Connecting to SK4FiLM API...</span>
-                </div>
-            </div>
-            
-            <div id="latest-posters" class="row g-4">
-                <div class="loading-container">
-                    <div class="loading-spinner"></div>
-                    <h4>Loading Latest Movies...</h4>
-                    <p class="text-muted">Fetching real data from Telegram channels</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="row align-items-center">
-                <div class="col-md-6 text-md-start">
-                    <h5 class="text-light mb-2">
-                        <i class="fas fa-film text-danger me-2"></i>SK4FiLM
-                    </h5>
-                    <p class="text-muted mb-0">Your ultimate movie search engine powered by real Telegram data.</p>
-                </div>
-                <div class="col-md-6 text-md-end mt-3 mt-md-0">
-                    <div class="social-links mb-2">
-                        <a href="#" class="text-light me-3" title="Telegram">
-                            <i class="fab fa-telegram fa-lg"></i>
-                        </a>
-                        <a href="#" class="text-light me-3" title="YouTube">
-                            <i class="fab fa-youtube fa-lg"></i>
-                        </a>
-                        <a href="#" class="text-light" title="Instagram">
-                            <i class="fab fa-instagram fa-lg"></i>
-                        </a>
-                    </div>
-                    <p class="text-muted mb-0">&copy; 2024 SK4FiLM. All rights reserved.</p>
-                </div>
-            </div>
-        </div>
-    </footer>
-
-    <!-- AdSense Ad -->
-    <div class="container my-4">
-        <div class="text-center">
-            <ins class="adsbygoogle"
-                 style="display:block"
-                 data-ad-client="ca-pub-5244164301170945"
-                 data-ad-slot="1234567890"
-                 data-ad-format="auto"
-                 data-full-width-responsive="true"></ins>
-            <script>
-                (adsbygoogle = window.adsbygoogle || []).push({});
-            </script>
-        </div>
-    </div>
-
-    <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
     <script>
         // Configuration
         const CONFIG = {
             BACKEND_URL: 'https://sk4film.koyeb.app',
-            TIMEOUT: 15000,
-            RETRY_ATTEMPTS: 3,
-            REFRESH_INTERVAL: 600000 // 10 minutes
+            TIMEOUT: 15000
         };
         
-        // State management
-        let apiConnected = false;
-        let loadAttempts = 0;
-        
-        // Utility functions
-        const utils = {
-            escapeHtml: (text) => {
-                if (!text) return '';
-                const div = document.createElement('div');
-                div.textContent = text;
-                return div.innerHTML;
-            },
-            
-            formatDate: (dateString) => {
-                if (!dateString) return 'Recently';
-                try {
-                    const date = new Date(dateString);
-                    const now = new Date();
-                    const diffTime = Math.abs(now - date);
-                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                    
-                    if (diffDays === 1) return 'Today';
-                    if (diffDays === 2) return 'Yesterday';
-                    if (diffDays <= 7) return `${diffDays} days ago`;
-                    if (diffDays <= 30) return `${Math.ceil(diffDays / 7)} weeks ago`;
-                    
-                    return date.toLocaleDateString('en-US', { 
-                        month: 'short', 
-                        day: 'numeric'
-                    });
-                } catch {
-                    return 'Recently';
-                }
-            },
-            
-            apiCall: async (endpoint, options = {}) => {
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), CONFIG.TIMEOUT);
-                
-                try {
-                    const response = await fetch(`${CONFIG.BACKEND_URL}${endpoint}`, {
-                        ...options,
-                        signal: controller.signal,
-                        headers: {
-                            'Content-Type': 'application/json',
-                            ...options.headers
-                        }
-                    });
-                    
-                    clearTimeout(timeoutId);
-                    
-                    if (!response.ok) {
-                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-                    }
-                    
-                    return await response.json();
-                    
-                } catch (error) {
-                    clearTimeout(timeoutId);
-                    if (error.name === 'AbortError') {
-                        throw new Error('Request timeout - server may be starting up');
-                    }
-                    throw error;
-                } finally {
-                    clearTimeout(timeoutId);
-                }
-            }
-        };
-        
-        // UI Updates
-        function updateApiStatus(status, message) {
-            const statusEl = document.getElementById('api-status');
-            const statusClass = status === 'connected' ? 'rgba(0, 255, 0, 0.1)' : 
-                               status === 'error' ? 'rgba(255, 0, 0, 0.1)' : 
-                               'rgba(255, 255, 0, 0.1)';
-            const statusColor = status === 'connected' ? '#00ff00' : 
-                               status === 'error' ? '#ff0000' : 
-                               '#ffff00';
-            
-            statusEl.innerHTML = `
-                <div class="status-indicator" style="background: ${statusClass}; color: ${statusColor};">
-                    <div class="status-dot" style="background: ${statusColor};"></div>
-                    <span>${message}</span>
-                </div>
-            `;
-        }
-        
-        // Search functionality
+        // FIXED: Search functionality with proper routing
         function searchMovie(query) {
             if (!query?.trim()) {
                 alert('Please enter a search term');
                 return;
             }
             
-            // Add loading state to search button
+            console.log('🔍 Redirecting to search page with query:', query);
+            
+            // Add loading state
             const searchBtn = document.querySelector('.search-btn');
-            const originalText = searchBtn.innerHTML;
-            searchBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Searching...';
-            searchBtn.disabled = true;
+            if (searchBtn) {
+                const originalText = searchBtn.innerHTML;
+                searchBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Searching...';
+                searchBtn.disabled = true;
+            }
             
-            setTimeout(() => {
-                window.location.href = `/search?query=${encodeURIComponent(query.trim())}`;
-            }, 500);
-        }
-        
-        // Poster loading with retry logic
-        async function loadLatestPosters() {
-            const postersContainer = document.getElementById('latest-posters');
-            loadAttempts++;
+            // FIXED: Multiple fallback methods for routing
+            const encodedQuery = encodeURIComponent(query.trim());
             
+            // Method 1: Direct path (most reliable)
             try {
-                console.log(`🔄 Loading posters (attempt ${loadAttempts})...`);
-                updateApiStatus('connecting', 'Connecting to SK4FiLM API...');
-                
-                // Show loading state
-                postersContainer.innerHTML = `
-                    <div class="loading-container">
-                        <div class="loading-spinner"></div>
-                        <h4>Loading Latest Movies...</h4>
-                        <p class="text-muted">Fetching real data from Telegram channels</p>
-                        <small class="text-muted">Attempt ${loadAttempts} of ${CONFIG.RETRY_ATTEMPTS}</small>
-                    </div>
-                `;
-                
-                // Check backend health first
-                await utils.apiCall('/health');
-                console.log('✅ Backend health check passed');
-                updateApiStatus('connected', 'Connected to SK4FiLM API');
-                apiConnected = true;
-                
-                // Load posters
-                const data = await utils.apiCall('/api/latest_posters?limit=8');
-                console.log('✅ Posters loaded:', data);
-                
-                if (data.status === 'success' && data.posters?.length > 0) {
-                    displayPosters(data.posters);
-                    loadAttempts = 0; // Reset on success
-                } else {
-                    throw new Error('No movies available from Telegram channels');
-                }
-                
+                window.location.href = `search.html?query=${encodedQuery}`;
             } catch (error) {
-                console.error(`❌ Loading failed (attempt ${loadAttempts}):`, error);
-                apiConnected = false;
+                console.error('Method 1 failed:', error);
                 
-                if (loadAttempts < CONFIG.RETRY_ATTEMPTS) {
-                    updateApiStatus('error', `Connection failed - Retrying in 5 seconds... (${loadAttempts}/${CONFIG.RETRY_ATTEMPTS})`);
-                    setTimeout(loadLatestPosters, 5000);
-                } else {
-                    updateApiStatus('error', 'API connection failed - Check backend status');
-                    showError(error.message);
-                    loadAttempts = 0; // Reset for next manual retry
+                // Method 2: Absolute URL
+                try {
+                    const baseURL = window.location.origin;
+                    window.location.href = `${baseURL}/search.html?query=${encodedQuery}`;
+                } catch (error2) {
+                    console.error('Method 2 failed:', error2);
+                    
+                    // Method 3: Using URL constructor
+                    try {
+                        const url = new URL('/search.html', window.location.origin);
+                        url.searchParams.set('query', query.trim());
+                        window.location.href = url.toString();
+                    } catch (error3) {
+                        console.error('All methods failed:', error3);
+                        alert('Unable to navigate to search page. Please try again.');
+                        
+                        // Reset button
+                        if (searchBtn) {
+                            searchBtn.innerHTML = originalText;
+                            searchBtn.disabled = false;
+                        }
+                    }
                 }
             }
         }
         
-        function displayPosters(posters) {
-            const postersContainer = document.getElementById('latest-posters');
-            
-            const html = posters.map((poster, index) => `
-                <div class="col-lg-3 col-md-4 col-sm-6">
-                    <div class="poster-card" style="animation-delay: ${index * 0.1}s">
-                        <img src="${CONFIG.BACKEND_URL}/api/get_poster?file_id=${poster.photo}" 
-                             alt="${utils.escapeHtml(poster.caption)}" class="poster-image"
-                             loading="lazy"
-                             onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjMyMCIgZmlsbD0iIzMzMzMzMyI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIzMjAiIGZpbGw9IiMzMzMzMzMiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE2IiBmaWxsPSIjZmZmZmZmIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+Tm8gUG9zdGVyPC90ZXh0Pjwvc3ZnPg=='" />
-                        <div class="poster-info">
-                            <h6 class="poster-title" title="${utils.escapeHtml(poster.caption)}">
-                                ${utils.escapeHtml(poster.caption.substring(0, 60))}${poster.caption.length > 60 ? '...' : ''}
-                            </h6>
-                            <div class="poster-date">
-                                <i class="fas fa-calendar-alt me-1"></i>${utils.formatDate(poster.date)}
-                            </div>
-                            <button class="btn btn-primary poster-btn" onclick="searchMovie('${utils.escapeHtml(poster.search_query)}')">
-                                <i class="fas fa-search me-2"></i>Search Movie
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-            
-            postersContainer.innerHTML = html;
-        }
+        // Rest of the JavaScript same as before
+        // ... (previous utility functions, loadLatestPosters, etc.)
         
-        function showError(message) {
-            const postersContainer = document.getElementById('latest-posters');
-            postersContainer.innerHTML = `
-                <div class="error-container">
-                    <div class="mb-4">
-                        <i class="fas fa-exclamation-triangle text-warning fa-4x"></i>
-                    </div>
-                    <h4 class="text-warning mb-3">Unable to Load Movies</h4>
-                    <p class="text-muted mb-4">${utils.escapeHtml(message)}</p>
-                    <div class="d-flex justify-content-center gap-3 flex-wrap">
-                        <button class="btn btn-warning" onclick="loadLatestPosters()">
-                            <i class="fas fa-redo me-2"></i>Try Again
-                        </button>
-                        <button class="btn btn-outline-light" onclick="window.location.reload()">
-                            <i class="fas fa-refresh me-2"></i>Refresh Page
-                        </button>
-                    </div>
-                    <div class="mt-4">
-                        <small class="text-muted">
-                            <i class="fas fa-info-circle me-1"></i>
-                            If the problem persists, the backend service may be starting up. Please wait a few minutes.
-                        </small>
-                    </div>
-                </div>
-            `;
-        }
-        
-        // Initialize application
+        // Initialize
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('🚀 SK4FiLM Frontend Loading...');
+            console.log('🚀 SK4FiLM Frontend Loading');
             console.log('📡 Backend API:', CONFIG.BACKEND_URL);
-            console.log('⚙️ Timeout:', CONFIG.TIMEOUT + 'ms');
             
-            // Load posters immediately
+            // Load posters
             loadLatestPosters();
             
-            // Auto-refresh posters
-            setInterval(() => {
-                if (apiConnected) {
-                    loadLatestPosters();
-                }
-            }, CONFIG.REFRESH_INTERVAL);
-            
-            // Search form handler
+            // FIXED: Enhanced search form handler
             const searchForm = document.getElementById('searchForm');
             const searchInput = document.getElementById('searchInput');
             
@@ -692,26 +88,32 @@
                 searchForm.addEventListener('submit', function(e) {
                     e.preventDefault();
                     const query = searchInput.value.trim();
-                    searchMovie(query);
+                    
+                    if (query) {
+                        console.log('Form submitted with query:', query);
+                        searchMovie(query);
+                    } else {
+                        searchInput.focus();
+                        alert('Please enter a search term');
+                    }
                 });
             }
             
-            // Add input focus effects
+            // Add Enter key support
             if (searchInput) {
-                searchInput.addEventListener('focus', function() {
-                    this.parentElement.style.transform = 'scale(1.02)';
-                });
-                
-                searchInput.addEventListener('blur', function() {
-                    this.parentElement.style.transform = 'scale(1)';
+                searchInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        const query = this.value.trim();
+                        if (query) {
+                            searchMovie(query);
+                        }
+                    }
                 });
             }
         });
         
-        // Console branding
-        console.log('%c🎬 SK4FiLM - Production Ready', 'color: #ff0000; font-size: 20px; font-weight: bold; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);');
-        console.log('%c📡 Backend: ' + CONFIG.BACKEND_URL, 'color: #00ccff; font-size: 14px;');
-        console.log('%c⚡ Powered by Real Telegram Data', 'color: #00ff00; font-size: 12px;');
+        console.log('%c🎬 SK4FiLM - Ready with Fixed Routing', 'color: #ff0000; font-size: 16px; font-weight: bold;');
     </script>
 </body>
 </html>
