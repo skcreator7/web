@@ -7,107 +7,25 @@
     <meta name="google-adsense-account" content="ca-pub-5244164301170945">
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5244164301170945" crossorigin="anonymous"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;600;700&family=Montserrat:wght@800&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --primary: #ff0000;
-            --secondary: #0066ff;
-            --accent: #00ccff;
-            --dark: #0a0a0a;
-            --darker: #000000;
-            --light: #ffffff;
-            --text: #f8f9fa;
-        }
-        
         body {
-            background: url('https://i.postimg.cc/T2mcBGtv/pxfuel-2.jpg') no-repeat center center fixed;
-            background-size: cover;
-            min-height: 100vh;
-            font-family: 'Josefin Sans', sans-serif;
-            color: var(--text);
-            position: relative;
-            overflow-x: hidden;
-            padding-top: 80px;
-        }
-        
-        body::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(10, 10, 10, 0.7);
-            z-index: -1;
-        }
-        
-        .container {
-            position: relative;
-            z-index: 1;
-            padding: 20px 15px;
-        }
-        
-        /* Simple Navigation */
-        .top-navbar {
-            background: rgba(15, 23, 42, 0.95);
-            backdrop-filter: blur(15px);
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            z-index: 1000;
-            padding: 10px 0;
-        }
-        
-        .navbar-brand {
-            display: flex;
-            align-items: center;
+            background: #0a0a0a;
             color: white;
-            text-decoration: none;
-            font-weight: 700;
+            font-family: Arial, sans-serif;
+            padding-top: 70px;
         }
         
-        .logo-img {
-            height: 40px;
-            width: auto;
-            margin-right: 10px;
-            border-radius: 6px;
+        .navbar {
+            background: #1a1a2e;
         }
         
-        .brand-text {
-            font-family: 'Montserrat', sans-serif;
-            font-size: 1.5rem;
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        
-        /* Results Header */
-        .results-header {
-            background: rgba(15, 23, 42, 0.8);
-            border-radius: 10px;
-            padding: 15px 20px;
-            margin-bottom: 20px;
-            border-left: 4px solid var(--accent);
-        }
-        
-        /* Result Items */
         .result-item {
-            background: rgba(15, 23, 42, 0.7);
-            backdrop-filter: blur(5px);
+            background: #16213e;
             border-radius: 10px;
             padding: 20px;
             margin-bottom: 15px;
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-        
-        .poster-result {
-            display: flex;
-            gap: 15px;
-            align-items: flex-start;
+            border-left: 4px solid #0066ff;
         }
         
         .poster-image {
@@ -115,109 +33,33 @@
             height: 200px;
             object-fit: cover;
             border-radius: 8px;
-            flex-shrink: 0;
         }
         
-        .result-content {
-            flex: 1;
-        }
-        
-        .result-title {
-            font-size: 1.1rem;
-            color: var(--accent);
-            margin-bottom: 8px;
-            font-weight: 600;
-        }
-        
-        .text-result {
-            line-height: 1.5;
-            font-size: 0.9rem;
-        }
-        
-        .text-result a {
-            color: var(--accent);
-            text-decoration: none;
-        }
-        
-        .text-result a:hover {
-            color: var(--primary);
-        }
-        
-        /* Ad containers */
         .ad-container {
             margin: 20px 0;
             text-align: center;
-            background: rgba(255,255,255,0.05);
-            border-radius: 8px;
             padding: 15px;
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-        
-        /* Loading Spinner */
-        .loading-spinner {
-            text-align: center;
-            padding: 40px 0;
-        }
-        
-        /* No Results */
-        .no-results {
-            text-align: center;
-            padding: 40px 20px;
-        }
-        
-        .no-results-icon {
-            font-size: 3rem;
-            margin-bottom: 15px;
-        }
-        
-        /* Back to Home */
-        .back-home {
-            text-align: center;
-            margin-top: 20px;
-        }
-        
-        /* Responsive */
-        @media (max-width: 768px) {
-            body {
-                padding-top: 70px;
-            }
-            
-            .poster-result {
-                flex-direction: column;
-            }
-            
-            .poster-image {
-                width: 100%;
-                height: 250px;
-                margin-bottom: 10px;
-            }
-            
-            .result-item {
-                padding: 15px;
-            }
+            background: #1a1a2e;
+            border-radius: 8px;
         }
     </style>
 </head>
 <body>
-    <!-- Simple Navigation -->
-    <nav class="top-navbar">
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
         <div class="container">
             <a href="index.html" class="navbar-brand">
-                <img src="https://iili.io/KOlfc41.png" alt="SK4FiLM Logo" class="logo-img">
-                <div class="brand-text">SK4FiLM</div>
+                <i class="fas fa-film me-2"></i>SK4FiLM
+            </a>
+            <a href="index.html" class="btn btn-outline-light btn-sm">
+                <i class="fas fa-arrow-left me-2"></i>Back
             </a>
         </div>
     </nav>
 
     <div class="container">
-        <!-- Results Header -->
-        <div class="results-header animate__animated animate__fadeInDown">
-            <div class="d-flex justify-content-between align-items-center">
-                <h5 class="mb-0" id="resultsInfo">Search Results</h5>
-                <a href="index.html" class="btn btn-sm btn-outline-light">
-                    <i class="fas fa-arrow-left me-1"></i>Back
-                </a>
-            </div>
+        <!-- Header -->
+        <div class="mb-4">
+            <h4 id="resultsInfo">Search Results</h4>
         </div>
 
         <!-- Top Ad -->
@@ -229,33 +71,15 @@
                 data-ad-slot="1234567897"
                 data-ad-format="auto"
                 data-full-width-responsive="true"></ins>
-            <script>
-                (adsbygoogle = window.adsbygoogle || []).push({});
-            </script>
+            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
         </div>
 
-        <!-- Results Container -->
+        <!-- Results -->
         <div id="resultsContainer">
-            <div class="loading-spinner">
-                <div class="spinner-border text-primary" role="status">
-                    <span class="visually-hidden">Loading...</span>
-                </div>
-                <p class="mt-3">Searching movies...</p>
+            <div class="text-center py-5">
+                <div class="spinner-border text-primary" role="status"></div>
+                <p class="mt-3">Searching real data from Telegram...</p>
             </div>
-        </div>
-
-        <!-- Middle Ad -->
-        <div class="ad-container" id="middleAd" style="display: none;">
-            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5244164301170945" crossorigin="anonymous"></script>
-            <ins class="adsbygoogle"
-                style="display:block"
-                data-ad-client="ca-pub-5244164301170945"
-                data-ad-slot="1234567898"
-                data-ad-format="auto"
-                data-full-width-responsive="true"></ins>
-            <script>
-                (adsbygoogle = window.adsbygoogle || []).push({});
-            </script>
         </div>
 
         <!-- Bottom Ad -->
@@ -267,140 +91,83 @@
                 data-ad-slot="1234567899"
                 data-ad-format="auto"
                 data-full-width-responsive="true"></ins>
-            <script>
-                (adsbygoogle = window.adsbygoogle || []).push({});
-            </script>
-        </div>
-
-        <!-- Back to Home -->
-        <div class="back-home">
-            <a href="index.html" class="btn btn-primary">
-                <i class="fas fa-search me-2"></i>New Search
-            </a>
+            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Backend API URL
         const BACKEND_URL = 'https://sk4film.koyeb.app';
         
-        // Current search state
-        let currentQuery = '';
-
-        // Get URL parameters
-        function getUrlParams() {
+        async function performRealSearch() {
             const urlParams = new URLSearchParams(window.location.search);
-            return urlParams.get('query') || '';
-        }
-
-        // Perform REAL search
-        async function performSearch() {
-            currentQuery = getUrlParams();
-
-            if (!currentQuery) {
+            const query = urlParams.get('query');
+            
+            if (!query) {
                 window.location.href = 'index.html';
                 return;
             }
-
-            // Update header
-            document.getElementById('resultsInfo').textContent = `Results for: "${currentQuery}"`;
-
+            
+            document.getElementById('resultsInfo').textContent = `Results for: "${query}"`;
+            
             try {
-                const response = await fetch(`${BACKEND_URL}/api/search?query=${encodeURIComponent(currentQuery)}&limit=20`);
+                const response = await fetch(`${BACKEND_URL}/api/search?query=${encodeURIComponent(query)}&limit=20`);
                 const data = await response.json();
                 
-                if (data.status === 'success' && data.results && data.results.length > 0) {
-                    displayResults(data.results);
-                } else if (data.status === 'error') {
-                    displayError(data.message);
-                } else {
-                    displayNoResults();
-                }
-            } catch (error) {
-                console.error('Search error:', error);
-                displayError('Search failed. Please try again.');
-            }
-        }
-
-        // Display results
-        function displayResults(results) {
-            const container = document.getElementById('resultsContainer');
-            
-            let resultsHTML = '';
-            
-            results.forEach((result, index) => {
-                if (result.type === 'poster') {
-                    resultsHTML += `
-                        <div class="result-item animate__animated animate__fadeInUp" style="animation-delay: ${index * 0.1}s">
-                            <div class="poster-result">
-                                <img src="${BACKEND_URL}/api/get_poster?file_id=${result.photo}" 
-                                     class="poster-image" 
-                                     alt="Movie Poster"
-                                     onerror="this.src='https://via.placeholder.com/300x400/333333/ffffff?text=Poster'">
-                                <div class="result-content">
-                                    <h6 class="result-title">🎬 Movie</h6>
-                                    <div class="text-result">
-                                        ${result.content}
+                const container = document.getElementById('resultsContainer');
+                
+                if (data.status === 'success' && data.results.length > 0) {
+                    let resultsHTML = '';
+                    
+                    data.results.forEach(result => {
+                        if (result.type === 'poster' && result.photo) {
+                            resultsHTML += `
+                                <div class="result-item">
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            <img src="${BACKEND_URL}/api/get_poster?file_id=${result.photo}" 
+                                                 class="poster-image" 
+                                                 alt="Poster"
+                                                 onerror="this.style.display='none'">
+                                        </div>
+                                        <div class="col-md-9">
+                                            <div>${result.content}</div>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                    `;
-                } else {
-                    resultsHTML += `
-                        <div class="result-item animate__animated animate__fadeInUp" style="animation-delay: ${index * 0.1}s">
-                            <div class="result-content">
-                                <h6 class="result-title">📄 Result</h6>
-                                <div class="text-result">
-                                    ${result.content}
+                            `;
+                        } else {
+                            resultsHTML += `
+                                <div class="result-item">
+                                    <div>${result.content}</div>
                                 </div>
-                            </div>
+                            `;
+                        }
+                    });
+                    
+                    container.innerHTML = resultsHTML;
+                } else {
+                    container.innerHTML = `
+                        <div class="text-center py-5">
+                            <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                            <h5>No results found</h5>
+                            <p class="text-muted">No movies found for "${query}" in Telegram channels</p>
+                            <a href="index.html" class="btn btn-primary">New Search</a>
                         </div>
                     `;
                 }
-            });
-
-            container.innerHTML = resultsHTML;
-            
-            // Show middle ad after first few results
-            if (results.length > 2) {
-                document.getElementById('middleAd').style.display = 'block';
+            } catch (error) {
+                document.getElementById('resultsContainer').innerHTML = `
+                    <div class="text-center py-5">
+                        <i class="fas fa-exclamation-triangle fa-3x text-danger mb-3"></i>
+                        <h5>Search Failed</h5>
+                        <p class="text-muted">Unable to connect to search service</p>
+                        <a href="index.html" class="btn btn-primary">Try Again</a>
+                    </div>
+                `;
             }
         }
-
-        // Display no results
-        function displayNoResults() {
-            const container = document.getElementById('resultsContainer');
-            container.innerHTML = `
-                <div class="no-results animate__animated animate__fadeIn">
-                    <div class="no-results-icon text-warning">
-                        <i class="fas fa-search"></i>
-                    </div>
-                    <h5>No results found</h5>
-                    <p class="text-muted">No movies found for "${currentQuery}"</p>
-                </div>
-            `;
-        }
-
-        // Display error message
-        function displayError(message) {
-            const container = document.getElementById('resultsContainer');
-            container.innerHTML = `
-                <div class="no-results animate__animated animate__fadeIn">
-                    <div class="no-results-icon text-danger">
-                        <i class="fas fa-exclamation-triangle"></i>
-                    </div>
-                    <h5>Search Failed</h5>
-                    <p class="text-muted">${message}</p>
-                </div>
-            `;
-        }
-
-        // Initialize
-        document.addEventListener('DOMContentLoaded', function() {
-            performSearch();
-        });
+        
+        document.addEventListener('DOMContentLoaded', performRealSearch);
     </script>
 </body>
 </html>
