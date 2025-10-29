@@ -11,28 +11,18 @@
       "use": "@vercel/static"
     }
   ],
-  "routes": [
-    {
-      "src": "/search",
-      "dest": "/search.html"
-    },
-    {
-      "src": "/search.html",
-      "dest": "/search.html"
-    },
-    {
-      "src": "/",
-      "dest": "/index.html"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/index.html"
-    }
-  ],
   "rewrites": [
     {
-      "source": "/search(.*)",
+      "source": "/search",
       "destination": "/search.html"
+    },
+    {
+      "source": "/search.html",
+      "destination": "/search.html"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
     }
   ],
   "headers": [
@@ -58,6 +48,6 @@
       ]
     }
   ],
-  "trailingSlash": false,
-  "cleanUrls": true
+  "cleanUrls": true,
+  "trailingSlash": false
 }
