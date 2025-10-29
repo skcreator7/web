@@ -6,12 +6,16 @@ import logging
 from configs import Config
 import html
 import re
+from quart import Quart, jsonify, request
+from hypercorn.asyncio import serve
+from hypercorn.config import Config as HyperConfig
 
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-)
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+# Quart app for API
+api_app = Quart(__name__)
+api_app.secret_key = Config.SECRET_KEY
 
 class MovieBot(Client):
     async def start(self):
@@ -74,11 +78,11 @@ async def web_search(query, limit=50):
     for channel_id in Config.TEXT_CHANNEL_IDS:
         try:
             async for msg in User.search_messages(channel_id, query=query, limit=limit):
-                if msg.text:  # Only text messages
+                if msg.text:
                     results.append({
                         'type': 'text',
                         'content': format_result(msg.text),
-                        'date': msg.date
+                        'date': msg.date.timestamp() if msg.date else None
                     })
         except Exception as e:
             logger.warning(f"Error searching text channel {channel_id}: {e}")
@@ -86,21 +90,110 @@ async def web_search(query, limit=50):
     # Search in poster channel
     try:
         async for msg in User.search_messages(Config.POSTER_CHANNEL_ID, query=query, limit=limit):
-            if msg.caption and msg.photo:  # Only posts with both photo and caption
+            if msg.caption and msg.photo:
                 results.append({
                     'type': 'poster',
                     'content': format_result(msg.caption),
                     'photo': msg.photo.file_id,
-                    'date': msg.date
+                    'date': msg.date.timestamp() if msg.date else None
                 })
     except Exception as e:
         logger.warning(f"Error searching poster channel: {e}")
     
     # Sort by date (newest first)
-    results.sort(key=lambda x: x['date'], reverse=True)
+    results.sort(key=lambda x: x.get('date', 0), reverse=True)
     
     return results[:limit]
 
+async def get_latest_posters(limit=20):
+    """Get latest posters from poster channel"""
+    if not User or not User.is_connected:
+        try:
+            if User:
+                await User.start()
+            else:
+                return []
+        except Exception as e:
+            logger.error(f"Failed to start user client: {e}")
+            return []
+
+    posters = []
+    try:
+        async for msg in User.get_chat_history(Config.POSTER_CHANNEL_ID, limit=limit):
+            if msg.photo and msg.caption:
+                posters.append({
+                    'photo': msg.photo.file_id,
+                    'caption': msg.caption,
+                    'date': msg.date.timestamp() if msg.date else None,
+                    'search_query': msg.caption.split('\n')[0] if msg.caption else "Movie"
+                })
+    except Exception as e:
+        logger.error(f"Error getting posters: {e}")
+    
+    return posters
+
+# API Routes
+@api_app.route('/api/search')
+async def api_search():
+    """API endpoint for movie search"""
+    query = request.args.get('query', '').strip()
+    if not query:
+        return jsonify({'error': 'Query parameter required'}), 400
+    
+    try:
+        results = await web_search(query)
+        return jsonify({
+            'status': 'success',
+            'query': query,
+            'results': results,
+            'count': len(results)
+        })
+    except Exception as e:
+        logger.error(f"API search error: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@api_app.route('/api/latest_posters')
+async def api_latest_posters():
+    """API endpoint for latest posters"""
+    try:
+        posters = await get_latest_posters()
+        return jsonify({
+            'status': 'success',
+            'posters': posters,
+            'count': len(posters)
+        })
+    except Exception as e:
+        logger.error(f"API posters error: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@api_app.route('/api/get_poster')
+async def api_get_poster():
+    """API endpoint to serve poster images"""
+    file_id = request.args.get('file_id')
+    if not file_id:
+        return jsonify({'error': 'No file_id provided'}), 400
+    
+    try:
+        if not User or not User.is_connected:
+            await User.start()
+        
+        file = await User.download_media(file_id, in_memory=True)
+        from quart import Response
+        return Response(file.getvalue(), mimetype='image/jpeg')
+    except Exception as e:
+        logger.error(f"Error getting poster: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@api_app.route('/api/health')
+async def api_health():
+    """Health check endpoint"""
+    return jsonify({
+        'status': 'healthy',
+        'service': 'SK4FiLM Backend',
+        'timestamp': asyncio.get_event_loop().time()
+    })
+
+# Telegram Bot Handlers (Original functionality)
 @Bot.on_message(filters.command("start") & filters.private)
 async def start_handler(client, message: Message):
     try:
@@ -109,7 +202,7 @@ async def start_handler(client, message: Message):
             [InlineKeyboardButton("📢 Channel", url=f"https://t.me/{Config.UPDATES_CHANNEL}")]
         ])
         
-        msg = await message.reply_photo(
+        await message.reply_photo(
             photo="https://example.com/photo.jpg",
             caption=Config.START_MSG.format(mention=message.from_user.mention),
             reply_markup=keyboard
@@ -125,12 +218,11 @@ async def handle_search(client, message: Message):
     try:
         results = await web_search(original_query)
         if results:
-            # Format the first result
             first_result = results[0]
             if first_result['type'] == 'poster':
                 text = f"<b>🎬 Poster Result:</b>\n\n{first_result['content']}"
                 buttons = [[InlineKeyboardButton("More Results", callback_data=f"more_{original_query}")]]
-                await search_msg.delete()  # Delete the searching message
+                await search_msg.delete()
                 await message.reply_photo(
                     photo=first_result['photo'],
                     caption=text,
@@ -158,7 +250,6 @@ async def show_more_results(client, callback: CallbackQuery):
     try:
         results = await web_search(query)
         if results:
-            # Format all results
             formatted_results = []
             for result in results:
                 if result['type'] == 'poster':
@@ -175,9 +266,11 @@ async def show_more_results(client, callback: CallbackQuery):
         await callback.message.edit_text("⚠️ Error loading more results")
 
 async def run_all():
-    # Start web server in background
-    from app import run_server
-    asyncio.create_task(run_server())
+    """Start both Telegram bot and API server"""
+    # Start API server
+    api_config = HyperConfig()
+    api_config.bind = [f"0.0.0.0:{Config.WEB_SERVER_PORT}"]
+    api_task = asyncio.create_task(serve(api_app, api_config))
     
     # Start Telegram bot
     try:
@@ -185,7 +278,9 @@ async def run_all():
             if User:
                 await User.start()
             logger.info("All services started successfully")
-            await asyncio.Event().wait()  # Run forever
+            
+            # Wait for both tasks
+            await asyncio.gather(api_task)
     except Exception as e:
         logger.error(f"Failed to start services: {e}")
         raise
