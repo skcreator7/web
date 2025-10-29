@@ -1,0 +1,8 @@
+{
+  "name": "sk4film-frontend",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "echo 'Building SK4FiLM frontend' && cp index.html dist/ && cp search.html dist/ && cp -r assets/ dist/ 2>/dev/null || true"
+  },
+  "dependencies": {}
+}
