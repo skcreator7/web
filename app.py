@@ -1,134 +1,144 @@
-# app.py (Vercel web)
-from quart import Quart, render_template, request, jsonify, redirect, url_for
-import os, logging
-import httpx
+from quart import Quart, render_template, request, jsonify
+import logging
+import os
+import aiohttp
+import asyncio
 from datetime import datetime
 from collections import defaultdict
-from configs import Config
 
-logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
-logger = logging.getLogger("sk4film-web")
+# Configuration
+class Config:
+    BOT_SESSION_NAME = "SK4FiLM"
+    WEB_BASE_URL = os.environ.get("WEB_BASE_URL", "https://your-app.vercel.app/")
+    KOYEB_BACKEND_URL = os.environ.get("KOYEB_BACKEND_URL", "https://your-bot-app.koyeb.app/")
+    SECRET_KEY = os.environ.get("SECRET_KEY", "your-secret-key-here")
 
-app = Quart(__name__, template_folder="templates")
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+app = Quart(__name__)
 app.secret_key = Config.SECRET_KEY
-
-KOYEB_API_BASE = os.environ.get("KOYEB_API_BASE")  # e.g., https://sk4film.koyeb.app
-KOYEB_API_TOKEN = os.environ.get("KOYEB_API_TOKEN")
-POSTER_BASE_URL = os.environ.get("POSTER_BASE_URL") or KOYEB_API_BASE
 
 visitors = defaultdict(float)
 
-def _headers():
-    h = {}
-    if KOYEB_API_TOKEN:
-        h["Authorization"] = f"Bearer {KOYEB_API_TOKEN}"
-    return h
+class Paginator:
+    def __init__(self, items, items_per_page=10):
+        self.items = items
+        self.items_per_page = items_per_page
+        self.total_items = len(items)
+        self.total_pages = max(1, (self.total_items + items_per_page - 1) // items_per_page)
+
+    def get_page(self, page_number):
+        page_number = max(1, min(page_number, self.total_pages))
+        start_index = (page_number - 1) * self.items_per_page
+        end_index = min(start_index + self.items_per_page, self.total_items)
+        
+        return {
+            'items': self.items[start_index:end_index],
+            'current_page': page_number,
+            'total_pages': self.total_pages,
+            'has_prev': page_number > 1,
+            'has_next': page_number < self.total_pages,
+            'prev_page': page_number - 1,
+            'next_page': page_number + 1
+        }
+
+async def fetch_from_backend(endpoint, params=None):
+    """Fetch data from Koyeb backend"""
+    try:
+        async with aiohttp.ClientSession() as session:
+            url = f"{Config.KOYEB_BACKEND_URL}{endpoint}"
+            async with session.get(url, params=params, timeout=30) as response:
+                if response.status == 200:
+                    return await response.json()
+                return None
+    except Exception as e:
+        logger.error(f"Backend fetch error: {e}")
+        return None
+
+async def search_movies(query):
+    """Search movies from Koyeb backend"""
+    return await fetch_from_backend("/api/search", {"query": query})
+
+async def get_latest_posters():
+    """Get latest posters from Koyeb backend"""
+    return await fetch_from_backend("/api/latest_posters")
+
+async def get_poster_url(file_id):
+    """Get poster image URL"""
+    return f"{Config.KOYEB_BACKEND_URL}/api/get_poster?file_id={file_id}"
 
 @app.before_request
 async def track_visitor():
-    ip = request.headers.get("X-Forwarded-For", request.remote_addr)
+    ip = request.headers.get('X-Forwarded-For', request.remote_addr)
     if ip:
-        visitors[ip.split(",")[0].strip()] = datetime.now().timestamp()
+        ip = ip.split(',')[0].strip()
+        visitors[ip] = datetime.now().timestamp()
 
-@app.get("/")
+@app.route('/')
 async def home():
-    items = []
-    try:
-        async with httpx.AsyncClient(timeout=10) as client:
-            r = await client.get(f"{KOYEB_API_BASE}/api/posters/latest?limit=20", headers=_headers())
-            data = r.json()
-            if data.get("status") == "success":
-                items = data.get("items", [])
-    except Exception as e:
-        logger.warning(f"home posters fetch error: {e}")
-    return await render_template("index.html", config=Config, posters=items)
+    posters_data = await get_latest_posters()
+    posters = posters_data.get('posters', []) if posters_data else []
+    
+    # Add full poster URLs
+    for poster in posters:
+        if 'photo' in poster:
+            poster['photo_url'] = await get_poster_url(poster['photo'])
+    
+    return await render_template('index.html', config=Config, posters=posters)
 
-@app.get("/search")
+@app.route('/search')
 async def search():
-    q = (request.args.get("query") or "").strip()
-    page = request.args.get("page", 1, type=int)
-    per_page = request.args.get("per_page", 10, type=int)
-    if not q:
-        return redirect(url_for("home"))
-    results = []
-    corrected = None
+    query = request.args.get('query', '').strip()
+    page = request.args.get('page', 1, type=int)
+    
+    if not query:
+        return await home()
+    
     try:
-        async with httpx.AsyncClient(timeout=20) as client:
-            r = await client.get(f"{KOYEB_API_BASE}/api/search", params={"q": q, "limit": 100}, headers=_headers())
-            data = r.json()
-            if data.get("status") == "success":
-                results = data.get("items", [])
-                corrected = data.get("corrected")
+        # Search from Koyeb backend
+        search_data = await search_movies(query)
+        
+        if search_data and 'results' in search_data:
+            results = search_data['results']
+            # Add poster URLs
+            for result in results:
+                if result.get('type') == 'poster' and 'photo' in result:
+                    result['photo_url'] = await get_poster_url(result['photo'])
+        else:
+            results = []
+        
+        paginator = Paginator(results)
+        page_data = paginator.get_page(page)
+        
+        return await render_template(
+            'results.html',
+            query=query,
+            results=page_data['items'],
+            total=len(results),
+            pagination=page_data,
+            config=Config,
+            year=datetime.now().year,
+            posters=await get_latest_posters() or []
+        )
+        
     except Exception as e:
-        logger.error(f"search error: {e}")
-        return await render_template("error.html", error=str(e), config=Config, year=datetime.now().year), 500
+        logger.error(f"Search error: {e}")
+        return await render_template('error.html', error=str(e), config=Config, year=datetime.now().year)
 
-    total = len(results)
-    total_pages = max(1, (total + per_page - 1) // per_page)
-    page = max(1, min(page, total_pages))
-    start, end = (page - 1) * per_page, min(page * per_page, total)
-    page_items = results[start:end]
-    pagination = {
-        "items_per_page": per_page,
-        "current_page": page,
-        "total_pages": total_pages,
-        "has_prev": page > 1,
-        "has_next": page < total_pages,
-        "prev_page": page - 1 if page > 1 else None,
-        "next_page": page + 1 if page < total_pages else None,
-        "page_numbers": list(range(max(1, page - 2), min(total_pages, page + 2) + 1)),
-        "start_index": start + 1,
-        "end_index": end
-    }
-
-    posters = []
-    try:
-        async with httpx.AsyncClient(timeout=10) as client:
-            r = await client.get(f"{KOYEB_API_BASE}/api/posters/latest?limit=12", headers=_headers())
-            data = r.json()
-            if data.get("status") == "success":
-                posters = data.get("items", [])
-    except Exception as e:
-        logger.warning(f"posters sidebar error: {e}")
-
-    return await render_template(
-        "results.html",
-        query=q,
-        corrected_query=corrected if corrected and corrected != q.lower() else None,
-        results=page_items,
-        total=total,
-        pagination=pagination,
-        config=Config,
-        year=datetime.now().year,
-        posters=posters
-    )
-
-@app.get("/get_poster")
-async def get_poster():
-    chat_id = request.args.get("chat_id")
-    message_id = request.args.get("message_id")
-    file_id = request.args.get("file_id")
-    if chat_id and message_id:
-        return redirect(f"{POSTER_BASE_URL}/api/get_poster?chat_id={chat_id}&message_id={message_id}")
-    if file_id:
-        # legacy fallback; may expire
-        return redirect(f"{POSTER_BASE_URL}/api/get_poster?file_id={file_id}")
-    return jsonify({"status": "error", "message": "chat_id+message_id or file_id required"}), 400
-
-@app.get("/visitor_count")
+@app.route('/visitor_count')
 async def visitor_count():
     cutoff = datetime.now().timestamp() - 1800
     active = {ip: ts for ip, ts in visitors.items() if ts > cutoff}
-    visitors.clear(); visitors.update(active)
-    return jsonify({"count": len(active), "updated": datetime.now().isoformat(), "status": "success"})
+    return jsonify({
+        'count': len(active),
+        'updated': datetime.now().isoformat()
+    })
 
-@app.errorhandler(404)
-async def not_found(e):
-    return await render_template("error.html", error="Not Found", config=Config, year=datetime.now().year), 404
-
-@app.errorhandler(500)
-async def server_error(e):
-    return await render_template("error.html", error=str(e), config=Config, year=datetime.now().year), 500
+# Vercel handler
+async def app_handler(scope, receive, send):
+    await app(scope, receive, send)
 
 if __name__ == "__main__":
-    app.run()
+    port = int(os.environ.get("PORT", 8000))
+    app.run(host='0.0.0.0', port=port)
