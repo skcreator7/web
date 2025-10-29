@@ -4,13 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Search Results - SK4FiLM</title>
-    <meta name="description" content="Search results for movies and web series on SK4FiLM">
+    <meta name="description" content="Search results for movies and web series on SK4FiLM - Find your favorite entertainment content">
+    <meta name="keywords" content="movie search, telegram movies, bollywood, hollywood, web series">
     
     <!-- Favicon -->
     <link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSI+PHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjZmYwMDAwIi8+PHRleHQgeD0iMTYiIHk9IjIwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5TPC90ZXh0Pjwvc3ZnPg==">
     
-    <!-- CSS -->
+    <!-- AdSense Configuration -->
+    <meta name="google-adsense-account" content="ca-pub-5244164301170945">
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5244164301170945" crossorigin="anonymous"></script>
+    
+    <!-- CSS Libraries -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
     
@@ -23,25 +29,70 @@
             --text: #f8f9fa;
         }
         
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
         body {
-            background: linear-gradient(135deg, #000000 0%, #1a1a2e 50%, #16213e 100%);
+            background: url('https://i.postimg.cc/T2mcBGtv/pxfuel-2.jpg') no-repeat center center fixed;
+            background-size: cover;
             min-height: 100vh;
             font-family: 'Josefin Sans', sans-serif;
             color: var(--text);
+            position: relative;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(0,0,0,0.8) 0%, rgba(26,26,46,0.9) 50%, rgba(22,33,62,0.95) 100%);
+            z-index: -1;
         }
         
         .navbar-custom {
             background: rgba(0, 0, 0, 0.95);
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(15px);
             border-bottom: 2px solid rgba(255, 0, 0, 0.3);
             padding: 1rem 0;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.5);
+        }
+        
+        .navbar-brand {
+            font-weight: 800;
+            font-size: 1.5rem;
+            color: var(--light) !important;
+        }
+        
+        .back-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            border-radius: 20px;
+            padding: 0.5rem 1rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            transform: translateX(-5px);
+            box-shadow: 0 5px 15px rgba(255, 255, 255, 0.1);
         }
         
         .search-section {
-            background: rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(10px);
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(15px);
             padding: 2rem 0;
             margin-bottom: 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
         
         .search-form {
@@ -49,6 +100,7 @@
             gap: 1rem;
             max-width: 800px;
             margin: 0 auto;
+            align-items: stretch;
         }
         
         .search-input {
@@ -60,6 +112,7 @@
             font-size: 1.1rem;
             flex: 1;
             transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
         }
         
         .search-input:focus {
@@ -68,6 +121,11 @@
             box-shadow: 0 0 20px rgba(255, 0, 0, 0.3);
             color: white;
             outline: none;
+            transform: translateY(-2px);
+        }
+        
+        .search-input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
         }
         
         .search-btn {
@@ -79,26 +137,29 @@
             font-weight: 600;
             white-space: nowrap;
             transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(255, 0, 0, 0.3);
         }
         
         .search-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 10px 25px rgba(255, 0, 0, 0.4);
+            background: linear-gradient(45deg, #cc0000, var(--primary));
         }
         
         .result-card {
             background: rgba(0, 0, 0, 0.8);
-            border-radius: 15px;
+            border-radius: 20px;
             border: 1px solid rgba(255, 255, 255, 0.1);
             margin-bottom: 1.5rem;
             overflow: hidden;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
+            transition: all 0.4s ease;
+            backdrop-filter: blur(15px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
         }
         
         .result-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 35px rgba(255, 0, 0, 0.3);
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(255, 0, 0, 0.3);
             border-color: var(--primary);
         }
         
@@ -107,7 +168,12 @@
             max-width: 200px;
             height: 280px;
             object-fit: cover;
-            border-radius: 10px;
+            border-radius: 15px;
+            transition: transform 0.3s ease;
+        }
+        
+        .result-card:hover .result-image {
+            transform: scale(1.05);
         }
         
         .result-content {
@@ -118,6 +184,7 @@
             color: var(--accent);
             font-weight: 600;
             margin-bottom: 0.5rem;
+            font-size: 1.1rem;
         }
         
         .result-text {
@@ -132,6 +199,7 @@
             align-items: center;
             font-size: 0.9rem;
             color: rgba(255, 255, 255, 0.7);
+            flex-wrap: wrap;
         }
         
         .loading-container, .error-container {
@@ -156,31 +224,92 @@
         
         .search-stats {
             background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            padding: 1rem;
+            border-radius: 15px;
+            padding: 1.5rem;
             margin-bottom: 2rem;
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .search-stats h5 {
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+        }
+        
+        .badge-type {
+            font-size: 0.8rem;
+            padding: 0.4rem 0.8rem;
+            border-radius: 15px;
+            font-weight: 500;
+        }
+        
+        .btn-action {
+            border-radius: 20px;
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: none;
+        }
+        
+        .btn-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* AdSense Ad Styling */
+        .ad-container {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            padding: 1rem;
+            margin: 2rem 0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
             backdrop-filter: blur(10px);
         }
         
-        .back-btn {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: white;
-            border-radius: 20px;
-            padding: 0.5rem 1rem;
-            text-decoration: none;
-            transition: all 0.3s ease;
+        .ad-label {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
         
-        .back-btn:hover {
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-            transform: translateX(-5px);
+        .toast-success {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1050;
+            background: rgba(0, 255, 0, 0.1);
+            color: #00ff00;
+            border: 1px solid rgba(0, 255, 0, 0.3);
+            border-radius: 10px;
+            padding: 1rem;
+            backdrop-filter: blur(10px);
+            animation: slideIn 0.3s ease-out;
         }
         
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        /* Responsive Design */
         @media (max-width: 768px) {
             .search-form {
                 flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .search-input, .search-btn {
+                width: 100%;
             }
             
             .result-card .row {
@@ -192,6 +321,34 @@
                 height: 200px;
                 margin-bottom: 1rem;
             }
+            
+            .result-meta {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+            
+            .search-stats {
+                padding: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .navbar-custom {
+                padding: 0.5rem 0;
+            }
+            
+            .search-section {
+                padding: 1rem 0;
+            }
+            
+            .result-card {
+                margin-bottom: 1rem;
+            }
+            
+            .result-content {
+                padding: 1rem;
+            }
         }
     </style>
 </head>
@@ -201,12 +358,12 @@
     <nav class="navbar navbar-custom">
         <div class="container">
             <div class="d-flex justify-content-between align-items-center w-100">
-                <a href="/" class="text-decoration-none">
-                    <h3 class="text-light mb-0">
+                <a href="index.html" class="text-decoration-none">
+                    <h3 class="navbar-brand mb-0">
                         <i class="fas fa-film text-danger me-2"></i>SK4FiLM
                     </h3>
                 </a>
-                <a href="/" class="back-btn">
+                <a href="index.html" class="back-btn">
                     <i class="fas fa-home me-2"></i>Home
                 </a>
             </div>
@@ -216,13 +373,26 @@
     <!-- Search Section -->
     <div class="search-section">
         <div class="container">
-            <form id="searchForm" class="search-form">
+            <form id="searchForm" class="search-form animate__animated animate__fadeInUp">
                 <input type="text" id="searchInput" class="search-input" 
-                       placeholder="Search for movies, web series..." required>
+                       placeholder="Search for movies, web series, shows..." required>
                 <button type="submit" class="search-btn">
                     <i class="fas fa-search me-2"></i>Search
                 </button>
             </form>
+        </div>
+    </div>
+
+    <!-- AdSense Ad - Top -->
+    <div class="container">
+        <div class="ad-container">
+            <div class="ad-label">Advertisement</div>
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-5244164301170945"
+                 data-ad-slot="2468135790"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
         </div>
     </div>
 
@@ -237,15 +407,49 @@
         </div>
     </div>
 
+    <!-- AdSense Ad - Middle -->
+    <div class="container">
+        <div class="ad-container">
+            <div class="ad-label">Advertisement</div>
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-5244164301170945"
+                 data-ad-slot="9753186420"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="mt-5 py-4" style="background: rgba(0, 0, 0, 0.9); border-top: 1px solid rgba(255, 0, 0, 0.3);">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-6 text-md-start">
+                    <h6 class="text-light mb-0">
+                        <i class="fas fa-film text-danger me-2"></i>SK4FiLM Search
+                    </h6>
+                    <small class="text-muted">Powered by real Telegram data</small>
+                </div>
+                <div class="col-md-6 text-md-end mt-2 mt-md-0">
+                    <small class="text-muted">&copy; 2024 SK4FiLM. All rights reserved.</small>
+                </div>
+            </div>
+        </div>
+    </footer>
+
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     
     <script>
+        // Initialize AdSense
+        (adsbygoogle = window.adsbygoogle || []).push({});
+        (adsbygoogle = window.adsbygoogle || []).push({});
+        
         // Configuration
         const CONFIG = {
             BACKEND_URL: 'https://sk4film.koyeb.app',
             TIMEOUT: 20000,
-            MAX_RESULTS: 20
+            MAX_RESULTS: 25
         };
         
         // Utility functions
@@ -331,10 +535,11 @@
                 
                 // Show loading state
                 resultsContainer.innerHTML = `
-                    <div class="loading-container">
+                    <div class="loading-container animate__animated animate__fadeIn">
                         <div class="loading-spinner"></div>
                         <h4>Searching "${utils.escapeHtml(query)}"...</h4>
                         <p class="text-muted">Looking through Telegram channels for your movie</p>
+                        <small class="text-muted">This may take a few seconds...</small>
                     </div>
                 `;
                 
@@ -358,14 +563,18 @@
             const resultsContainer = document.getElementById('searchResults');
             
             const statsHtml = `
-                <div class="search-stats">
+                <div class="search-stats animate__animated animate__fadeInUp">
                     <div class="row align-items-center">
                         <div class="col-md-8">
-                            <h5 class="mb-0">
+                            <h5 class="mb-1">
                                 <i class="fas fa-search text-primary me-2"></i>
                                 Search Results for "${utils.escapeHtml(query)}"
                             </h5>
-                            <small class="text-muted">Found ${totalCount} results from Telegram channels</small>
+                            <div class="d-flex gap-2 align-items-center flex-wrap">
+                                <small class="text-muted">Found ${totalCount} results from Telegram channels</small>
+                                <span class="badge bg-success badge-type">Real Data</span>
+                                <span class="badge bg-info badge-type">Live Search</span>
+                            </div>
                         </div>
                         <div class="col-md-4 text-md-end mt-2 mt-md-0">
                             <small class="text-muted">
@@ -378,44 +587,54 @@
             `;
             
             const resultsHtml = results.map((result, index) => `
-                <div class="result-card" style="animation-delay: ${index * 0.1}s">
+                <div class="result-card animate__animated animate__fadeInUp" style="animation-delay: ${index * 0.1}s">
                     <div class="p-4">
-                        <div class="row">
+                        <div class="row align-items-start">
                             ${result.photo ? `
                                 <div class="col-md-3 mb-3 mb-md-0">
                                     <img src="${CONFIG.BACKEND_URL}/api/get_poster?file_id=${result.photo}" 
                                          alt="Movie Poster" class="result-image"
-                                         onerror="this.style.display='none'">
+                                         loading="lazy"
+                                         onerror="this.style.display='none'; this.parentElement.style.display='none';">
                                 </div>
                                 <div class="col-md-9">
                             ` : '<div class="col-12">'}
                                 <div class="result-content">
-                                    <div class="d-flex justify-content-between align-items-start mb-3">
-                                        <span class="badge ${result.type === 'poster' ? 'bg-danger' : 'bg-primary'} fs-6">
+                                    <div class="d-flex justify-content-between align-items-start mb-3 flex-wrap gap-2">
+                                        <span class="badge ${result.type === 'poster' ? 'bg-danger' : 'bg-primary'} badge-type">
                                             ${result.type === 'poster' ? 
                                               '<i class="fas fa-image me-1"></i>Movie Poster' : 
                                               '<i class="fas fa-file-text me-1"></i>Text Result'
                                             }
                                         </span>
-                                        <span class="result-meta">
-                                            <i class="fas fa-calendar-alt me-1"></i>
-                                            ${utils.formatDate(result.date)}
-                                        </span>
+                                        <div class="result-meta">
+                                            <small>
+                                                <i class="fas fa-calendar-alt me-1"></i>
+                                                ${utils.formatDate(result.date)}
+                                            </small>
+                                            <small>
+                                                <i class="fas fa-telegram me-1"></i>
+                                                Channel ${result.channel_id ? Math.abs(result.channel_id).toString().slice(-4) : 'Source'}
+                                            </small>
+                                        </div>
                                     </div>
                                     
-                                    <div class="result-text">
+                                    <div class="result-text mb-3">
                                         ${result.content || 'No description available'}
                                     </div>
                                     
                                     <div class="d-flex gap-2 flex-wrap">
-                                        <button class="btn btn-outline-light btn-sm" onclick="copyToClipboard('${utils.escapeHtml(result.content?.replace(/<[^>]*>/g, '') || '')}')">
+                                        <button class="btn btn-outline-light btn-action" onclick="copyToClipboard('${utils.escapeHtml(result.content?.replace(/<[^>]*>/g, '') || '')}')">
                                             <i class="fas fa-copy me-1"></i>Copy
                                         </button>
                                         ${result.type === 'poster' ? `
-                                            <button class="btn btn-primary btn-sm" onclick="searchRelated('${utils.escapeHtml(utils.truncateText(result.content, 30))}')">
+                                            <button class="btn btn-primary btn-action" onclick="searchRelated('${utils.escapeHtml(utils.truncateText(result.content, 30))}')">
                                                 <i class="fas fa-search me-1"></i>Search Similar
                                             </button>
                                         ` : ''}
+                                        <button class="btn btn-success btn-action" onclick="shareResult('${utils.escapeHtml(query)}', '${utils.escapeHtml(utils.truncateText(result.content, 50))}')">
+                                            <i class="fas fa-share me-1"></i>Share
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -430,18 +649,27 @@
         function showNoResults(query) {
             const resultsContainer = document.getElementById('searchResults');
             resultsContainer.innerHTML = `
-                <div class="error-container">
+                <div class="error-container animate__animated animate__fadeIn">
                     <div class="mb-4">
-                        <i class="fas fa-search fa-4x text-muted"></i>
+                        <i class="fas fa-search fa-5x text-muted"></i>
                     </div>
                     <h3>No Results Found</h3>
                     <p class="lead">No movies found for "${utils.escapeHtml(query)}"</p>
                     <p class="text-muted mb-4">Try searching with different keywords, check spelling, or try broader terms.</p>
+                    <div class="mb-4">
+                        <h6 class="text-info">Search Tips:</h6>
+                        <ul class="list-unstyled text-muted">
+                            <li><i class="fas fa-lightbulb me-2"></i>Try movie names in English</li>
+                            <li><i class="fas fa-lightbulb me-2"></i>Use simple keywords like "action", "comedy"</li>
+                            <li><i class="fas fa-lightbulb me-2"></i>Search for actor or director names</li>
+                            <li><i class="fas fa-lightbulb me-2"></i>Try year + movie name (e.g., "2024 movie")</li>
+                        </ul>
+                    </div>
                     <div class="d-flex justify-content-center gap-3 flex-wrap">
                         <button class="btn btn-primary" onclick="document.getElementById('searchInput').focus()">
                             <i class="fas fa-search me-2"></i>Try Different Search
                         </button>
-                        <a href="/" class="btn btn-outline-light">
+                        <a href="index.html" class="btn btn-outline-light">
                             <i class="fas fa-home me-2"></i>Back to Home
                         </a>
                     </div>
@@ -452,17 +680,23 @@
         function showError(message) {
             const resultsContainer = document.getElementById('searchResults');
             resultsContainer.innerHTML = `
-                <div class="error-container">
+                <div class="error-container animate__animated animate__fadeIn">
                     <div class="mb-4">
-                        <i class="fas fa-exclamation-triangle fa-4x text-warning"></i>
+                        <i class="fas fa-exclamation-triangle fa-5x text-warning"></i>
                     </div>
                     <h3 class="text-warning">Search Error</h3>
                     <p class="text-muted mb-4">${utils.escapeHtml(message)}</p>
+                    <div class="mb-4">
+                        <p class="text-muted">
+                            <i class="fas fa-info-circle me-1"></i>
+                            This could be due to network issues or the backend service may be starting up.
+                        </p>
+                    </div>
                     <div class="d-flex justify-content-center gap-3 flex-wrap">
                         <button class="btn btn-warning" onclick="retryLastSearch()">
                             <i class="fas fa-redo me-2"></i>Try Again
                         </button>
-                        <a href="/" class="btn btn-outline-light">
+                        <a href="index.html" class="btn btn-outline-light">
                             <i class="fas fa-home me-2"></i>Back to Home
                         </a>
                     </div>
@@ -475,18 +709,16 @@
             if (!text) return;
             
             navigator.clipboard.writeText(text).then(() => {
-                // Show temporary success message
-                const toast = document.createElement('div');
-                toast.className = 'alert alert-success position-fixed';
-                toast.style.cssText = 'top: 20px; right: 20px; z-index: 1050; opacity: 0.9;';
-                toast.innerHTML = '<i class="fas fa-check me-2"></i>Copied to clipboard!';
-                document.body.appendChild(toast);
-                
-                setTimeout(() => {
-                    document.body.removeChild(toast);
-                }, 2000);
+                showToast('Copied to clipboard!', 'success');
             }).catch(() => {
-                alert('Failed to copy to clipboard');
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                showToast('Copied to clipboard!', 'success');
             });
         }
         
@@ -496,6 +728,37 @@
             document.getElementById('searchInput').value = cleanQuery;
             performSearch(cleanQuery);
             window.history.pushState({}, '', `?query=${encodeURIComponent(cleanQuery)}`);
+        }
+        
+        function shareResult(query, content) {
+            if (navigator.share) {
+                navigator.share({
+                    title: `SK4FiLM Search: ${query}`,
+                    text: content,
+                    url: window.location.href
+                });
+            } else {
+                // Fallback
+                const shareText = `Found on SK4FiLM: ${content}\n${window.location.href}`;
+                copyToClipboard(shareText);
+                showToast('Share link copied to clipboard!', 'success');
+            }
+        }
+        
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = `toast-${type}`;
+            toast.innerHTML = `<i class="fas fa-check me-2"></i>${message}`;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => {
+                    if (document.body.contains(toast)) {
+                        document.body.removeChild(toast);
+                    }
+                }, 300);
+            }, 2500);
         }
         
         function retryLastSearch() {
@@ -509,6 +772,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             console.log('🔍 SK4FiLM Search Page Loading...');
             console.log('📡 Backend API:', CONFIG.BACKEND_URL);
+            console.log('📢 AdSense:', 'ca-pub-5244164301170945');
             
             const query = utils.getQueryParameter();
             const searchInput = document.getElementById('searchInput');
@@ -521,9 +785,18 @@
                 if (!query) {
                     searchInput.focus();
                     document.getElementById('searchResults').innerHTML = `
-                        <div class="text-center py-5">
+                        <div class="text-center py-5 animate__animated animate__fadeIn">
+                            <div class="mb-4">
+                                <i class="fas fa-search fa-4x text-primary"></i>
+                            </div>
                             <h4>Enter a search term to find movies</h4>
                             <p class="text-muted">Search through thousands of movies from Telegram channels</p>
+                            <div class="mt-4">
+                                <small class="text-muted">
+                                    <i class="fas fa-info-circle me-1"></i>
+                                    Powered by real-time Telegram data
+                                </small>
+                            </div>
                         </div>
                     `;
                 }
@@ -534,7 +807,7 @@
                 performSearch(query);
             }
             
-            // Search form handler
+            // Enhanced search form handler
             const searchForm = document.getElementById('searchForm');
             if (searchForm) {
                 searchForm.addEventListener('submit', function(e) {
@@ -544,7 +817,21 @@
                         // Update URL and perform search
                         window.history.pushState({}, '', `?query=${encodeURIComponent(newQuery)}`);
                         performSearch(newQuery);
+                    } else {
+                        searchInput.focus();
+                        showToast('Please enter a search term', 'warning');
                     }
+                });
+            }
+            
+            // Add input enhancements
+            if (searchInput) {
+                searchInput.addEventListener('focus', function() {
+                    this.parentElement.style.transform = 'scale(1.02)';
+                });
+                
+                searchInput.addEventListener('blur', function() {
+                    this.parentElement.style.transform = 'scale(1)';
                 });
             }
         });
@@ -552,13 +839,17 @@
         // Handle browser back/forward
         window.addEventListener('popstate', function() {
             const query = utils.getQueryParameter();
-            document.getElementById('searchInput').value = query;
+            const searchInput = document.getElementById('searchInput');
+            if (searchInput) {
+                searchInput.value = query;
+            }
             if (query) {
                 performSearch(query);
             }
         });
         
-        console.log('%c🔍 SK4FiLM Search - Ready', 'color: #00ccff; font-size: 16px; font-weight: bold;');
+        console.log('%c🔍 SK4FiLM Search - Ready with AdSense', 'color: #00ccff; font-size: 16px; font-weight: bold;');
+        console.log('%c💰 AdSense Integrated', 'color: #ffff00; font-size: 12px;');
     </script>
 </body>
 </html>
