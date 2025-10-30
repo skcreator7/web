@@ -6,7 +6,689 @@ from quart import Quart, jsonify, request, Response
 from hypercorn.asyncio import serve
 from hypercorn.config import Config as HyperConfig
 import html
+import reimport asyncio
+import os
+import logging
+from pyrogram import Client, errors
+from quart import Quart, jsonify, request, Response
+from hypercorn.asyncio import serve
+from hypercorn.config import Config as HyperConfig
+import html
 import re
+from datetime import datetime, timedelta
+import math
+import aiohttp
+import urllib.parse
+import json
+import time
+
+class Config:
+    API_ID = int(os.environ.get("API_ID", "0"))
+    API_HASH = os.environ.get("API_HASH", "")
+    USER_SESSION_STRING = os.environ.get("USER_SESSION_STRING", "")
+    
+    TEXT_CHANNEL_IDS = [-1001891090100, -1002024811395]
+    
+    SECRET_KEY = os.environ.get("SECRET_KEY", "sk4film-secret-key-2024")
+    WEB_SERVER_PORT = int(os.environ.get("PORT", 8000))
+    
+    OMDB_KEYS = ["8265bd1c", "b9bd48a6", "2f2d1c8e"]
+    AUTO_UPDATE_INTERVAL = 30
+
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
+
+app = Quart(__name__)
+User = None
+bot_started = False
+
+# FIXED: Data store with proper deduplication
+movie_store = {
+    'movies': [],
+    'last_update': None,
+    'last_ids': {},
+    'seen_titles': set(),  # Track seen titles to prevent duplicates
+    'updating': False
+}
+
+def extract_clean_title(text):
+    """Extract clean movie title - no duplicates"""
+    if not text or len(text) < 15:
+        return None
+    
+    try:
+        # Clean the text first
+        text = re.sub(r'[^\w\s\(\)\-\.\n\u0900-\u097F]', ' ', text)  # Keep Hindi chars too
+        first_line = text.split('\n')[0].strip()
+        
+        patterns = [
+            r'🎬\s*([^-\n]{4,35})(?:\s*-|\n|$)',
+            r'^([^(]{4,35})\s*\(\d{4}\)',
+            r'^([^-]{4,35})\s*-\s*(?:Hindi|English|20\d{2})',
+            r'^([A-Z][a-z]+(?:\s+[A-Za-z]+){1,3})',
+            r'"([^"]{4,30})"'
+        ]
+        
+        for pattern in patterns:
+            match = re.search(pattern, first_line, re.IGNORECASE)
+            if match:
+                title = match.group(1).strip()
+                title = re.sub(r'\s+', ' ', title)
+                
+                if validate_clean_title(title):
+                    return title
+        
+        return None
+        
+    except:
+        return None
+
+def validate_clean_title(title):
+    """Validate title to avoid duplicates and invalid titles"""
+    if not title or len(title) < 4 or len(title) > 40:
+        return False
+    
+    # Remove common bad words
+    bad_words = ['size', 'quality', 'download', 'link', 'channel', 'group', 'mb', 'gb', 'file']
+    if any(word in title.lower() for word in bad_words):
+        return False
+    
+    # Must have letters
+    if not re.search(r'[a-zA-Z]', title):
+        return False
+    
+    return True
+
+async def get_imdb_poster_reliable(title, session):
+    """Reliable IMDB poster fetching - no duplicates"""
+    try:
+        for api_key in Config.OMDB_KEYS:
+            try:
+                url = f"http://www.omdbapi.com/?t={urllib.parse.quote(title)}&apikey={api_key}&plot=short"
+                
+                async with session.get(url, timeout=7) as response:
+                    if response.status == 200:
+                        data = await response.json()
+                        
+                        if (data.get('Response') == 'True' and 
+                            data.get('Poster') and 
+                            data['Poster'] != 'N/A' and
+                            data['Poster'].startswith('http')):
+                            
+                            return {
+                                'poster_url': data['Poster'],
+                                'imdb_title': data.get('Title', title),
+                                'year': data.get('Year', ''),
+                                'rating': data.get('imdbRating', ''),
+                                'genre': data.get('Genre', '')[:30],
+                                'success': True
+                            }
+                
+                await asyncio.sleep(0.1)
+                
+            except:
+                continue
+        
+        return {'success': False}
+        
+    except:
+        return {'success': False}
+
+async def get_recent_movies_fixed():
+    """FIXED: Get recent movies - newest first, no duplicates"""
+    if not User or not bot_started:
+        return []
+    
+    try:
+        start_time = time.time()
+        logger.info("🚀 Getting recent movies - NEWEST FIRST, NO DUPLICATES")
+        
+        # Get ALL recent posts with timestamps
+        all_posts_with_time = []
+        
+        for channel_id in Config.TEXT_CHANNEL_IDS:
+            try:
+                channel_name = 'Movies Link' if channel_id == -1001891090100 else 'DISKWALA MOVIES'
+                
+                posts_count = 0
+                async for message in User.get_chat_history(channel_id, limit=35):
+                    if message.text and len(message.text) > 40 and message.date:
+                        title = extract_clean_title(message.text)
+                        
+                        if title:
+                            # Use actual message timestamp for proper sorting
+                            all_posts_with_time.append({
+                                'title': title,
+                                'text': message.text,
+                                'date': message.date,  # Keep as datetime for sorting
+                                'date_iso': message.date.isoformat(),
+                                'channel': channel_name,
+                                'message_id': message.id,
+                                'channel_id': channel_id
+                            })
+                            posts_count += 1
+                
+                logger.info(f"✅ {channel_name}: {posts_count} posts")
+                
+            except Exception as e:
+                logger.warning(f"Channel {channel_id} error: {e}")
+        
+        # SORT BY ACTUAL DATE - NEWEST FIRST
+        all_posts_with_time.sort(key=lambda x: x['date'], reverse=True)
+        
+        logger.info(f"📊 Got {len(all_posts_with_time)} total posts, sorting by date...")
+        
+        # REMOVE DUPLICATES - Keep newest of each title
+        unique_movies = []
+        seen_titles_lower = set()
+        
+        for post in all_posts_with_time:
+            title_key = post['title'].lower().strip()
+            
+            if title_key not in seen_titles_lower:
+                seen_titles_lower.add(title_key)
+                unique_movies.append(post)
+                
+                if len(unique_movies) >= 30:  # Limit for performance
+                    break
+        
+        logger.info(f"🎯 After deduplication: {len(unique_movies)} unique movies")
+        
+        # Add IMDB posters in parallel batches
+        movies_with_posters = []
+        
+        async with aiohttp.ClientSession() as session:
+            batch_size = 6  # Smaller batches for reliability
+            
+            for i in range(0, len(unique_movies), batch_size):
+                batch = unique_movies[i:i + batch_size]
+                logger.info(f"🎬 IMDB batch {i//batch_size + 1}: {len(batch)} movies")
+                
+                # Parallel IMDB calls
+                imdb_tasks = [get_imdb_poster_reliable(movie['title'], session) for movie in batch]
+                imdb_results = await asyncio.gather(*imdb_tasks, return_exceptions=True)
+                
+                for movie, imdb_data in zip(batch, imdb_results):
+                    # Convert datetime back to ISO string for JSON
+                    movie['date'] = movie['date_iso']
+                    del movie['date_iso']
+                    
+                    if isinstance(imdb_data, dict) and imdb_data.get('success'):
+                        movie.update({
+                            'imdb_poster': imdb_data['poster_url'],
+                            'imdb_year': imdb_data['year'],
+                            'imdb_rating': imdb_data['rating'],
+                            'imdb_genre': imdb_data['genre'],
+                            'has_poster': True
+                        })
+                        logger.info(f"✅ IMDB: {movie['title']}")
+                    else:
+                        movie['has_poster'] = False
+                        logger.info(f"⚠️ No IMDB: {movie['title']}")
+                    
+                    movies_with_posters.append(movie)
+                
+                # Rate limiting between batches
+                if i + batch_size < len(unique_movies):
+                    await asyncio.sleep(0.4)
+        
+        total_time = time.time() - start_time
+        poster_count = sum(1 for m in movies_with_posters if m.get('has_poster'))
+        
+        logger.info(f"⚡ COMPLETE: {len(movies_with_posters)} movies in {total_time:.2f}s")
+        logger.info(f"🖼️ {poster_count} movies with IMDB posters")
+        logger.info(f"📅 Sorted by date - newest first!")
+        
+        return movies_with_posters
+        
+    except Exception as e:
+        logger.error(f"Recent movies error: {e}")
+        return []
+
+async def check_for_new_posts_fixed():
+    """FIXED: Check for new posts - proper timestamp handling"""
+    if not User or not bot_started:
+        return False
+    
+    try:
+        logger.info("🔄 Checking for NEW posts...")
+        
+        new_posts_found = False
+        current_time = datetime.now()
+        
+        for channel_id in Config.TEXT_CHANNEL_IDS:
+            try:
+                channel_name = 'Movies Link' if channel_id == -1001891090100 else 'DISKWALA MOVIES'
+                last_known_id = movie_store['last_ids'].get(channel_id, 0)
+                
+                new_posts = []
+                async for message in User.get_chat_history(channel_id, limit=8):
+                    if (message.id > last_known_id and 
+                        message.text and 
+                        len(message.text) > 40 and 
+                        message.date):
+                        
+                        title = extract_clean_title(message.text)
+                        
+                        if title:
+                            title_key = title.lower().strip()
+                            
+                            # Check if we haven't seen this title before
+                            if title_key not in movie_store['seen_titles']:
+                                movie_store['seen_titles'].add(title_key)
+                                
+                                new_post = {
+                                    'title': title,
+                                    'text': message.text,
+                                    'date': message.date.isoformat(),
+                                    'channel': channel_name,
+                                    'message_id': message.id,
+                                    'channel_id': channel_id,
+                                    'is_new': True
+                                }
+                                
+                                new_posts.append(new_post)
+                                logger.info(f"🆕 NEW MOVIE: {title} from {channel_name}")
+                
+                if new_posts:
+                    # Get IMDB posters for new posts
+                    async with aiohttp.ClientSession() as session:
+                        for post in new_posts:
+                            imdb_data = await get_imdb_poster_reliable(post['title'], session)
+                            if imdb_data.get('success'):
+                                post.update({
+                                    'imdb_poster': imdb_data['poster_url'],
+                                    'imdb_year': imdb_data['year'],
+                                    'imdb_rating': imdb_data['rating'],
+                                    'has_poster': True
+                                })
+                            else:
+                                post['has_poster'] = False
+                    
+                    # Add NEW posts to FRONT of list (newest first)
+                    movie_store['movies'] = new_posts + movie_store['movies']
+                    
+                    # Update last message ID
+                    movie_store['last_ids'][channel_id] = max(post['message_id'] for post in new_posts)
+                    
+                    new_posts_found = True
+                    
+            except Exception as e:
+                logger.warning(f"New posts check error for {channel_id}: {e}")
+        
+        # Keep only latest 40 movies and remove any old duplicates
+        if movie_store['movies']:
+            movie_store['movies'] = movie_store['movies'][:40]
+        
+        if new_posts_found:
+            movie_store['last_update'] = current_time
+            logger.info("✅ NEW POSTS ADDED TO FRONT!")
+        
+        return new_posts_found
+        
+    except Exception as e:
+        logger.error(f"New posts check error: {e}")
+        return False
+
+async def search_channels(query, limit=10, offset=0):
+    """Search telegram channels"""
+    try:
+        results = []
+        
+        for channel_id in Config.TEXT_CHANNEL_IDS:
+            try:
+                async for message in User.search_messages(channel_id, query, limit=15):
+                    if message.text:
+                        formatted = format_telegram_content(message.text)
+                        
+                        results.append({
+                            'content': formatted,
+                            'date': message.date.isoformat() if message.date else datetime.now().isoformat(),
+                            'channel': 'Movies Link' if channel_id == -1001891090100 else 'DISKWALA MOVIES',
+                            'links': len(re.findall(r'https?://[^\s]+', message.text))
+                        })
+                        
+            except Exception as e:
+                logger.warning(f"Search error: {e}")
+        
+        # Sort by links first, then date
+        results.sort(key=lambda x: (x['links'], x['date']), reverse=True)
+        
+        total = len(results)
+        paginated = results[offset:offset + limit]
+        
+        return {
+            "results": paginated,
+            "total": total,
+            "current_page": (offset // limit) + 1,
+            "total_pages": math.ceil(total / limit) if total > 0 else 1
+        }
+        
+    except Exception as e:
+        return {"results": [], "total": 0}
+
+def format_telegram_content(text):
+    """Enhanced telegram content formatting"""
+    if not text:
+        return ""
+    
+    formatted = html.escape(text)
+    
+    # Enhanced download links
+    formatted = re.sub(
+        r'(https?://[^\s]+)', 
+        r'<a href="\1" target="_blank" style="color: #00ccff; font-weight: 600; background: rgba(0,204,255,0.1); padding: 3px 8px; border-radius: 6px; margin: 2px; display: inline-block; text-decoration: none;"><i class="fas fa-external-link-alt me-1"></i>\1</a>', 
+        formatted
+    )
+    
+    # Convert newlines
+    formatted = formatted.replace('\n', '<br>')
+    
+    # Movie info highlighting
+    formatted = re.sub(r'📁\s*Size[:\s]*([^<br>|]+)', r'<span style="background: rgba(40,167,69,0.2); color: #28a745; padding: 4px 10px; border-radius: 10px; font-size: 0.8rem; margin: 3px; display: inline-block; border: 1px solid rgba(40,167,69,0.3);"><i class="fas fa-hdd me-1"></i>Size: \1</span>', formatted)
+    formatted = re.sub(r'📹\s*Quality[:\s]*([^<br>|]+)', r'<span style="background: rgba(0,123,255,0.2); color: #007bff; padding: 4px 10px; border-radius: 10px; font-size: 0.8rem; margin: 3px; display: inline-block; border: 1px solid rgba(0,123,255,0.3);"><i class="fas fa-video me-1"></i>Quality: \1</span>', formatted)
+    
+    return formatted
+
+async def initialize_telegram_system():
+    """Initialize complete telegram system"""
+    global User, bot_started
+    
+    try:
+        logger.info("🔄 Initializing complete Telegram system...")
+        
+        User = Client(
+            "sk4film_complete_fixed",
+            api_id=Config.API_ID,
+            api_hash=Config.API_HASH,
+            session_string=Config.USER_SESSION_STRING,
+            workdir="/tmp"
+        )
+        
+        await User.start()
+        me = await User.get_me()
+        logger.info(f"✅ Connected: {me.first_name}")
+        
+        # Verify channels
+        working_channels = []
+        for channel_id in Config.TEXT_CHANNEL_IDS:
+            try:
+                chat = await User.get_chat(channel_id)
+                logger.info(f"✅ Channel verified: {chat.title}")
+                working_channels.append(channel_id)
+            except Exception as e:
+                logger.error(f"❌ Channel {channel_id} error: {e}")
+        
+        if working_channels:
+            Config.TEXT_CHANNEL_IDS = working_channels
+            bot_started = True
+            
+            # Load initial movies with proper sorting
+            logger.info("📋 Loading initial movies...")
+            initial_movies = await get_recent_movies_fixed()
+            
+            # Initialize store
+            movie_store['movies'] = initial_movies
+            movie_store['last_update'] = datetime.now()
+            
+            # Set initial seen titles to prevent duplicates
+            movie_store['seen_titles'] = {movie['title'].lower() for movie in initial_movies}
+            
+            # Set last message IDs
+            for movie in initial_movies:
+                channel_id = movie.get('channel_id')
+                if channel_id:
+                    current_max = movie_store['last_ids'].get(channel_id, 0)
+                    movie_store['last_ids'][channel_id] = max(current_max, movie.get('message_id', 0))
+            
+            # Start auto update background task
+            asyncio.create_task(auto_update_loop())
+            
+            logger.info(f"🎉 COMPLETE SYSTEM READY!")
+            logger.info(f"🎬 {len(initial_movies)} movies loaded (newest first)")
+            logger.info(f"🔄 Auto update every {Config.AUTO_UPDATE_INTERVAL}s")
+            return True
+        
+        return False
+        
+    except Exception as e:
+        logger.error(f"System init error: {e}")
+        return False
+
+async def auto_update_loop():
+    """Background auto update - fixed"""
+    logger.info("🔄 AUTO UPDATE LOOP STARTED - NO DUPLICATES")
+    
+    while bot_started:
+        try:
+            if not movie_store['updating']:
+                movie_store['updating'] = True
+                await check_for_new_posts_fixed()
+                movie_store['updating'] = False
+            
+            await asyncio.sleep(Config.AUTO_UPDATE_INTERVAL)
+            
+        except Exception as e:
+            logger.error(f"Auto update error: {e}")
+            movie_store['updating'] = False
+            await asyncio.sleep(60)
+
+@app.after_request
+async def after_request(response):
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+    response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
+    return response
+
+@app.route('/')
+async def home():
+    return jsonify({
+        "status": "healthy" if bot_started else "error",
+        "service": "SK4FiLM Complete Fixed System",
+        "features": [
+            "recent_posts_first",
+            "no_duplicate_posters",
+            "auto_update_system", 
+            "social_media_menu",
+            "tutorial_videos",
+            "features_section",
+            "disclaimer_section",
+            "adsense_optimization"
+        ],
+        "movies_count": len(movie_store['movies']),
+        "last_update": movie_store['last_update'].isoformat() if movie_store['last_update'] else None,
+        "timestamp": datetime.now().isoformat()
+    })
+
+@app.route('/api/movies')
+async def api_movies():
+    """FIXED movies API - recent first, no duplicates"""
+    try:
+        limit = int(request.args.get('limit', 30))
+        
+        if not bot_started:
+            return jsonify({"status": "error", "message": "Service unavailable"}), 503
+        
+        # Return movies from store - already sorted newest first
+        movies = movie_store['movies'][:limit]
+        poster_count = sum(1 for m in movies if m.get('has_poster'))
+        
+        logger.info(f"📱 API: Serving {len(movies)} movies (newest first)")
+        
+        return jsonify({
+            "status": "success",
+            "movies": movies,
+            "total_movies": len(movies),
+            "movies_with_posters": poster_count,
+            "auto_update_active": True,
+            "last_update": movie_store['last_update'].isoformat() if movie_store['last_update'] else None,
+            "sorting": "newest_first",
+            "duplicate_prevention": "active",
+            "timestamp": datetime.now().isoformat()
+        })
+        
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+@app.route('/api/search')
+async def api_search():
+    """Search API"""
+    try:
+        query = request.args.get('query', '').strip()
+        limit = int(request.args.get('limit', 8))
+        page = int(request.args.get('page', 1))
+        offset = (page - 1) * limit
+        
+        if not query:
+            return jsonify({"status": "error", "message": "Query required"}), 400
+        
+        result = await search_channels(query, limit, offset)
+        
+        return jsonify({
+            "status": "success",
+            "query": query,
+            "results": result["results"],
+            "pagination": {
+                "current_page": result["current_page"],
+                "total_pages": result["total_pages"],
+                "total_results": result["total"]
+            },
+            "timestamp": datetime.now().isoformat()
+        })
+        
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+@app.route('/api/poster')
+async def api_poster():
+    """FIXED poster proxy - no double loading"""
+    try:
+        poster_url = request.args.get('url', '').strip()
+        
+        if not poster_url or not poster_url.startswith('http'):
+            return create_single_placeholder("Invalid URL")
+        
+        logger.info(f"🖼️ Loading poster: {poster_url[:50]}...")
+        
+        # Browser-like headers
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            'Accept': 'image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8',
+            'Accept-Language': 'en-US,en;q=0.9',
+            'DNT': '1',
+            'Connection': 'keep-alive',
+            'Sec-Fetch-Dest': 'image',
+            'Sec-Fetch-Mode': 'no-cors',
+            'Cache-Control': 'no-cache',
+            'Referer': 'https://www.imdb.com/'
+        }
+        
+        async with aiohttp.ClientSession() as session:
+            async with session.get(poster_url, headers=headers, timeout=12) as response:
+                if response.status == 200:
+                    image_data = await response.read()
+                    content_type = response.headers.get('content-type', 'image/jpeg')
+                    
+                    logger.info(f"✅ Poster loaded: {len(image_data)} bytes")
+                    
+                    return Response(
+                        image_data,
+                        mimetype=content_type,
+                        headers={
+                            'Content-Type': content_type,
+                            'Cache-Control': 'public, max-age=7200',
+                            'Access-Control-Allow-Origin': '*',
+                            'Access-Control-Allow-Methods': 'GET',
+                            'Cross-Origin-Resource-Policy': 'cross-origin'
+                        }
+                    )
+                else:
+                    logger.warning(f"❌ Poster HTTP {response.status}")
+                    return create_single_placeholder(f"HTTP {response.status}")
+        
+    except Exception as e:
+        logger.error(f"Poster error: {e}")
+        return create_single_placeholder("Load Error")
+
+def create_single_placeholder(error_text):
+    """Single professional placeholder - no double display"""
+    svg = f'''<svg width="300" height="450" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+            <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#1a1a2e"/>
+                <stop offset="100%" style="stop-color:#16213e"/>
+            </linearGradient>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#bg)" rx="12"/>
+        <circle cx="150" cy="180" r="45" fill="#00ccff" opacity="0.2"/>
+        <text x="50%" y="190" text-anchor="middle" fill="#00ccff" font-size="28" font-weight="bold">🎬</text>
+        <text x="50%" y="250" text-anchor="middle" fill="#ffffff" font-size="16" font-weight="bold">SK4FiLM</text>
+        <text x="50%" y="280" text-anchor="middle" fill="#00ccff" font-size="12">Movie Poster</text>
+        <text x="50%" y="350" text-anchor="middle" fill="#ffffff" font-size="10" opacity="0.7">{error_text}</text>
+        <text x="50%" y="400" text-anchor="middle" fill="#00ccff" font-size="10" opacity="0.8">Click to Search Telegram</text>
+    </svg>'''
+    
+    return Response(svg, mimetype='image/svg+xml', headers={
+        'Cache-Control': 'public, max-age=300',
+        'Access-Control-Allow-Origin': '*'
+    })
+
+@app.route('/api/force_update')
+async def api_force_update():
+    """Force update - reload all movies"""
+    try:
+        if not bot_started:
+            return jsonify({"status": "error"}), 503
+        
+        logger.info("🔄 FORCE UPDATE - Reloading all movies")
+        
+        # Clear seen titles for fresh load
+        movie_store['seen_titles'].clear()
+        
+        # Get fresh movies
+        fresh_movies = await get_recent_movies_fixed()
+        movie_store['movies'] = fresh_movies
+        movie_store['last_update'] = datetime.now()
+        
+        # Update seen titles
+        movie_store['seen_titles'] = {movie['title'].lower() for movie in fresh_movies}
+        
+        return jsonify({
+            "status": "success",
+            "movies_reloaded": len(fresh_movies),
+            "sorting": "newest_first",
+            "timestamp": datetime.now().isoformat()
+        })
+        
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+async def run_server():
+    try:
+        logger.info("🚀 SK4FiLM COMPLETE FIXED SYSTEM")
+        logger.info("📅 Recent posts will show first")
+        logger.info("🚫 No duplicate posters will be shown")
+        logger.info("✅ All previous features preserved")
+        
+        success = await initialize_telegram_system()
+        
+        if success:
+            logger.info("🎉 ALL SYSTEMS OPERATIONAL!")
+        
+        config = HyperConfig()
+        config.bind = [f"0.0.0.0:{Config.WEB_SERVER_PORT}"]
+        
+        await serve(app, config)
+        
+    except Exception as e:
+        logger.error(f"Server error: {e}")
+    finally:
+        if User:
+            await User.stop()
+
+if __name__ == "__main__":
+    asyncio.run(run_server())
+
 from datetime import datetime, timedelta
 import math
 import aiohttp
