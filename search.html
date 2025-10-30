@@ -6,9 +6,17 @@
     <title>Search Results - SK4FiLM</title>
     <meta name="description" content="Search results for movies and web series on SK4FiLM">
     
-    <!-- AdSense Configuration -->
+    <!-- Google Auto Ads Configuration -->
     <meta name="google-adsense-account" content="ca-pub-5244164301170945">
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5244164301170945" crossorigin="anonymous"></script>
+    <script>
+        (adsbygoogle = window.adsbygoogle || []).push({
+            google_ad_client: "ca-pub-5244164301170945",
+            enable_page_level_ads: true,
+            overlays: {bottom: true},
+            auto_ad_client: "ca-pub-5244164301170945"
+        });
+    </script>
     
     <!-- CSS Libraries -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -37,7 +45,7 @@
             font-family: 'Poppins', sans-serif;
             color: var(--light);
             position: relative;
-            padding-top: 140px; /* Space for navbar + search */
+            padding-top: 140px;
         }
         
         body::before {
@@ -60,7 +68,6 @@
             width: 100%;
             z-index: 1000;
             padding: 15px 0;
-            box-shadow: 0 2px 20px rgba(0,0,0,0.3);
         }
         
         .navbar-content {
@@ -77,7 +84,6 @@
             align-items: center;
             color: white;
             text-decoration: none;
-            font-weight: 700;
         }
         
         .logo-img {
@@ -102,25 +108,18 @@
             padding: 8px 16px;
             text-decoration: none;
             transition: all 0.3s ease;
-            font-size: 0.9rem;
         }
         
-        .back-btn:hover {
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-        }
-        
-        /* FIXED: Search Section - Always Visible */
+        /* Search Section */
         .search-section {
             background: rgba(15, 23, 42, 0.9);
             backdrop-filter: blur(15px);
             position: fixed;
-            top: 70px; /* Below navbar */
+            top: 70px;
             width: 100%;
             z-index: 900;
             padding: 15px 0;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 2px 15px rgba(0,0,0,0.2);
         }
         
         .search-form {
@@ -228,7 +227,7 @@
             border: 1px solid rgba(255,255,255,0.15);
             border-radius: 15px;
             padding: 25px;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
             transition: all 0.3s ease;
             position: relative;
         }
@@ -248,43 +247,6 @@
             box-shadow: 0 8px 25px rgba(0, 102, 255, 0.3);
         }
         
-        .result-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-            gap: 12px;
-        }
-        
-        .result-badge {
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
-        }
-        
-        .badge-poster {
-            background: linear-gradient(45deg, var(--primary), #cc0000);
-            color: white;
-        }
-        
-        .badge-text {
-            background: linear-gradient(45deg, var(--secondary), var(--accent));
-            color: white;
-        }
-        
-        .result-meta {
-            display: flex;
-            gap: 15px;
-            align-items: center;
-            font-size: 0.85rem;
-            color: rgba(255, 255, 255, 0.7);
-            flex-wrap: wrap;
-        }
-        
-        /* Full Content Display */
         .result-content {
             color: var(--light);
             line-height: 1.7;
@@ -307,22 +269,6 @@
             background: var(--primary);
         }
         
-        .movie-info-tags {
-            display: flex;
-            gap: 8px;
-            margin: 15px 0;
-            flex-wrap: wrap;
-        }
-        
-        .info-tag {
-            background: rgba(255, 255, 255, 0.1);
-            color: var(--accent);
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 0.75rem;
-            border: 1px solid rgba(0, 204, 255, 0.3);
-        }
-        
         .result-poster {
             width: 100%;
             max-width: 250px;
@@ -332,21 +278,10 @@
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
         }
         
-        /* AdSense Ads */
-        .ad-container {
-            background: rgba(0, 0, 0, 0.4);
-            border: 2px dashed rgba(255, 255, 255, 0.2);
-            border-radius: 12px;
-            padding: 15px;
-            margin: 20px 0;
-            text-align: center;
-        }
-        
-        .ad-label {
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 0.8rem;
-            margin-bottom: 10px;
-            text-transform: uppercase;
+        /* Auto Ad Spacing - Google will insert ads automatically */
+        .content-section {
+            margin: 30px 0;
+            min-height: 200px; /* Space for auto ads */
         }
         
         /* Pagination */
@@ -366,13 +301,11 @@
             border-radius: 8px;
             cursor: pointer;
             transition: all 0.3s ease;
-            font-weight: 500;
             margin: 0 4px;
         }
         
         .page-btn:hover {
             background: var(--primary);
-            transform: translateY(-2px);
         }
         
         .page-btn.active {
@@ -380,6 +313,7 @@
             color: var(--dark);
         }
         
+        /* Loading */
         .loading-spinner {
             width: 3rem;
             height: 3rem;
@@ -395,10 +329,10 @@
             100% { transform: rotate(360deg); }
         }
         
-        /* Mobile Responsive - Perfect */
+        /* Mobile Responsive */
         @media (max-width: 768px) {
             body {
-                padding-top: 120px; /* Adjust for fixed search */
+                padding-top: 120px;
             }
             
             .navbar-content {
@@ -421,12 +355,10 @@
             
             .search-input {
                 padding: 10px 16px;
-                font-size: 0.95rem;
             }
             
             .search-btn {
                 padding: 10px 20px;
-                font-size: 0.95rem;
             }
             
             .main-container {
@@ -441,49 +373,9 @@
                 padding: 20px;
             }
             
-            .result-header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 8px;
-            }
-            
-            .result-meta {
-                gap: 10px;
-                font-size: 0.8rem;
-            }
-            
-            .result-content {
-                font-size: 0.95rem;
-            }
-            
             .result-poster {
                 max-width: 200px;
                 height: 280px;
-            }
-            
-            .page-btn {
-                width: 100%;
-                max-width: 150px;
-                margin: 2px 0;
-            }
-        }
-        
-        /* Tablet */
-        @media (min-width: 769px) and (max-width: 1024px) {
-            body {
-                padding-top: 130px;
-            }
-            
-            .result-poster {
-                max-width: 220px;
-                height: 300px;
-            }
-        }
-        
-        /* Desktop */
-        @media (min-width: 1025px) {
-            body {
-                padding-top: 140px;
             }
         }
         
@@ -512,53 +404,43 @@
         </div>
     </nav>
 
-    <!-- FIXED: Search Section - Always Available for Repeat Search -->
+    <!-- Search Section -->
     <div class="search-section">
-        <div class="container">
-            <form id="searchForm" class="search-form">
-                <input type="text" id="searchInput" class="search-input" 
-                       placeholder="Search again for movies, web series..." required>
-                <button type="submit" class="search-btn">
-                    <i class="fas fa-search me-1"></i>Search
-                </button>
-            </form>
-        </div>
+        <form id="searchForm" class="search-form">
+            <input type="text" id="searchInput" class="search-input" 
+                   placeholder="Search again for movies..." required>
+            <button type="submit" class="search-btn">
+                <i class="fas fa-search me-1"></i>Search
+            </button>
+        </form>
     </div>
 
     <div class="main-container">
-        <!-- Top AdSense Ad -->
-        <div class="ad-container">
-            <div class="ad-label">
-                <i class="fas fa-ad me-1"></i>Advertisement
-            </div>
-            <ins class="adsbygoogle"
-                 style="display:block"
-                 data-ad-client="ca-pub-5244164301170945"
-                 data-ad-slot="3589065722"
-                 data-ad-format="auto"
-                 data-full-width-responsive="true"></ins>
-        </div>
-
         <!-- Search Stats -->
         <div id="searchStats" style="display: none;">
             <div class="search-stats fade-in">
                 <div class="stats-title">Search Results</div>
                 <div id="searchQuery" style="margin-bottom: 15px; color: var(--light);"></div>
                 <div class="stats-badges">
-                    <div class="stats-badge">Real Data</div>
+                    <div class="stats-badge">Google Auto Ads</div>
                     <div class="stats-badge">Full Content</div>
                     <div class="stats-badge" id="resultsCount">0 Results</div>
                 </div>
             </div>
         </div>
 
-        <!-- Results Container -->
+        <!-- Results Container with Auto Ad Spacing -->
         <div class="results-wrapper">
-            <div id="searchResults">
+            <div id="searchResults" class="content-section">
                 <div style="text-align: center; padding: 50px 20px;">
                     <i class="fas fa-search fa-4x text-primary mb-4"></i>
                     <h4>Ready to Search Movies</h4>
                     <p style="color: rgba(255, 255, 255, 0.8);">Use the search box above to find movies</p>
+                    <div style="margin-top: 20px;">
+                        <span style="background: rgba(0, 255, 0, 0.1); color: #00ff00; padding: 8px 16px; border-radius: 15px; font-size: 0.9rem;">
+                            <i class="fas fa-robot me-2"></i>Google Auto Ads Active
+                        </span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -567,20 +449,9 @@
         <div id="paginationContainer" style="display: none;">
             <div class="pagination-container fade-in">
                 <div id="paginationInfo" style="color: var(--accent); font-size: 1.1rem; margin-bottom: 8px;"></div>
-                <div id="paginationDetails" style="color: rgba(255, 255, 255, 0.8); margin-bottom: 20px; font-size: 0.9rem;"></div>
+                <div id="paginationDetails" style="color: rgba(255, 255, 255, 0.8); margin-bottom: 20px;"></div>
                 <div id="paginationControls" style="display: flex; justify-content: center; gap: 8px; flex-wrap: wrap;"></div>
             </div>
-        </div>
-
-        <!-- Bottom AdSense Ad -->
-        <div class="ad-container">
-            <div class="ad-label">Advertisement</div>
-            <ins class="adsbygoogle"
-                 style="display:block"
-                 data-ad-client="ca-pub-5244164301170945"
-                 data-ad-slot="3589065722"
-                 data-ad-format="auto"
-                 data-full-width-responsive="true"></ins>
         </div>
     </div>
 
@@ -588,11 +459,10 @@
         // Configuration
         const CONFIG = {
             BACKEND_URL: 'https://sk4film.koyeb.app',
-            RESULTS_PER_PAGE: 8,
+            RESULTS_PER_PAGE: 6,  // Optimal for auto ads
             TIMEOUT: 30000
         };
         
-        // State
         let currentQuery = '';
         let currentPage = 1;
         let isLoading = false;
@@ -628,21 +498,16 @@
                     if (diffHours < 24) return `${diffHours}h`;
                     
                     const diffDays = Math.ceil(diffHours / 24);
-                    if (diffDays <= 7) return `${diffDays}d`;
-                    
-                    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                    return diffDays <= 7 ? `${diffDays}d` : date.toLocaleDateString('en', { month: 'short', day: 'numeric' });
                 } catch {
                     return 'Recently';
                 }
             }
         };
         
-        // FIXED: Main search function with proper state management
+        // MAIN: Search function with Google Auto Ads support
         async function performSearch(query, page = 1) {
-            if (isLoading) {
-                console.log('⚠️ Search already in progress, skipping...');
-                return;
-            }
+            if (isLoading) return;
             
             const resultsContainer = document.getElementById('searchResults');
             const statsContainer = document.getElementById('searchStats');
@@ -653,19 +518,17 @@
                 return;
             }
             
-            // FIXED: Proper state management
             isLoading = true;
             currentQuery = query.trim();
             currentPage = page;
             
-            console.log(`🔍 Performing search: "${currentQuery}" (page: ${currentPage})`);
-            
             try {
-                // Update URL and input field
+                console.log(`🔍 Auto Ads Search: "${currentQuery}" (page: ${currentPage})`);
+                
                 utils.updateURL(currentQuery, currentPage);
                 document.getElementById('searchInput').value = currentQuery;
                 
-                // Show loading
+                // Loading state
                 resultsContainer.innerHTML = `
                     <div style="text-align: center; padding: 60px 20px;">
                         <div class="loading-spinner"></div>
@@ -673,41 +536,34 @@
                             Searching "${utils.escapeHtml(currentQuery)}"
                         </div>
                         <div style="color: rgba(255, 255, 255, 0.7);">
-                            Page ${currentPage} - Loading results...
+                            Page ${currentPage} - Google Auto Ads will appear
                         </div>
                     </div>
                 `;
                 
-                // Hide other sections
                 statsContainer.style.display = 'none';
                 paginationContainer.style.display = 'none';
                 
-                // FIXED: API call with proper error handling
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), CONFIG.TIMEOUT);
-                
-                const response = await fetch(
-                    `${CONFIG.BACKEND_URL}/api/search?query=${encodeURIComponent(currentQuery)}&page=${currentPage}&limit=${CONFIG.RESULTS_PER_PAGE}`,
-                    { signal: controller.signal }
-                );
-                
-                clearTimeout(timeoutId);
-                
-                if (!response.ok) {
-                    throw new Error(`Server error: ${response.status}`);
-                }
-                
+                // API call
+                const response = await fetch(`${CONFIG.BACKEND_URL}/api/search?query=${encodeURIComponent(currentQuery)}&page=${currentPage}&limit=${CONFIG.RESULTS_PER_PAGE}`);
                 const data = await response.json();
-                console.log('✅ Search completed:', data);
                 
                 if (data.status === 'success') {
                     if (data.results?.length > 0) {
-                        displayResults(data.results, currentQuery, data.pagination);
+                        displayResultsForAutoAds(data.results, currentQuery, data.pagination);
                         updateSearchStats(currentQuery, data.pagination);
                         
                         if (data.pagination.total_pages > 1) {
                             updatePagination(data.pagination);
                         }
+                        
+                        // Trigger Google Auto Ads refresh
+                        setTimeout(() => {
+                            if (window.adsbygoogle && window.adsbygoogle.loaded) {
+                                window.adsbygoogle.push({});
+                            }
+                        }, 1500);
+                        
                     } else {
                         showNoResults(currentQuery);
                     }
@@ -717,39 +573,34 @@
                 
             } catch (error) {
                 console.error('❌ Search error:', error);
-                if (error.name === 'AbortError') {
-                    showError('Search timeout - please try again');
-                } else {
-                    showError(`Search failed: ${error.message}`);
-                }
+                showError(error.message);
             } finally {
-                // CRITICAL: Always reset loading state
                 isLoading = false;
-                console.log('🔄 Search state reset - ready for next search');
             }
         }
         
-        // CLEAN: Display results without extra buttons
-        function displayResults(results, query, pagination) {
+        // OPTIMIZED: Display results with spacing for Google Auto Ads
+        function displayResultsForAutoAds(results, query, pagination) {
             const resultsContainer = document.getElementById('searchResults');
             let resultsHTML = '';
             
             results.forEach((result, index) => {
                 resultsHTML += `
-                    <div class="result-item fade-in" style="animation-delay: ${index * 0.1}s">
-                        <div class="result-header">
+                    <div class="result-item fade-in content-section" style="animation-delay: ${index * 0.1}s">
+                        <!-- Result Header -->
+                        <div style="display: flex; justify-content: between; align-items: flex-start; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
                             <div>
-                                <span class="result-badge ${result.type === 'poster' ? 'badge-poster' : 'badge-text'}">
+                                <span style="padding: 6px 14px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; ${result.type === 'poster' ? 'background: linear-gradient(45deg, var(--primary), #cc0000);' : 'background: linear-gradient(45deg, var(--secondary), var(--accent));'} color: white;">
                                     ${result.type === 'poster' ? 
                                       '<i class="fas fa-image me-1"></i>Poster' : 
                                       '<i class="fas fa-file-text me-1"></i>Text'
                                     }
                                 </span>
-                                ${result.movie_info?.quality ? `<span style="background: #28a745; color: white; padding: 4px 10px; border-radius: 12px; font-size: 0.75rem;">${result.movie_info.quality}</span>` : ''}
-                                ${result.movie_info?.size ? `<span style="background: #17a2b8; color: white; padding: 4px 10px; border-radius: 12px; font-size: 0.75rem;">${result.movie_info.size}</span>` : ''}
+                                ${result.movie_info?.quality ? `<span style="background: #28a745; color: white; padding: 4px 10px; border-radius: 12px; font-size: 0.75rem; margin-left: 8px;">${result.movie_info.quality}</span>` : ''}
+                                ${result.movie_info?.size ? `<span style="background: #17a2b8; color: white; padding: 4px 10px; border-radius: 12px; font-size: 0.75rem; margin-left: 8px;">${result.movie_info.size}</span>` : ''}
                             </div>
                             
-                            <div class="result-meta">
+                            <div style="display: flex; gap: 15px; align-items: center; font-size: 0.85rem; color: rgba(255, 255, 255, 0.7); flex-wrap: wrap;">
                                 <div style="display: flex; align-items: center; gap: 4px;">
                                     <i class="fas fa-calendar-alt text-info"></i>
                                     <span>${utils.formatDate(result.date)}</span>
@@ -767,14 +618,16 @@
                             </div>
                         </div>
                         
+                        <!-- Movie Info Tags -->
                         ${Object.keys(result.movie_info || {}).length > 0 ? `
-                            <div class="movie-info-tags">
-                                ${result.movie_info.year ? `<span class="info-tag">${result.movie_info.year}</span>` : ''}
-                                ${result.movie_info.rating ? `<span class="info-tag">⭐ ${result.movie_info.rating}</span>` : ''}
-                                ${result.movie_info.genre ? `<span class="info-tag">${result.movie_info.genre}</span>` : ''}
+                            <div style="display: flex; gap: 8px; margin: 15px 0; flex-wrap: wrap;">
+                                ${result.movie_info.year ? `<span style="background: rgba(255, 255, 255, 0.1); color: var(--accent); padding: 4px 10px; border-radius: 12px; font-size: 0.75rem;">${result.movie_info.year}</span>` : ''}
+                                ${result.movie_info.rating ? `<span style="background: rgba(255, 255, 255, 0.1); color: var(--accent); padding: 4px 10px; border-radius: 12px; font-size: 0.75rem;">⭐ ${result.movie_info.rating}</span>` : ''}
+                                ${result.movie_info.genre ? `<span style="background: rgba(255, 255, 255, 0.1); color: var(--accent); padding: 4px 10px; border-radius: 12px; font-size: 0.75rem;">${result.movie_info.genre}</span>` : ''}
                             </div>
                         ` : ''}
                         
+                        <!-- Full Content -->
                         <div style="margin: 20px 0;">
                             ${result.type === 'poster' && result.photo ? `
                                 <div class="row align-items-start">
@@ -793,34 +646,21 @@
                             `}
                         </div>
                     </div>
-                    
-                    <!-- AdSense Ad After Each Result -->
-                    <div class="ad-container fade-in" style="animation-delay: ${(index * 0.1) + 0.2}s">
-                        <div class="ad-label">
-                            <i class="fas fa-bullhorn me-1"></i>Advertisement ${index + 1}
-                        </div>
-                        <ins class="adsbygoogle"
-                             style="display:block"
-                             data-ad-client="ca-pub-5244164301170945"
-                             data-ad-slot="3589065722"
-                             data-ad-format="auto"
-                             data-full-width-responsive="true"></ins>
-                    </div>
                 `;
+                
+                // Add spacing every 2 results for Google Auto Ads
+                if ((index + 1) % 2 === 0) {
+                    resultsHTML += `<div class="content-section" style="min-height: 100px;"></div>`;
+                }
             });
             
             resultsContainer.innerHTML = resultsHTML;
             
-            // Initialize ads
+            // Notify Google Auto Ads of new content
             setTimeout(() => {
-                for (let i = 0; i < results.length; i++) {
-                    try {
-                        (adsbygoogle = window.adsbygoogle || []).push({});
-                    } catch (e) {
-                        console.error('AdSense error:', e);
-                    }
+                if (window.adsbygoogle) {
+                    window.adsbygoogle.push({});
                 }
-                console.log(`💰 Initialized ${results.length} ads`);
             }, 1000);
         }
         
@@ -841,30 +681,17 @@
             
             let controlsHTML = '';
             
-            // Previous
             if (pagination.current_page > 1) {
                 controlsHTML += `<button class="page-btn" onclick="performSearch('${currentQuery}', ${pagination.current_page - 1})"><i class="fas fa-chevron-left me-1"></i>Prev</button>`;
             }
             
-            // Page numbers (show 3 around current)
             const start = Math.max(1, pagination.current_page - 1);
             const end = Math.min(pagination.total_pages, pagination.current_page + 1);
-            
-            if (start > 1) {
-                controlsHTML += `<button class="page-btn" onclick="performSearch('${currentQuery}', 1)">1</button>`;
-                if (start > 2) controlsHTML += `<span style="padding: 10px; color: var(--accent);">...</span>`;
-            }
             
             for (let i = start; i <= end; i++) {
                 controlsHTML += `<button class="page-btn ${i === pagination.current_page ? 'active' : ''}" onclick="performSearch('${currentQuery}', ${i})">${i}</button>`;
             }
             
-            if (end < pagination.total_pages) {
-                if (end < pagination.total_pages - 1) controlsHTML += `<span style="padding: 10px; color: var(--accent);">...</span>`;
-                controlsHTML += `<button class="page-btn" onclick="performSearch('${currentQuery}', ${pagination.total_pages})">${pagination.total_pages}</button>`;
-            }
-            
-            // Next
             if (pagination.current_page < pagination.total_pages) {
                 controlsHTML += `<button class="page-btn" onclick="performSearch('${currentQuery}', ${pagination.current_page + 1})">Next<i class="fas fa-chevron-right ms-1"></i></button>`;
             }
@@ -875,30 +702,23 @@
         
         function showNoResults(query) {
             document.getElementById('searchResults').innerHTML = `
-                <div style="text-align: center; padding: 50px 20px;">
+                <div class="content-section" style="text-align: center; padding: 50px 20px;">
                     <i class="fas fa-search fa-4x text-muted mb-4"></i>
                     <h3>No Results Found</h3>
                     <p style="color: rgba(255, 255, 255, 0.8);">No movies found for "${utils.escapeHtml(query)}"</p>
-                    <p style="font-size: 0.9rem; color: rgba(255, 255, 255, 0.6); margin-top: 15px;">
-                        Try searching with different keywords or check spelling
+                    <p style="font-size: 0.9rem; color: rgba(255, 255, 255, 0.6);">
+                        Try different keywords or check spelling
                     </p>
                 </div>
-                
-                <div class="ad-container">
-                    <div class="ad-label">Advertisement</div>
-                    <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-5244164301170945" data-ad-slot="3589065722" data-ad-format="auto" data-full-width-responsive="true"></ins>
-                </div>
             `;
-            
-            setTimeout(() => (adsbygoogle = window.adsbygoogle || []).push({}), 500);
         }
         
         function showError(message) {
             document.getElementById('searchResults').innerHTML = `
-                <div style="text-align: center; padding: 50px 20px;">
+                <div class="content-section" style="text-align: center; padding: 50px 20px;">
                     <i class="fas fa-exclamation-triangle fa-4x text-warning mb-4"></i>
                     <h3 class="text-warning">Search Error</h3>
-                    <p style="color: rgba(255, 255, 255, 0.8); margin-bottom: 20px;">${utils.escapeHtml(message)}</p>
+                    <p style="color: rgba(255, 255, 255, 0.8);">${utils.escapeHtml(message)}</p>
                     <button onclick="retrySearch()" style="background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 20px; cursor: pointer;">
                         <i class="fas fa-redo me-1"></i>Try Again
                     </button>
@@ -906,149 +726,57 @@
             `;
         }
         
-        // FIXED: Retry function
         function retrySearch() {
             if (currentQuery) {
-                console.log('🔄 Retrying search...');
                 performSearch(currentQuery, currentPage);
-            } else {
-                document.getElementById('searchInput').focus();
             }
         }
         
-        // FIXED: Form submission handler
-        function initializeSearch() {
-            const searchForm = document.getElementById('searchForm');
-            const searchInput = document.getElementById('searchInput');
-            
-            if (searchForm && searchInput) {
-                // FIXED: Remove any existing listeners first
-                searchForm.removeEventListener('submit', handleSearchSubmit);
-                searchForm.addEventListener('submit', handleSearchSubmit);
-                
-                console.log('✅ Search form initialized');
-            }
-        }
-        
-        // FIXED: Search submit handler
-        function handleSearchSubmit(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            
-            const searchInput = document.getElementById('searchInput');
-            const query = searchInput?.value?.trim();
-            
-            console.log('🔍 Search form submitted:', query);
-            
-            if (query && !isLoading) {
-                performSearch(query, 1);
-            } else if (!query) {
-                searchInput.focus();
-                showError('Please enter a search term');
-            } else {
-                console.log('⚠️ Search in progress, please wait...');
-            }
-        }
-        
-        // Initialize page
+        // Initialize
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('🚀 SK4FiLM Search Page Loading...');
-            
-            // Initialize AdSense
-            (adsbygoogle = window.adsbygoogle || []).push({});
-            (adsbygoogle = window.adsbygoogle || []).push({});
-            
-            // Get URL parameters
-            const urlQuery = utils.getQueryParameter();
-            const urlPage = utils.getPageParameter();
-            
-            console.log('📄 URL Parameters:', { query: urlQuery, page: urlPage });
-            
-            // Initialize search form
-            initializeSearch();
-            
-            // Set input value
-            const searchInput = document.getElementById('searchInput');
-            if (searchInput && urlQuery) {
-                searchInput.value = urlQuery;
-            }
-            
-            // Perform initial search if query exists
-            if (urlQuery) {
-                currentQuery = urlQuery;
-                currentPage = urlPage;
-                performSearch(urlQuery, urlPage);
-            } else {
-                // Focus on search input if no query
-                if (searchInput) {
-                    searchInput.focus();
-                }
-            }
-        });
-        
-        // FIXED: Browser navigation handling
-        window.addEventListener('popstate', function(event) {
-            console.log('🔄 Browser navigation detected');
+            console.log('🚀 SK4FiLM Search - Google Auto Ads');
+            console.log('🤖 Automatic ad placement active');
             
             const query = utils.getQueryParameter();
             const page = utils.getPageParameter();
-            
-            console.log('📄 Navigation to:', { query, page });
-            
-            // Update input field
             const searchInput = document.getElementById('searchInput');
+            
             if (searchInput) {
                 searchInput.value = query || '';
+                
+                // Enhanced search form
+                document.getElementById('searchForm').addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    const newQuery = searchInput.value.trim();
+                    if (newQuery && !isLoading) {
+                        performSearch(newQuery, 1);
+                    }
+                });
+                
+                if (!query) {
+                    searchInput.focus();
+                }
             }
             
-            // Perform search if query exists and not loading
-            if (query && !isLoading) {
-                currentQuery = query;
-                currentPage = page;
+            if (query) {
                 performSearch(query, page);
-            } else if (!query) {
-                // Show default state
-                document.getElementById('searchResults').innerHTML = `
-                    <div style="text-align: center; padding: 50px 20px;">
-                        <i class="fas fa-search fa-4x text-primary mb-4"></i>
-                        <h4>Ready to Search Movies</h4>
-                        <p style="color: rgba(255, 255, 255, 0.8);">Use the search box above to find movies</p>
-                    </div>
-                `;
-                document.getElementById('searchStats').style.display = 'none';
-                document.getElementById('paginationContainer').style.display = 'none';
             }
         });
         
-        // FIXED: Prevent form double submission
-        let lastSubmitTime = 0;
-        
-        function handleSearchSubmit(e) {
-            e.preventDefault();
-            e.stopPropagation();
+        window.addEventListener('popstate', function() {
+            const query = utils.getQueryParameter();
+            const page = utils.getPageParameter();
             
-            const now = Date.now();
-            if (now - lastSubmitTime < 1000) {
-                console.log('⚠️ Double submit prevented');
-                return;
-            }
-            lastSubmitTime = now;
-            
-            const searchInput = document.getElementById('searchInput');
-            const query = searchInput?.value?.trim();
-            
-            console.log('🔍 Form submitted with query:', query);
+            document.getElementById('searchInput').value = query || '';
             
             if (query && !isLoading) {
-                performSearch(query, 1);
-            } else if (!query) {
-                searchInput?.focus();
+                performSearch(query, page);
             }
-        }
+        });
         
-        console.log('%c🔍 SK4FiLM Search - REPEAT SEARCH FIXED', 'color: #00ff00; font-size: 16px; font-weight: bold;');
-        console.log('%c🔄 Multiple Searches Supported', 'color: #ffff00; font-size: 12px;');
-        console.log('%c📱 Mobile/Desktop Responsive', 'color: #00ccff; font-size: 12px;');
+        console.log('%c🎬 SK4FiLM - GOOGLE AUTO ADS ACTIVE', 'color: #ff0000; font-size: 18px; font-weight: bold;');
+        console.log('%c🤖 Automatic Ad Placement Enabled', 'color: #00ff00; font-size: 14px;');
+        console.log('%c💰 Maximum Revenue with Auto Optimization', 'color: #ffff00; font-size: 14px;');
     </script>
 </body>
 </html>
