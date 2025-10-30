@@ -11,39 +11,35 @@ from datetime import datetime
 import math
 import aiohttp
 import urllib.parse
-import json
 
 class Config:
     API_ID = int(os.environ.get("API_ID", "0"))
     API_HASH = os.environ.get("API_HASH", "")
     USER_SESSION_STRING = os.environ.get("USER_SESSION_STRING", "")
     
-    # Working text channels
     TEXT_CHANNEL_IDS = [-1001891090100, -1002024811395]
     
     SECRET_KEY = os.environ.get("SECRET_KEY", "sk4film-secret-key-2024")
     WEB_SERVER_PORT = int(os.environ.get("PORT", 8000))
     
-    # Multiple OMDB API keys for better reliability
-    OMDB_KEYS = ["8265bd1c", "b9bd48a6", "2f2d1c8e"]
+    # IMDB API Keys for reliability
+    OMDB_KEYS = ["8265bd1c", "b9bd48a6", "2f2d1c8e", "3e2b5f9d"]
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
 app = Quart(__name__)
-app.secret_key = Config.SECRET_KEY
-
 User = None
 bot_started = False
 
-def extract_movie_title_enhanced(telegram_text):
-    """Enhanced movie title extraction from telegram posts"""
-    if not telegram_text:
+def extract_movie_title_smart(telegram_text):
+    """Smart movie title extraction from Telegram posts"""
+    if not telegram_text or len(telegram_text) < 10:
         return None
     
     try:
-        # Remove excess emojis but keep structure
-        text = re.sub(r'[🔥💥⚡🎯🎪🎭⭐✨🌟💫🎊🎉]', '', telegram_text)
+        # Clean text for processing
+        text = telegram_text.replace('\u0000', '').strip()
         
         # Get first meaningful line
         lines = [line.strip() for line in text.split('\n') if line.strip()]
@@ -51,71 +47,109 @@ def extract_movie_title_enhanced(telegram_text):
             return None
         
         first_line = lines[0]
-        logger.info(f"🔍 Processing line: '{first_line[:60]}...'")
+        logger.info(f"🎯 Extracting from: '{first_line[:50]}...'")
         
-        # Enhanced patterns for Bollywood/Hollywood movies
-        patterns = [
+        # Enhanced movie title patterns
+        title_patterns = [
             # Pattern 1: Movie Name (Year)
-            r'🎬?\s*([^(]{4,50}?)\s*\(\d{4}\)',
+            r'🎬?\s*([^(]{4,45}?)\s*\(\d{4}\)',
             
-            # Pattern 2: Movie Name - Year/Quality
-            r'🎬?\s*([^-]{4,50}?)\s*-\s*(?:20\d{2}|Hindi|English|Action|Drama)',
+            # Pattern 2: Movie Name - Year/Info
+            r'🎬?\s*([^-]{4,45}?)\s*-\s*(?:20\d{2}|Hindi|English|Action|Drama|Comedy)',
             
             # Pattern 3: After film emoji
-            r'🎬\s*([^-\n]{4,50}?)(?:\s*-|\s*\n|$)',
+            r'🎬\s*([^-\n]{4,45}?)(?:\s*-|\s*\n|$)',
             
-            # Pattern 4: Clean title before dash
-            r'^([A-Z][^-\n]{4,45}?)\s*-',
+            # Pattern 4: Quoted titles
+            r'"([^"]{4,40})"',
             
-            # Pattern 5: Multi-word titles
-            r'^([A-Z][a-z]+(?:\s+[A-Z][a-z]+){1,4})',
+            # Pattern 5: Bold/emphasized titles
+            r'\*\*([^*]{4,40})\*\*',
             
-            # Pattern 6: Numbers in title (like "3 Idiots", "2 States")
+            # Pattern 6: Clean title before separator
+            r'^([A-Z][^-|\n]{4,35}?)(?:\s*[-|]|\s*\n)',
+            
+            # Pattern 7: Multiple word titles
+            r'^([A-Z][a-z]+(?:\s+[A-Za-z]+){1,4})',
+            
+            # Pattern 8: Numeric titles (like "3 Idiots")
             r'^(\d+\s+[A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)',
         ]
         
-        for i, pattern in enumerate(patterns, 1):
-            match = re.search(pattern, first_line, re.IGNORECASE)
-            if match:
-                raw_title = match.group(1).strip()
-                
-                # Clean up the title
-                clean_title = re.sub(r'\s+', ' ', raw_title)  # Normalize spaces
-                clean_title = clean_title.replace('Movie', '').replace('Film', '').strip()
-                
-                # Validate title
-                if (4 <= len(clean_title) <= 60 and 
-                    not re.match(r'^\d+$', clean_title) and
-                    not clean_title.lower() in ['size', 'quality', 'rating', 'download', 'link']):
+        for i, pattern in enumerate(title_patterns, 1):
+            try:
+                match = re.search(pattern, first_line, re.IGNORECASE)
+                if match:
+                    raw_title = match.group(1).strip()
                     
-                    logger.info(f"✅ Pattern {i} matched: '{clean_title}'")
-                    return clean_title
+                    # Clean and validate title
+                    clean_title = clean_movie_title(raw_title)
+                    
+                    if validate_movie_title(clean_title):
+                        logger.info(f"✅ Pattern {i} success: '{clean_title}'")
+                        return clean_title
+                        
+            except Exception as e:
+                logger.warning(f"Pattern {i} error: {e}")
+                continue
         
-        # Fallback: Look for quoted titles
-        quoted_match = re.search(r'"([^"]{4,40})"', first_line)
-        if quoted_match:
-            quoted_title = quoted_match.group(1).strip()
-            logger.info(f"💬 Quoted title found: '{quoted_title}'")
-            return quoted_title
-        
-        logger.warning(f"⚠️ No title pattern matched for: '{first_line[:50]}...'")
+        logger.warning(f"⚠️ No title patterns matched for: '{first_line[:50]}...'")
         return None
         
     except Exception as e:
-        logger.error(f"Title extraction error: {e}")
+        logger.error(f"Smart title extraction error: {e}")
         return None
 
-async def get_imdb_data_with_fallback(movie_title):
-    """Get IMDB data with multiple API keys as fallback"""
+def clean_movie_title(title):
+    """Clean and normalize movie title"""
+    if not title:
+        return ""
+    
+    # Remove extra words
+    title = title.replace('Movie', '').replace('Film', '').replace('Full', '').strip()
+    
+    # Normalize spaces
+    title = re.sub(r'\s+', ' ', title)
+    
+    # Remove leading/trailing punctuation
+    title = re.sub(r'^[^\w]+|[^\w]+$', '', title)
+    
+    return title.strip()
+
+def validate_movie_title(title):
+    """Validate if extracted title is a valid movie name"""
+    if not title or len(title) < 3 or len(title) > 60:
+        return False
+    
+    # Check for invalid patterns
+    invalid_words = ['size', 'quality', 'rating', 'download', 'link', 'channel', 'group', 'file', 'mb', 'gb']
+    if any(word in title.lower() for word in invalid_words):
+        return False
+    
+    # Check if it's just numbers
+    if re.match(r'^\d+$', title):
+        return False
+    
+    # Must contain at least one letter
+    if not re.search(r'[a-zA-Z]', title):
+        return False
+    
+    return True
+
+async def get_imdb_poster_enhanced(movie_title):
+    """Enhanced IMDB poster fetching with multiple API keys"""
+    if not movie_title:
+        return {'success': False, 'error': 'No title provided'}
+    
     for i, api_key in enumerate(Config.OMDB_KEYS):
         try:
-            logger.info(f"🎬 IMDB attempt {i+1}/3 for: '{movie_title}' (Key: {api_key[:4]}...)")
+            logger.info(f"🎬 IMDB API {i+1}/{len(Config.OMDB_KEYS)}: '{movie_title}'")
             
             async with aiohttp.ClientSession() as session:
-                # Try exact title first
+                # Primary search
                 url = f"http://www.omdbapi.com/?t={urllib.parse.quote(movie_title)}&apikey={api_key}&plot=short"
                 
-                async with session.get(url, timeout=10) as response:
+                async with session.get(url, timeout=12) as response:
                     if response.status == 200:
                         data = await response.json()
                         
@@ -123,232 +157,218 @@ async def get_imdb_data_with_fallback(movie_title):
                             poster_url = data.get('Poster', '')
                             
                             if poster_url and poster_url != 'N/A' and poster_url.startswith('http'):
-                                imdb_result = {
+                                imdb_info = {
                                     'poster_url': poster_url,
                                     'imdb_title': data.get('Title', movie_title),
                                     'year': data.get('Year', 'Unknown'),
                                     'rating': data.get('imdbRating', 'N/A'),
                                     'genre': data.get('Genre', 'N/A'),
-                                    'plot': data.get('Plot', 'No plot available')[:200],
+                                    'plot': data.get('Plot', 'No plot available')[:150],
                                     'director': data.get('Director', 'N/A'),
-                                    'actors': data.get('Actors', 'N/A')[:100],
                                     'runtime': data.get('Runtime', 'N/A'),
-                                    'imdb_id': data.get('imdbID', ''),
                                     'success': True,
-                                    'api_key_used': i + 1
+                                    'api_key_index': i + 1
                                 }
                                 
-                                logger.info(f"✅ IMDB SUCCESS (Key {i+1}): {poster_url}")
-                                return imdb_result
+                                logger.info(f"✅ IMDB SUCCESS (API {i+1}): {poster_url[:50]}...")
+                                return imdb_info
                             else:
-                                logger.info(f"⚠️ No poster in response (Key {i+1})")
+                                logger.info(f"⚠️ No poster URL (API {i+1})")
                         else:
-                            error_msg = data.get('Error', 'Unknown error')
-                            logger.info(f"⚠️ OMDB Error (Key {i+1}): {error_msg}")
+                            logger.info(f"⚠️ Movie not found (API {i+1}): {data.get('Error', 'Unknown')}")
                     else:
-                        logger.warning(f"❌ HTTP Error (Key {i+1}): {response.status}")
-        
+                        logger.warning(f"❌ HTTP {response.status} (API {i+1})")
+            
+            # Small delay between API attempts
+            await asyncio.sleep(0.5)
+            
         except Exception as e:
-            logger.warning(f"⚠️ API Key {i+1} failed: {e}")
+            logger.warning(f"⚠️ API {i+1} failed: {e}")
             continue
     
-    logger.warning(f"❌ All IMDB API keys failed for: '{movie_title}'")
+    logger.error(f"❌ All IMDB APIs failed for: '{movie_title}'")
     return {'success': False, 'error': 'All API keys exhausted'}
 
-async def get_30_latest_posts_with_titles_and_posters():
-    """Get 30 latest posts with extracted titles and IMDB posters"""
+async def get_recent_movies_with_posters(limit=30):
+    """Get recent movies from Telegram with IMDB posters"""
     if not User or not bot_started:
         logger.error("❌ Telegram not connected")
         return []
     
     try:
-        logger.info("📋 Getting latest posts from text channels for title extraction...")
+        logger.info("📋 Getting recent movie posts from Telegram channels...")
         
-        all_posts = []
+        all_movie_posts = []
         
-        # Get posts from both text channels
+        # Get posts from all text channels
         for channel_id in Config.TEXT_CHANNEL_IDS:
             try:
                 channel_name = 'Movies Link' if channel_id == -1001891090100 else 'DISKWALA MOVIES'
-                logger.info(f"📝 Processing channel: {channel_name} ({channel_id})")
+                logger.info(f"📝 Processing {channel_name} ({channel_id})...")
                 
-                post_count = 0
+                posts_found = 0
                 async for message in User.get_chat_history(
                     chat_id=channel_id,
-                    limit=50  # Get more messages for better title variety
+                    limit=60  # Get more to ensure variety
                 ):
-                    if message.text and len(message.text) > 40:  # Substantial posts only
+                    if message.text and len(message.text) > 40:
                         # Extract movie title
-                        movie_title = extract_movie_title_enhanced(message.text)
+                        movie_title = extract_movie_title_smart(message.text)
                         
                         if movie_title:
-                            post_data = {
+                            movie_post = {
                                 'extracted_title': movie_title,
-                                'original_text': message.text,
-                                'short_preview': message.text[:100] + ('...' if len(message.text) > 100 else ''),
-                                'date': message.date.isoformat() if message.date else datetime.now().isoformat(),
+                                'original_post': message.text,
+                                'preview_text': message.text[:100] + ('...' if len(message.text) > 100 else ''),
+                                'post_date': message.date.isoformat() if message.date else datetime.now().isoformat(),
                                 'message_id': message.id,
                                 'channel_id': channel_id,
                                 'channel_name': channel_name,
                                 'has_download_links': bool(re.search(r'https?://', message.text)),
-                                'download_link_count': len(re.findall(r'https?://[^\s]+', message.text)),
-                                'telegram_link': f"https://t.me/c/{str(channel_id).replace('-100', '')}/{message.id}"
+                                'download_count': len(re.findall(r'https?://[^\s]+', message.text)),
+                                'post_length': len(message.text)
                             }
                             
-                            all_posts.append(post_data)
-                            post_count += 1
+                            all_movie_posts.append(movie_post)
+                            posts_found += 1
                             
-                            logger.info(f"📄 Post {post_count}: '{movie_title}' from {channel_name}")
+                            logger.info(f"📄 Movie {posts_found}: '{movie_title}' from {channel_name}")
                 
-                logger.info(f"✅ Channel {channel_name}: {post_count} posts with extractable titles")
+                logger.info(f"✅ {channel_name}: {posts_found} movie posts extracted")
                 
             except Exception as e:
                 logger.warning(f"Channel {channel_id} processing error: {e}")
                 continue
         
-        if not all_posts:
-            logger.error("❌ No posts with extractable titles found!")
+        if not all_movie_posts:
+            logger.warning("⚠️ No movie posts found in any channel")
             return []
         
         # Sort by date (newest first) and remove duplicates
-        all_posts.sort(key=lambda x: x['date'], reverse=True)
+        all_movie_posts.sort(key=lambda x: x['post_date'], reverse=True)
         
-        # Remove duplicate titles (case-insensitive)
+        # Remove duplicate movie titles
         seen_titles = set()
-        unique_posts = []
+        unique_movies = []
         
-        for post in all_posts:
+        for post in all_movie_posts:
             title_key = post['extracted_title'].lower().strip()
-            if title_key not in seen_titles and len(unique_posts) < 30:
+            if title_key not in seen_titles and len(unique_movies) < limit:
                 seen_titles.add(title_key)
-                unique_posts.append(post)
+                unique_movies.append(post)
         
-        logger.info(f"📊 Found {len(unique_posts)} unique movie titles for IMDB lookup")
+        logger.info(f"📊 Found {len(unique_movies)} unique movies for IMDB processing")
         
-        # Add IMDB posters to each unique post
-        final_posts_with_imdb = []
+        # Add IMDB posters to each movie
+        movies_with_imdb = []
         
-        for i, post in enumerate(unique_posts):
+        for i, movie in enumerate(unique_movies):
             try:
-                logger.info(f"🎬 IMDB lookup {i+1}/{len(unique_posts)}: '{post['extracted_title']}'")
+                logger.info(f"🎬 IMDB processing {i+1}/{len(unique_movies)}: '{movie['extracted_title']}'")
                 
                 # Get IMDB data
-                imdb_data = await get_imdb_data_with_fallback(post['extracted_title'])
+                imdb_result = await get_imdb_poster_enhanced(movie['extracted_title'])
                 
-                if imdb_data.get('success'):
-                    # Add IMDB data to post
-                    post.update({
-                        'imdb_poster_url': imdb_data['poster_url'],
-                        'imdb_title': imdb_data['imdb_title'],
-                        'imdb_year': imdb_data['year'],
-                        'imdb_rating': imdb_data['rating'],
-                        'imdb_genre': imdb_data['genre'],
-                        'imdb_plot': imdb_data['plot'],
-                        'imdb_director': imdb_data['director'],
-                        'imdb_actors': imdb_data['actors'],
-                        'has_imdb_poster': True,
-                        'api_key_used': imdb_data['api_key_used']
+                if imdb_result.get('success'):
+                    # Successfully got IMDB data
+                    movie.update({
+                        'imdb_poster_url': imdb_result['poster_url'],
+                        'imdb_title': imdb_result['imdb_title'],
+                        'imdb_year': imdb_result['year'],
+                        'imdb_rating': imdb_result['rating'],
+                        'imdb_genre': imdb_result['genre'],
+                        'imdb_plot': imdb_result['plot'],
+                        'has_imdb_data': True,
+                        'api_used': imdb_result['api_key_index']
                     })
-                    logger.info(f"✅ IMDB added for: '{post['extracted_title']}'")
+                    logger.info(f"✅ IMDB added: '{movie['extracted_title']}'")
                 else:
                     # No IMDB data available
-                    post.update({
+                    movie.update({
                         'imdb_poster_url': None,
-                        'has_imdb_poster': False,
-                        'imdb_error': imdb_data.get('error', 'Not found')
+                        'has_imdb_data': False,
+                        'imdb_error': imdb_result.get('error', 'Not found in IMDB')
                     })
-                    logger.info(f"⚠️ No IMDB data for: '{post['extracted_title']}'")
+                    logger.info(f"⚠️ No IMDB: '{movie['extracted_title']}'")
                 
-                final_posts_with_imdb.append(post)
+                movies_with_imdb.append(movie)
                 
-                # Rate limiting - small delay between API calls
-                await asyncio.sleep(0.3)
+                # Rate limiting delay
+                await asyncio.sleep(0.4)
                 
             except Exception as e:
-                logger.warning(f"Post IMDB integration error: {e}")
+                logger.error(f"Movie IMDB processing error: {e}")
                 continue
         
-        logger.info(f"✅ COMPLETE: {len(final_posts_with_imdb)} posts ready with IMDB integration")
-        return final_posts_with_imdb
+        logger.info(f"✅ COMPLETE: {len(movies_with_imdb)} movies ready with IMDB integration")
+        return movies_with_imdb
         
     except Exception as e:
-        logger.error(f"❌ Latest posts with IMDB error: {e}")
+        logger.error(f"❌ Recent movies processing error: {e}")
         return []
 
-async def search_telegram_channels_enhanced(query, limit=20, offset=0):
-    """Enhanced telegram search with better formatting"""
+async def search_telegram_full(query, limit=20, offset=0):
+    """Complete telegram search with enhanced formatting"""
     if not User or not bot_started:
         return {"results": [], "total": 0}
     
     try:
-        logger.info(f"🔍 Enhanced Telegram search for: '{query}'")
+        logger.info(f"🔍 Full Telegram search: '{query}'")
         
-        all_results = []
+        search_results = []
         
         for channel_id in Config.TEXT_CHANNEL_IDS:
             try:
                 channel_name = 'Movies Link' if channel_id == -1001891090100 else 'DISKWALA MOVIES'
                 logger.info(f"📝 Searching {channel_name}...")
                 
-                result_count = 0
                 async for message in User.search_messages(
                     chat_id=channel_id,
                     query=query,
                     limit=50
                 ):
                     if message.text and len(message.text) > 30:
-                        # Enhanced formatting
-                        formatted_content = format_telegram_content_enhanced(message.text)
+                        formatted_content = format_telegram_post(message.text)
                         
                         result = {
-                            'type': 'telegram_result',
                             'content': formatted_content,
                             'raw_text': message.text,
-                            'extracted_title': extract_movie_title_enhanced(message.text),
                             'date': message.date.isoformat() if message.date else datetime.now().isoformat(),
-                            'message_id': message.id,
-                            'channel_id': channel_id,
                             'channel_name': channel_name,
+                            'channel_id': channel_id,
+                            'message_id': message.id,
                             'telegram_link': f"https://t.me/c/{str(channel_id).replace('-100', '')}/{message.id}",
-                            'download_links': extract_download_links(message.text),
-                            'has_download_links': bool(re.search(r'https?://', message.text)),
-                            'link_count': len(re.findall(r'https?://[^\s]+', message.text)),
-                            'text_length': len(message.text),
-                            'relevance_score': calculate_relevance_score(query, message.text)
+                            'download_links': len(re.findall(r'https?://[^\s]+', message.text)),
+                            'has_downloads': bool(re.search(r'https?://', message.text))
                         }
                         
-                        all_results.append(result)
-                        result_count += 1
-                
-                logger.info(f"✅ {channel_name}: {result_count} results")
-                
+                        search_results.append(result)
+                        
             except Exception as e:
-                logger.warning(f"Channel {channel_id} search error: {e}")
+                logger.warning(f"Search error in {channel_id}: {e}")
                 continue
         
         # Sort by relevance and date
-        all_results.sort(key=lambda x: (x['relevance_score'], x['date']), reverse=True)
+        search_results.sort(key=lambda x: (x['download_links'], x['date']), reverse=True)
         
-        total_results = len(all_results)
-        paginated_results = all_results[offset:offset + limit]
+        total_results = len(search_results)
+        paginated_results = search_results[offset:offset + limit]
         
-        logger.info(f"✅ Enhanced search completed: {len(paginated_results)}/{total_results} results")
+        logger.info(f"✅ Search complete: {len(paginated_results)}/{total_results} results")
         
         return {
             "results": paginated_results,
             "total": total_results,
             "current_page": (offset // limit) + 1,
-            "total_pages": math.ceil(total_results / limit) if total_results > 0 else 1,
-            "search_query": query,
-            "channels_searched": Config.TEXT_CHANNEL_IDS
+            "total_pages": math.ceil(total_results / limit) if total_results > 0 else 1
         }
         
     except Exception as e:
-        logger.error(f"Enhanced search error: {e}")
+        logger.error(f"Telegram search error: {e}")
         return {"results": [], "total": 0}
 
-def format_telegram_content_enhanced(text):
-    """Enhanced formatting for telegram content"""
+def format_telegram_post(text):
+    """Format telegram post for display"""
     if not text:
         return ""
     
@@ -356,102 +376,39 @@ def format_telegram_content_enhanced(text):
         # HTML escape
         formatted = html.escape(text)
         
-        # Enhanced download links formatting
+        # Enhanced download links
         formatted = re.sub(
             r'(https?://[^\s]+)', 
-            r'<a href="\1" target="_blank" class="download-link"><i class="fas fa-download me-2"></i>\1</a>', 
+            r'<a href="\1" target="_blank" class="download-link"><i class="fas fa-external-link-alt me-1"></i>\1</a>', 
             formatted
         )
         
         # Convert newlines
         formatted = formatted.replace('\n', '<br>')
         
-        # Enhanced movie metadata tags
-        formatted = re.sub(r'📁\s*Size[:\s]*([^<br>|]+)', r'<span class="info-tag size-tag"><i class="fas fa-hdd me-1"></i>Size: \1</span>', formatted)
-        formatted = re.sub(r'📹\s*Quality[:\s]*([^<br>|]+)', r'<span class="info-tag quality-tag"><i class="fas fa-video me-1"></i>Quality: \1</span>', formatted)
-        formatted = re.sub(r'⭐\s*Rating[:\s]*([^<br>|]+)', r'<span class="info-tag rating-tag"><i class="fas fa-star me-1"></i>Rating: \1</span>', formatted)
-        formatted = re.sub(r'🎭\s*Genre[:\s]*([^<br>|]+)', r'<span class="info-tag genre-tag"><i class="fas fa-masks-theater me-1"></i>Genre: \1</span>', formatted)
-        formatted = re.sub(r'🎵\s*Audio[:\s]*([^<br>|]+)', r'<span class="info-tag audio-tag"><i class="fas fa-volume-up me-1"></i>Audio: \1</span>', formatted)
+        # Movie info tags
+        formatted = re.sub(r'📁\s*Size[:\s]*([^<br>|]+)', r'<span class="info-tag size-tag"><i class="fas fa-hdd me-1"></i>\1</span>', formatted)
+        formatted = re.sub(r'📹\s*Quality[:\s]*([^<br>|]+)', r'<span class="info-tag quality-tag"><i class="fas fa-video me-1"></i>\1</span>', formatted)
+        formatted = re.sub(r'⭐\s*Rating[:\s]*([^<br>|]+)', r'<span class="info-tag rating-tag"><i class="fas fa-star me-1"></i>\1</span>', formatted)
         
         # Movie title highlighting
-        formatted = re.sub(r'🎬\s*([^<br>-]+)', r'<h6 class="movie-title-highlight"><i class="fas fa-film me-2"></i>\1</h6>', formatted)
+        formatted = re.sub(r'🎬\s*([^<br>-]+)', r'<h5 class="movie-highlight"><i class="fas fa-film me-2"></i>\1</h5>', formatted)
         
         return formatted
         
     except Exception as e:
-        logger.warning(f"Content formatting error: {e}")
+        logger.warning(f"Post formatting error: {e}")
         return html.escape(str(text))
 
-def extract_download_links(text):
-    """Extract and categorize download links"""
-    if not text:
-        return []
-    
-    links = re.findall(r'https?://[^\s]+', text)
-    categorized_links = []
-    
-    for link in links:
-        link_type = 'unknown'
-        if 'drive.google' in link:
-            link_type = 'google_drive'
-        elif 'mega.nz' in link or 'mega.io' in link:
-            link_type = 'mega'
-        elif 'dropbox.com' in link:
-            link_type = 'dropbox'
-        elif 'telegram' in link or 't.me' in link:
-            link_type = 'telegram'
-        elif any(x in link.lower() for x in ['stream', 'watch', 'play']):
-            link_type = 'streaming'
-        elif any(x in link.lower() for x in ['download', 'dl', 'file']):
-            link_type = 'download'
-        
-        categorized_links.append({
-            'url': link,
-            'type': link_type,
-            'domain': urllib.parse.urlparse(link).netloc
-        })
-    
-    return categorized_links
-
-def calculate_relevance_score(query, text):
-    """Calculate relevance score for search results"""
-    if not query or not text:
-        return 0
-    
-    query_lower = query.lower()
-    text_lower = text.lower()
-    
-    score = 0
-    
-    # Exact match bonus
-    if query_lower in text_lower:
-        score += 10
-    
-    # Word matches
-    query_words = query_lower.split()
-    for word in query_words:
-        if word in text_lower:
-            score += 5
-    
-    # Download links bonus
-    if re.search(r'https?://', text):
-        score += 3
-    
-    # Length bonus for substantial content
-    if len(text) > 200:
-        score += 2
-    
-    return score
-
 async def initialize_telegram():
-    """Initialize telegram connection"""
+    """Initialize Telegram connection"""
     global User, bot_started
     
     try:
-        logger.info("🔄 Initializing Telegram connection...")
+        logger.info("🔄 Initializing Telegram...")
         
         User = Client(
-            "sk4film_latest",
+            "sk4film_main",
             api_id=Config.API_ID,
             api_hash=Config.API_HASH,
             session_string=Config.USER_SESSION_STRING,
@@ -460,29 +417,28 @@ async def initialize_telegram():
         
         await User.start()
         me = await User.get_me()
-        logger.info(f"✅ Connected as: {me.first_name} (@{me.username or 'no_username'})")
+        logger.info(f"✅ Connected: {me.first_name} (@{me.username or 'no_username'})")
         
-        # Verify text channels
+        # Verify channels
         working_channels = []
         for channel_id in Config.TEXT_CHANNEL_IDS:
             try:
                 chat = await User.get_chat(channel_id)
-                logger.info(f"✅ Channel verified: {chat.title} ({channel_id})")
+                logger.info(f"✅ Channel OK: {chat.title}")
                 working_channels.append(channel_id)
             except Exception as e:
-                logger.error(f"❌ Channel {channel_id} access error: {e}")
+                logger.error(f"❌ Channel {channel_id} error: {e}")
         
         if working_channels:
             Config.TEXT_CHANNEL_IDS = working_channels
             bot_started = True
-            logger.info(f"🎉 SYSTEM READY! Working channels: {working_channels}")
+            logger.info(f"🎉 SYSTEM READY with {len(working_channels)} channels")
             return True
-        else:
-            logger.error("❌ No accessible channels found!")
-            return False
+        
+        return False
         
     except Exception as e:
-        logger.error(f"❌ Telegram initialization failed: {e}")
+        logger.error(f"❌ Telegram init error: {e}")
         return False
 
 # CORS
@@ -497,115 +453,94 @@ async def after_request(response):
 async def home():
     return jsonify({
         "status": "healthy" if bot_started else "error",
-        "service": "SK4FiLM API - Latest Posts + IMDB + Enhanced Search",
-        "version": "7.0",
-        "mode": "TITLE_EXTRACTION_IMDB_INTEGRATION",
+        "service": "SK4FiLM API - Recent Movies with IMDB Posters",
         "telegram_connected": bot_started,
-        "text_channels": Config.TEXT_CHANNEL_IDS,
-        "imdb_keys_available": len(Config.OMDB_KEYS),
-        "features": ["title_extraction", "imdb_posters", "enhanced_search", "click_to_search"],
+        "channels": Config.TEXT_CHANNEL_IDS,
         "timestamp": datetime.now().isoformat()
     })
 
-@app.route('/api/latest_posts')
-async def api_latest_posts():
-    """Get latest posts with titles and IMDB posters"""
+@app.route('/api/latest_movies')
+async def api_latest_movies():
+    """MAIN API: Get recent movies with IMDB posters"""
     try:
         limit = int(request.args.get('limit', 30))
         
         if not bot_started:
             return jsonify({
                 "status": "error",
-                "message": "Telegram service not available - please check connection"
+                "message": "Telegram service not available"
             }), 503
         
-        logger.info(f"🎬 API: Getting {limit} latest posts with IMDB integration...")
+        logger.info(f"🎬 API: Getting {limit} recent movies with IMDB posters...")
         
-        posts_with_imdb = await get_30_latest_posts_with_titles_and_posters()
+        movies = await get_recent_movies_with_posters(limit)
         
-        if posts_with_imdb:
-            success_count = sum(1 for post in posts_with_imdb if post.get('has_imdb_poster'))
-            logger.info(f"✅ API SUCCESS: {len(posts_with_imdb)} posts, {success_count} with IMDB posters")
+        if movies:
+            imdb_count = sum(1 for m in movies if m.get('has_imdb_data'))
+            logger.info(f"✅ API SUCCESS: {len(movies)} movies, {imdb_count} with IMDB posters")
             
             return jsonify({
                 "status": "success",
-                "posts": posts_with_imdb[:limit],
-                "total_posts": len(posts_with_imdb),
-                "posts_with_imdb": success_count,
-                "source": "TEXT_CHANNELS_TITLE_EXTRACTION_IMDB",
-                "channels_used": Config.TEXT_CHANNEL_IDS,
+                "movies": movies,
+                "total_movies": len(movies),
+                "movies_with_imdb": imdb_count,
+                "source": "RECENT_TELEGRAM_POSTS_WITH_IMDB",
                 "timestamp": datetime.now().isoformat()
             })
         else:
-            logger.warning("⚠️ No posts with extractable titles found")
             return jsonify({
                 "status": "error",
-                "message": "No posts with extractable movie titles found"
+                "message": "No recent movies found"
             }), 404
             
     except Exception as e:
-        logger.error(f"❌ Latest posts API error: {e}")
+        logger.error(f"❌ Latest movies API error: {e}")
         return jsonify({"status": "error", "message": str(e)}), 500
 
 @app.route('/api/search')
 async def api_search():
-    """Enhanced search API"""
+    """Search API"""
     try:
         query = request.args.get('query', '').strip()
-        limit = int(request.args.get('limit', 10))
+        limit = int(request.args.get('limit', 8))
         page = int(request.args.get('page', 1))
         offset = (page - 1) * limit
         
         if not query:
-            return jsonify({"status": "error", "message": "Search query is required"}), 400
+            return jsonify({"status": "error", "message": "Query required"}), 400
         
-        if not bot_started:
-            return jsonify({"status": "error", "message": "Telegram service unavailable"}), 503
-        
-        logger.info(f"🔍 Enhanced Search API: '{query}' (page: {page}, limit: {limit})")
-        
-        search_results = await search_telegram_channels_enhanced(query, limit, offset)
+        result = await search_telegram_full(query, limit, offset)
         
         return jsonify({
             "status": "success",
             "query": query,
-            "results": search_results["results"],
+            "results": result["results"],
             "pagination": {
-                "current_page": search_results["current_page"],
-                "total_pages": search_results["total_pages"],
-                "total_results": search_results["total"],
-                "results_per_page": limit,
-                "showing_start": offset + 1,
-                "showing_end": min(offset + limit, search_results["total"]),
-                "has_next_page": search_results["current_page"] < search_results["total_pages"]
+                "current_page": result["current_page"],
+                "total_pages": result["total_pages"],
+                "total_results": result["total"],
+                "results_per_page": limit
             },
-            "search_source": "TELEGRAM_CHANNELS_ENHANCED",
-            "channels_searched": search_results.get("channels_searched", []),
             "timestamp": datetime.now().isoformat()
         })
         
     except Exception as e:
-        logger.error(f"Search API error: {e}")
         return jsonify({"status": "error", "message": str(e)}), 500
 
-@app.route('/api/proxy_poster')
-async def api_proxy_poster():
-    """FIXED: Proxy IMDB posters with better error handling"""
+@app.route('/api/imdb_poster')
+async def api_imdb_poster():
+    """Enhanced IMDB poster proxy with better error handling"""
     try:
         poster_url = request.args.get('url', '').strip()
         
-        if not poster_url:
-            return create_error_placeholder("No URL provided")
+        if not poster_url or not poster_url.startswith('http'):
+            return create_poster_placeholder("Invalid URL")
         
-        if not poster_url.startswith('http'):
-            return create_error_placeholder("Invalid URL")
-        
-        logger.info(f"🖼️ Proxying IMDB poster: {poster_url}")
+        logger.info(f"🖼️ Proxying IMDB poster: {poster_url[:60]}...")
         
         headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-            'Accept': 'image/webp,image/apng,image/*,*/*;q=0.8',
-            'Accept-Encoding': 'gzip, deflate, br',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            'Accept': 'image/webp,image/apng,image/jpeg,image/png,image/*,*/*;q=0.8',
             'Accept-Language': 'en-US,en;q=0.9',
             'Cache-Control': 'no-cache',
             'Referer': 'https://www.imdb.com/'
@@ -617,86 +552,75 @@ async def api_proxy_poster():
                     image_data = await response.read()
                     content_type = response.headers.get('content-type', 'image/jpeg')
                     
-                    logger.info(f"✅ IMDB poster proxied: {len(image_data)} bytes")
+                    logger.info(f"✅ IMDB poster loaded: {len(image_data)} bytes")
                     
                     return Response(
                         image_data,
                         mimetype=content_type,
                         headers={
-                            'Cache-Control': 'public, max-age=7200',
+                            'Cache-Control': 'public, max-age=86400',  # 24 hours
                             'Content-Type': content_type,
-                            'Access-Control-Allow-Origin': '*'
+                            'Access-Control-Allow-Origin': '*',
+                            'Access-Control-Allow-Methods': 'GET',
+                            'Access-Control-Allow-Headers': 'Content-Type'
                         }
                     )
                 else:
-                    logger.warning(f"❌ Poster response error: {response.status}")
-                    return create_error_placeholder(f"HTTP {response.status}")
+                    logger.warning(f"❌ Poster HTTP error: {response.status}")
+                    return create_poster_placeholder(f"HTTP {response.status}")
                     
     except asyncio.TimeoutError:
-        logger.error("⏰ Poster download timeout")
-        return create_error_placeholder("Timeout")
+        logger.error("⏰ IMDB poster timeout")
+        return create_poster_placeholder("Timeout")
     except Exception as e:
         logger.error(f"❌ Poster proxy error: {e}")
-        return create_error_placeholder("Proxy Error")
+        return create_poster_placeholder("Load Error")
 
-def create_error_placeholder(error_msg):
-    """Create error placeholder SVG"""
+def create_poster_placeholder(error_text):
+    """Create professional poster placeholder"""
     svg = f'''<svg width="300" height="400" xmlns="http://www.w3.org/2000/svg">
         <defs>
-            <linearGradient id="errorGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <linearGradient id="posterGrad" x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" style="stop-color:#1a1a2e"/>
-                <stop offset="100%" style="stop-color:#16213e"/>
+                <stop offset="50%" style="stop-color:#16213e"/>
+                <stop offset="100%" style="stop-color:#0f172a"/>
+            </linearGradient>
+            <linearGradient id="iconGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#00ccff"/>
+                <stop offset="100%" style="stop-color:#0066ff"/>
             </linearGradient>
         </defs>
-        <rect width="100%" height="100%" fill="url(#errorGrad)"/>
-        <circle cx="150" cy="150" r="50" fill="none" stroke="#00ccff" stroke-width="2" opacity="0.5"/>
-        <text x="50%" y="160" text-anchor="middle" fill="#00ccff" font-size="18" font-family="Arial, sans-serif" font-weight="bold">
-            <tspan x="50%" dy="0">🎬</tspan>
-            <tspan x="50%" dy="30" font-size="14">SK4FiLM</tspan>
-        </text>
-        <text x="50%" y="250" text-anchor="middle" fill="#ffffff" font-size="12" font-family="Arial, sans-serif" opacity="0.8">{error_msg}</text>
+        <rect width="100%" height="100%" fill="url(#posterGrad)"/>
+        <circle cx="150" cy="150" r="45" fill="none" stroke="url(#iconGrad)" stroke-width="3" opacity="0.6"/>
+        <circle cx="150" cy="150" r="35" fill="url(#iconGrad)" opacity="0.3"/>
+        <text x="50%" y="160" text-anchor="middle" fill="url(#iconGrad)" font-size="24" font-family="Arial, sans-serif" font-weight="bold">🎬</text>
+        <text x="50%" y="220" text-anchor="middle" fill="#00ccff" font-size="16" font-family="Arial, sans-serif" font-weight="600">SK4FiLM</text>
+        <text x="50%" y="250" text-anchor="middle" fill="#ffffff" font-size="12" font-family="Arial, sans-serif" opacity="0.8">{error_text}</text>
+        <text x="50%" y="320" text-anchor="middle" fill="#00ccff" font-size="10" font-family="Arial, sans-serif" opacity="0.6">Click to Search Telegram</text>
         </svg>'''
     
     return Response(svg, mimetype='image/svg+xml', headers={'Cache-Control': 'public, max-age=300'})
 
-# Server startup
+# Server
 async def run_server():
     try:
-        logger.info("🚀 SK4FiLM Server - ENHANCED TITLE + IMDB + SEARCH SYSTEM")
+        logger.info("🚀 SK4FiLM - Recent Movies + IMDB Posters System")
         
-        # Initialize telegram
-        telegram_success = await initialize_telegram()
+        success = await initialize_telegram()
         
-        if telegram_success:
-            logger.info("✅ COMPLETE SYSTEM ONLINE!")
-            logger.info("📋 Latest posts with title extraction")
-            logger.info("🎬 IMDB posters with multiple API keys")
-            logger.info("🔍 Enhanced telegram search")
-            logger.info("🖱️ Click-to-search functionality")
-        else:
-            logger.warning("⚠️ System running in limited mode")
+        if success:
+            logger.info("✅ SYSTEM FULLY OPERATIONAL!")
         
-        # Start web server
         config = HyperConfig()
         config.bind = [f"0.0.0.0:{Config.WEB_SERVER_PORT}"]
         
-        logger.info(f"🌐 Starting web server on port {Config.WEB_SERVER_PORT}")
         await serve(app, config)
         
     except Exception as e:
-        logger.error(f"💥 Server startup error: {e}")
+        logger.error(f"💥 Server error: {e}")
     finally:
         if User:
-            try:
-                await User.stop()
-                logger.info("🔌 Telegram client stopped")
-            except:
-                pass
+            await User.stop()
 
 if __name__ == "__main__":
-    try:
-        asyncio.run(run_server())
-    except KeyboardInterrupt:
-        logger.info("🛑 Server stopped by user")
-    except Exception as e:
-        logger.error(f"💥 Fatal server error: {e}")
+    asyncio.run(run_server())
