@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Search Results - SK4FiLM</title>
+    <title>SK4FiLM - Movie Search Engine</title>
     
-    <!-- Google Auto Ads ONLY -->
+    <!-- Google Auto Ads -->
     <meta name="google-adsense-account" content="ca-pub-5244164301170945">
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5244164301170945" crossorigin="anonymous"></script>
     <script>
@@ -18,25 +18,26 @@
     
     <!-- CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;600;700&family=Montserrat:wght@800&display=swap" rel="stylesheet">
     
     <style>
         :root {
             --primary: #ff0000;
             --secondary: #0066ff;
             --accent: #00ccff;
-            --light: #f8f9fa;
+            --text: #f8f9fa;
         }
         
         body {
             background: url('https://i.postimg.cc/T2mcBGtv/pxfuel-2.jpg') no-repeat center center fixed;
             background-size: cover;
             min-height: 100vh;
-            font-family: 'Poppins', sans-serif;
-            color: var(--light);
+            font-family: 'Josefin Sans', sans-serif;
+            color: var(--text);
             position: relative;
-            padding-top: 140px;
+            padding-top: 90px;
         }
         
         body::before {
@@ -46,11 +47,17 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(10, 10, 10, 0.85);
+            background: rgba(10, 10, 10, 0.7);
             z-index: -1;
         }
         
-        /* Navigation */
+        .container {
+            position: relative;
+            z-index: 1;
+            padding: 20px 15px 40px;
+        }
+        
+        /* Navigation - PRESERVED */
         .top-navbar {
             background: rgba(15, 23, 42, 0.95);
             backdrop-filter: blur(15px);
@@ -58,114 +65,191 @@
             top: 0;
             width: 100%;
             z-index: 1000;
-            padding: 15px 0;
+            padding: 12px 0;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
         }
         
         .navbar-content {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
         }
         
-        /* Search Section */
-        .search-section {
-            background: rgba(15, 23, 42, 0.9);
-            position: fixed;
-            top: 70px;
-            width: 100%;
-            z-index: 900;
-            padding: 15px 0;
+        .logo-img {
+            height: 55px;
+            margin-right: 15px;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(255, 0, 0, 0.3);
         }
         
-        .search-form {
-            display: flex;
-            gap: 12px;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 0 20px;
+        .brand-text {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 2.2rem;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
         
+        /* Section boxes - PRESERVED */
+        .section-box {
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(5px);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        /* Search - PRESERVED */
         .search-input {
-            background: rgba(255, 255, 255, 0.1);
-            border: 2px solid rgba(255, 255, 255, 0.2);
+            background: rgba(60, 65, 90, 0.7);
+            border: none;
+            border-bottom: 2px solid var(--primary);
             color: white;
-            padding: 12px 20px;
+            padding: 10px 15px;
             font-size: 1rem;
-            flex: 1;
-            border-radius: 25px;
+            border-radius: 6px;
         }
         
         .search-input:focus {
-            border-color: var(--accent);
+            border-bottom-color: var(--accent);
+            box-shadow: 0 0 12px rgba(0, 204, 255, 0.5);
             outline: none;
             color: white;
         }
         
         .search-btn {
-            background: linear-gradient(45deg, var(--primary), var(--secondary));
-            border: none;
-            border-radius: 25px;
-            padding: 12px 24px;
+            background: linear-gradient(50deg, var(--primary), var(--secondary));
             color: white;
             font-weight: 600;
+            padding: 10px 25px;
+            border: none;
+            border-radius: 6px;
+            width: 100%;
+            margin-top: 8px;
             cursor: pointer;
         }
         
-        /* Results */
-        .main-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        
-        .results-wrapper {
-            background: rgba(15, 23, 42, 0.8);
-            border-radius: 15px;
-            padding: 25px;
-            margin-bottom: 25px;
+        /* IMDB Movie Cards */
+        .movie-card {
+            background: rgba(30, 41, 59, 0.8);
             border: 1px solid rgba(255,255,255,0.1);
-        }
-        
-        .result-item {
-            background: rgba(30, 41, 59, 0.9);
-            border: 1px solid rgba(255,255,255,0.15);
-            border-radius: 15px;
-            padding: 25px;
-            margin-bottom: 25px;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            height: 100%;
+            cursor: pointer;
             position: relative;
         }
         
-        .result-item::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 4px;
-            height: 100%;
-            background: linear-gradient(45deg, var(--primary), var(--accent));
+        .movie-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 102, 255, 0.4);
+            border-color: var(--accent);
         }
         
-        .result-content {
-            color: var(--light);
-            line-height: 1.7;
-            font-size: 1rem;
-            word-wrap: break-word;
-            white-space: pre-wrap;
+        .movie-poster {
+            width: 100%;
+            height: 320px;
+            object-fit: cover;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            transition: transform 0.3s ease;
         }
         
-        .result-content a {
+        .movie-card:hover .movie-poster {
+            transform: scale(1.08);
+        }
+        
+        .movie-info {
+            padding: 16px;
+        }
+        
+        .movie-title {
+            font-size: 0.95rem;
             color: var(--accent);
+            margin-bottom: 10px;
+            line-height: 1.4;
             font-weight: 600;
+        }
+        
+        .imdb-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: linear-gradient(45deg, #f5c518, #daa520);
+            color: #000;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.7rem;
+            font-weight: 700;
+        }
+        
+        .telegram-badge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: linear-gradient(45deg, #0088cc, #006bb3);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.7rem;
+            font-weight: 700;
+        }
+        
+        .click-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0,0,0,0.9));
+            padding: 12px 8px 8px;
+            text-align: center;
+            color: var(--accent);
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        /* Visitor counter - PRESERVED */
+        .visitor-container {
+            position: fixed;
+            bottom: 15px;
+            right: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        .visitor-logo {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 6px;
+            border: 2px solid white;
+        }
+        
+        .visitor-count {
+            background: rgba(0, 102, 255, 0.8);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: bold;
         }
         
         /* Mobile */
         @media (max-width: 768px) {
-            body { padding-top: 120px; }
-            .main-container { padding: 15px; }
-            .result-item { padding: 20px; }
+            body { padding-top: 80px; }
+            .container { padding: 15px 10px 30px; }
+            .logo-img { height: 45px; }
+            .brand-text { font-size: 1.8rem; }
+            .section-box { padding: 20px; }
+            .movie-poster { height: 280px; }
         }
         
         .loading-spinner {
@@ -175,7 +259,7 @@
             border-top: 4px solid var(--primary);
             border-radius: 50%;
             animation: spin 1s linear infinite;
-            margin: 0 auto 20px;
+            margin: 0 auto 15px;
         }
         
         @keyframes spin {
@@ -186,170 +270,360 @@
 </head>
 
 <body>
-    <!-- Navigation -->
+    <!-- Audio - PRESERVED -->
+    <audio autoplay id="bg-audio">
+        <source src="https://files.catbox.moe/5t18g8.mp3" type="audio/mpeg">
+    </audio>
+    
+    <!-- Navigation - PRESERVED -->
     <nav class="top-navbar">
-        <div class="navbar-content">
-            <a href="index.html" style="display: flex; align-items: center; color: white; text-decoration: none;">
-                <img src="https://iili.io/KOlfc41.png" alt="SK4FiLM Logo" style="height: 40px; margin-right: 12px; border-radius: 6px;">
-                <div style="font-size: 1.5rem; background: linear-gradient(90deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 700;">SK4FiLM</div>
-            </a>
-            <a href="index.html" style="background: rgba(255, 255, 255, 0.1); color: white; padding: 8px 16px; border-radius: 20px; text-decoration: none;">
-                <i class="fas fa-home me-1"></i>Home
-            </a>
-        </div>
-    </nav>
-
-    <!-- Search Section -->
-    <div class="search-section">
-        <form id="searchForm" class="search-form">
-            <input type="text" id="searchInput" class="search-input" placeholder="Search real movie data..." required>
-            <button type="submit" class="search-btn">
-                <i class="fas fa-search me-1"></i>Search
-            </button>
-        </form>
-    </div>
-
-    <div class="main-container">
-        <!-- Search Stats -->
-        <div id="searchStats" style="display: none;">
-            <div style="background: linear-gradient(135deg, rgba(40, 167, 69, 0.1), rgba(0, 102, 255, 0.1)); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 15px; padding: 20px; margin-bottom: 25px; text-align: center;">
-                <div style="color: var(--accent); font-size: 1.2rem; margin-bottom: 10px;">Real Data Search Results</div>
-                <div id="searchQuery" style="margin-bottom: 15px; color: var(--light);"></div>
-                <div style="display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;">
-                    <div style="background: rgba(40, 167, 69, 0.2); color: #28a745; padding: 6px 14px; border-radius: 12px; font-size: 0.8rem;">Real Data Only</div>
-                    <div style="background: rgba(0, 102, 255, 0.2); color: var(--accent); padding: 6px 14px; border-radius: 12px; font-size: 0.8rem;">Text Channels</div>
-                    <div id="resultsCount" style="background: rgba(0, 102, 255, 0.2); color: var(--accent); padding: 6px 14px; border-radius: 12px; font-size: 0.8rem;">0 Results</div>
-                </div>
+        <div class="container">
+            <div class="navbar-content">
+                <a href="#" style="display: flex; align-items: center; color: white; text-decoration: none;">
+                    <img src="https://iili.io/KOlfc41.png" alt="SK4FiLM Logo" class="logo-img">
+                    <div style="display: flex; flex-direction: column;">
+                        <div class="brand-text">SK4FiLM</div>
+                        <div style="font-size: 0.85rem; color: var(--accent); font-style: italic;">House of Entertainment</div>
+                    </div>
+                </a>
+                
+                <button onclick="showSocial()" style="background: transparent; border: none; color: var(--accent); font-size: 1.7rem; cursor: pointer; padding: 8px;">
+                    <i class="fas fa-bars"></i>
+                </button>
             </div>
         </div>
-
-        <!-- Results -->
-        <div class="results-wrapper">
-            <div id="searchResults">
-                <div style="text-align: center; padding: 50px 20px;">
-                    <i class="fas fa-search fa-4x text-primary mb-4"></i>
-                    <h4>Search Real Movie Data</h4>
-                    <p style="color: rgba(255, 255, 255, 0.8);">Enter movie name to search text channels</p>
-                    <div style="margin-top: 20px;">
-                        <span style="background: rgba(40, 167, 69, 0.1); color: #28a745; padding: 8px 16px; border-radius: 15px; font-size: 0.9rem;">
-                            <i class="fas fa-check me-2"></i>Real Data Only
-                        </span>
+    </nav>
+    
+    <div class="container">
+        <!-- Hero - PRESERVED -->
+        <div class="section-box animate__animated animate__fadeIn">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <div class="content-section">
+                        <p style="font-size: 1.1rem; margin-bottom: 10px;">🥰</p>
+                        <p style="font-size: 1rem;">Find your favorite movies with our powerful search engine</p>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div style="background: rgba(255, 255, 255, 0.1); border-radius: 10px; padding: 20px;">
+                        <input class="form-control search-input" id="searchQuery" placeholder="Search for movies, web series..." required type="text">
+                        <button class="btn search-btn" onclick="doSearch()" type="button">
+                            <i class="fas fa-search me-2"></i>Search Movies
+                        </button>
+                        <div class="text-center mt-3">
+                            <a class="btn btn-outline-light" href="https://t.me/skfilmbot" target="_blank">
+                                <i class="fab fa-telegram me-2"></i>Use Telegram Bot
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
+        </div>
+
+        <!-- MAIN: Latest Uploads with IMDB Posters -->
+        <div class="section-box animate__animated animate__fadeIn mt-4">
+            <div style="display: flex; justify-content: between; align-items: center; margin-bottom: 25px; flex-wrap: wrap; gap: 15px;">
+                <h2 style="color: var(--accent); margin: 0;">🔥 Latest Uploads</h2>
+                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                    <span style="background: rgba(0, 136, 204, 0.2); color: #0088cc; padding: 4px 10px; border-radius: 12px; font-size: 0.75rem;">
+                        <i class="fab fa-telegram me-1"></i>Telegram Posts
+                    </span>
+                    <span style="background: rgba(245, 197, 24, 0.2); color: #f5c518; padding: 4px 10px; border-radius: 12px; font-size: 0.75rem;">
+                        <i class="fas fa-star me-1"></i>IMDB Posters
+                    </span>
+                    <span style="background: rgba(40, 167, 69, 0.2); color: #28a745; padding: 4px 10px; border-radius: 12px; font-size: 0.75rem;">
+                        <i class="fas fa-mouse-pointer me-1"></i>Click to Search
+                    </span>
+                </div>
+            </div>
+            
+            <div class="row g-3" id="latestMovies">
+                <div class="col-12">
+                    <div style="text-align: center; padding: 40px 20px;">
+                        <div class="loading-spinner"></div>
+                        <p style="color: var(--accent); font-size: 1.3rem; margin-bottom: 10px;">
+                            <i class="fas fa-cogs me-2"></i>Loading Latest Movies
+                        </p>
+                        <p style="color: rgba(255, 255, 255, 0.8); margin-bottom: 15px;">
+                            Step 1: Getting titles from Telegram posts<br>
+                            Step 2: Fetching IMDB posters<br>
+                            Step 3: Ready for Telegram search
+                        </p>
+                        <div style="display: flex; justify-content: center; gap: 8px; flex-wrap: wrap;">
+                            <span style="background: rgba(0, 136, 204, 0.1); color: #0088cc; padding: 4px 8px; border-radius: 10px; font-size: 0.7rem;">📱 Telegram</span>
+                            <span style="background: rgba(245, 197, 24, 0.1); color: #f5c518; padding: 4px 8px; border-radius: 10px; font-size: 0.7rem;">🎬 IMDB</span>
+                            <span style="background: rgba(40, 167, 69, 0.1); color: #28a745; padding: 4px 8px; border-radius: 10px; font-size: 0.7rem;">🔍 Search</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tutorial Videos - PRESERVED EXACTLY -->
+        <div class="section-box animate__animated animate__fadeIn">
+            <h2 style="color: var(--accent); text-align: center; margin-bottom: 30px;">Tutorial Videos</h2>
+            <div class="row gy-4">
+                <div class="col-12 col-md-4">
+                    <div style="background: rgba(30, 41, 59, 0.7); padding: 20px; border-radius: 8px; text-align: center; height: 100%;">
+                        <h5 style="color: var(--accent); margin-bottom: 15px;">How to Search Movies</h5>
+                        <div class="ratio ratio-16x9">
+                            <iframe allowfullscreen src="https://www.youtube.com/embed/PSQ9_KLzm8s" style="border-radius: 8px;"></iframe>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-12 col-md-4">
+                    <div style="background: rgba(30, 41, 59, 0.7); padding: 20px; border-radius: 8px; text-align: center; height: 100%;">
+                        <h5 style="color: var(--accent); margin-bottom: 15px;">How To Open StreaamNet Link</h5>
+                        <div class="ratio ratio-16x9">
+                            <iframe allowfullscreen src="https://www.youtube.com/embed/fVL7DfhnwWM" style="border-radius: 8px;"></iframe>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-12 col-md-4">
+                    <div style="background: rgba(30, 41, 59, 0.7); padding: 20px; border-radius: 8px; text-align: center; height: 100%;">
+                        <h5 style="color: var(--accent); margin-bottom: 15px;">How To Open DiskWala Link</h5>
+                        <div class="ratio ratio-16x9">
+                            <iframe allowfullscreen src="https://www.youtube.com/embed/ZNKeL-pcIDw" style="border-radius: 8px;"></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Features - PRESERVED EXACTLY -->
+        <div class="section-box animate__animated animate__fadeIn">
+            <h2 style="color: var(--accent); text-align: center; margin-bottom: 30px;">Why Choose SK4FiLM?</h2>
+            <div class="row gy-4">
+                <div class="col-md-4">
+                    <div style="background: rgba(30, 41, 59, 0.7); padding: 20px; border-radius: 8px; text-align: center; height: 100%;">
+                        <div style="font-size: 2.2rem; color: var(--accent); margin-bottom: 12px;">
+                            <i class="fas fa-bolt"></i>
+                        </div>
+                        <h5>Fast Search</h5>
+                        <p>Quickly find movies across multiple Telegram channels</p>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div style="background: rgba(30, 41, 59, 0.7); padding: 20px; border-radius: 8px; text-align: center; height: 100%;">
+                        <div style="font-size: 2.2rem; color: var(--accent); margin-bottom: 12px;">
+                            <i class="fas fa-download"></i>
+                        </div>
+                        <h5>Easy Download</h5>
+                        <p>Multiple download options with direct links</p>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div style="background: rgba(30, 41, 59, 0.7); padding: 20px; border-radius: 8px; text-align: center; height: 100%;">
+                        <div style="font-size: 2.2rem; color: var(--accent); margin-bottom: 12px;">
+                            <i class="fas fa-mobile-alt"></i>
+                        </div>
+                        <h5>Mobile Friendly</h5>
+                        <p>Works perfectly on all devices and platforms</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Disclaimer - PRESERVED -->
+        <div style="background: rgba(255, 0, 0, 0.1); border: 1px solid rgba(255, 0, 0, 0.3); border-radius: 8px; padding: 15px; margin-top: 30px; text-align: center; color: #ff6b6b;">
+            <p><strong>Disclaimer:</strong> This Site Does Not Store Any File On The Server, It Only Links To Media Files Which Are Already Hosted On Telegram.</p>
+        </div>
+    </div>
+
+    <!-- Visitor Counter - PRESERVED -->
+    <div class="visitor-container">
+        <div class="visitor-logo">
+            <i class="fas fa-users" style="color: white; font-size: 1.5rem;"></i>
+        </div>
+        <div class="visitor-count">
+            <span id="visitorCount">1247</span>
+            <span style="background: #ff0000; color: white; font-size: 0.6rem; padding: 2px 5px; border-radius: 8px; margin-left: 4px; animation: blink 2s infinite;">LIVE</span>
         </div>
     </div>
 
     <script>
-        const CONFIG = {
-            BACKEND_URL: 'https://sk4film.koyeb.app',
-            RESULTS_PER_PAGE: 8
-        };
+        const BACKEND_URL = 'https://sk4film.koyeb.app';
         
-        let currentQuery = '';
-        let currentPage = 1;
-        let isLoading = false;
-        
-        // Search function
-        async function performSearch(query, page = 1) {
-            if (isLoading) return;
+        // Search function - PRESERVED
+        function doSearch() {
+            const input = document.getElementById('searchQuery');
+            const query = input.value.trim();
             
-            const resultsContainer = document.getElementById('searchResults');
-            const statsContainer = document.getElementById('searchStats');
-            
-            if (!query?.trim()) return;
-            
-            isLoading = true;
-            currentQuery = query.trim();
-            currentPage = page;
-            
-            try {
-                document.getElementById('searchInput').value = currentQuery;
-                
-                resultsContainer.innerHTML = `
-                    <div style="text-align: center; padding: 60px 20px;">
-                        <div class="loading-spinner"></div>
-                        <div style="font-size: 1.2rem; color: var(--accent);">Searching Real Data</div>
-                        <div style="color: rgba(255, 255, 255, 0.7);">Query: "${currentQuery}"</div>
-                    </div>
-                `;
-                
-                const response = await fetch(`${CONFIG.BACKEND_URL}/api/search?query=${encodeURIComponent(currentQuery)}&page=${currentPage}&limit=${CONFIG.RESULTS_PER_PAGE}`);
-                const data = await response.json();
-                
-                if (data.status === 'success' && data.results?.length > 0) {
-                    displayRealResults(data.results);
-                    updateSearchStats(currentQuery, data.pagination);
-                } else {
-                    showNoResults(currentQuery);
-                }
-                
-            } catch (error) {
-                console.error('Search error:', error);
-                showSearchError();
-            } finally {
-                isLoading = false;
+            if (query && query.length >= 2) {
+                window.location.href = `search.html?query=${encodeURIComponent(query)}`;
+            } else {
+                input.style.borderBottomColor = '#ff0000';
+                input.focus();
+                setTimeout(() => input.style.borderBottomColor = '', 2000);
             }
         }
         
-        function displayRealResults(results) {
-            const resultsContainer = document.getElementById('searchResults');
-            let resultsHTML = '';
+        // MAIN: Load latest posts with IMDB posters
+        async function loadLatestMoviesWithIMDB() {
+            const container = document.getElementById('latestMovies');
             
-            results.forEach((result, index) => {
-                resultsHTML += `
-                    <div class="result-item" style="animation: fadeIn 0.5s ease-out ${index * 0.1}s both;">
-                        <div style="display: flex; justify-content: between; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
-                            <span style="background: linear-gradient(45deg, #28a745, #20c997); color: white; padding: 6px 14px; border-radius: 20px; font-size: 0.75rem; font-weight: 600;">
-                                <i class="fas fa-check me-1"></i>Real Data
-                            </span>
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/latest_posts?limit=30`);
+                const data = await response.json();
+                
+                if (data.status === 'success' && data.posts?.length > 0) {
+                    displayMoviesWithIMDB(data.posts);
+                    console.log(`✅ ${data.posts.length} movies loaded with IMDB`);
+                } else {
+                    showNoData();
+                }
+                
+            } catch (error) {
+                console.error('Loading error:', error);
+                showError();
+            }
+        }
+        
+        // Display movies with IMDB posters
+        function displayMoviesWithIMDB(movies) {
+            const container = document.getElementById('latestMovies');
+            let html = '';
+            
+            movies.forEach((movie, index) => {
+                html += `
+                    <div class="col-6 col-sm-4 col-md-3 col-xl-2">
+                        <div class="movie-card animate__animated animate__fadeInUp" 
+                             style="animation-delay: ${index * 0.05}s"
+                             onclick="searchInTelegram('${escapeJs(movie.title)}')"
+                             title="Click to search: ${escapeHtml(movie.title)}">
                             
-                            <div style="display: flex; gap: 15px; font-size: 0.85rem; color: rgba(255, 255, 255, 0.7);">
-                                <span><i class="fas fa-calendar me-1"></i>${formatDate(result.date)}</span>
-                                <span><i class="fas fa-telegram me-1"></i>${result.channel_name}</span>
-                                ${result.link_count ? `<span><i class="fas fa-link me-1"></i>${result.link_count} Links</span>` : ''}
+                            <div class="position-relative">
+                                ${movie.has_poster && movie.imdb_poster ? `
+                                    <img src="${BACKEND_URL}/api/proxy_poster?url=${encodeURIComponent(movie.imdb_poster)}" 
+                                         class="movie-poster" 
+                                         alt="${escapeHtml(movie.title)}"
+                                         loading="lazy"
+                                         onerror="this.parentElement.innerHTML='<div class=&quot;movie-poster&quot; style=&quot;background: linear-gradient(135deg, #1a1a2e, #16213e); display: flex; align-items: center; justify-content: center; color: var(--accent); font-weight: 600; text-align: center; padding: 20px; font-size: 0.9rem;&quot;><div><i class=&quot;fas fa-film fa-2x mb-2&quot;></i><br>${escapeHtml(movie.title)}</div></div>'">
+                                    
+                                    <div class="imdb-badge">
+                                        <i class="fas fa-star me-1"></i>IMDB
+                                    </div>
+                                ` : `
+                                    <div class="movie-poster" style="background: linear-gradient(135deg, #1a1a2e, #16213e); display: flex; align-items: center; justify-content: center; color: var(--accent); font-weight: 600; text-align: center; padding: 20px; font-size: 0.9rem;">
+                                        <div>
+                                            <i class="fas fa-film fa-2x mb-2"></i><br>
+                                            ${escapeHtml(movie.title)}
+                                        </div>
+                                    </div>
+                                `}
+                                
+                                <div class="telegram-badge">
+                                    <i class="fab fa-telegram me-1"></i>TG
+                                </div>
+                                
+                                <div class="click-overlay">
+                                    <i class="fas fa-search me-1"></i>Click to Search Telegram
+                                </div>
+                            </div>
+                            
+                            <div class="movie-info">
+                                <h6 class="movie-title">
+                                    🎬 ${escapeHtml(movie.title)}
+                                </h6>
+                                
+                                <div style="display: flex; justify-content: between; align-items: center; font-size: 0.75rem; margin-top: 8px;">
+                                    <span style="color: rgba(255, 255, 255, 0.6);">
+                                        <i class="fas fa-clock me-1"></i>${formatDate(movie.date)}
+                                    </span>
+                                    ${movie.imdb_rating && movie.imdb_rating !== 'N/A' ? `
+                                        <span style="color: #f5c518; font-weight: 600;">
+                                            <i class="fas fa-star me-1"></i>${movie.imdb_rating}
+                                        </span>
+                                    ` : `
+                                        <span style="color: var(--accent);">
+                                            <i class="fas fa-search me-1"></i>Search
+                                        </span>
+                                    `}
+                                </div>
+                                
+                                ${movie.imdb_year ? `
+                                    <div style="margin-top: 6px;">
+                                        <small style="background: rgba(255, 255, 255, 0.1); color: var(--accent); padding: 2px 8px; border-radius: 10px; font-size: 0.7rem;">
+                                            ${movie.imdb_year}
+                                        </small>
+                                    </div>
+                                ` : ''}
                             </div>
                         </div>
-                        
-                        <div class="result-content">${result.content}</div>
                     </div>
                 `;
             });
             
-            resultsContainer.innerHTML = resultsHTML;
+            container.innerHTML = html;
         }
         
-        function updateSearchStats(query, pagination) {
-            document.getElementById('searchQuery').innerHTML = `Results for "<strong>${escapeHtml(query)}</strong>"`;
-            document.getElementById('resultsCount').textContent = `${pagination.total_results} Real Results`;
-            document.getElementById('searchStats').style.display = 'block';
+        // SEARCH: When movie card is clicked
+        function searchInTelegram(movieTitle) {
+            if (!movieTitle) return;
+            
+            console.log(`🎬 Searching Telegram for: "${movieTitle}"`);
+            
+            showNotification(`Searching "${movieTitle}" in Telegram channels...`);
+            
+            setTimeout(() => {
+                window.location.href = `search.html?query=${encodeURIComponent(movieTitle)}`;
+            }, 800);
         }
         
-        function showNoResults(query) {
-            document.getElementById('searchResults').innerHTML = `
-                <div style="text-align: center; padding: 50px 20px;">
-                    <i class="fas fa-search fa-4x text-muted mb-4"></i>
-                    <h3>No Real Data Found</h3>
-                    <p style="color: rgba(255, 255, 255, 0.8);">No results for "${escapeHtml(query)}" in text channels</p>
-                    <div style="margin-top: 20px;">
-                        <span style="background: rgba(40, 167, 69, 0.1); color: #28a745; padding: 6px 12px; border-radius: 12px; font-size: 0.8rem;">
-                            <i class="fas fa-info-circle me-1"></i>Real data search only
-                        </span>
+        function showNoData() {
+            document.getElementById('latestMovies').innerHTML = `
+                <div class="col-12">
+                    <div style="text-align: center; padding: 50px 20px;">
+                        <i class="fas fa-inbox fa-4x text-muted mb-4"></i>
+                        <h4>No Recent Posts</h4>
+                        <p style="color: rgba(255, 255, 255, 0.8);">No extractable movie titles found</p>
+                        <button onclick="loadLatestMoviesWithIMDB()" style="background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 20px; cursor: pointer;">
+                            <i class="fas fa-refresh me-1"></i>Retry
+                        </button>
                     </div>
                 </div>
             `;
         }
         
-        function showSearchError() {
-            document.getElementById('searchResults').innerHTML = `
-                <div style="text-align: center; padding: 50px 20px;">
-                    <i class="fas fa-exclamation-triangle fa-4x text-warning mb-4"></i>
-                    <h3 class="text-warning">Search Error</h3>
-                    <p style="color: rgba(255, 255, 255, 0.8);">Unable to search text channels</p>
+        function showError() {
+            document.getElementById('latestMovies').innerHTML = `
+                <div class="col-12">
+                    <div style="text-align: center; padding: 50px 20px;">
+                        <i class="fas fa-exclamation-triangle fa-4x text-warning mb-4"></i>
+                        <h4 class="text-warning">Service Error</h4>
+                        <p style="color: rgba(255, 255, 255, 0.8);">Cannot connect to Telegram</p>
+                        <button onclick="loadLatestMoviesWithIMDB()" style="background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 20px; cursor: pointer;">
+                            <i class="fas fa-refresh me-1"></i>Try Again
+                        </button>
+                    </div>
                 </div>
             `;
         }
         
+        // Social menu - PRESERVED
+        function showSocial() {
+            const links = {
+                'Telegram': 'https://t.me/sk4film',
+                'WhatsApp': 'https://whatsapp.com/channel/0029Va69Ts2C6ZvmEWsHNo3c',
+                'YouTube': 'https://youtube.com/@Skcreator7',
+                'Bot': 'https://t.me/skfilmbot'
+            };
+            
+            let msg = '🔗 Follow SK4FiLM:\n\n';
+            Object.entries(links).forEach(([name, url]) => {
+                msg += `${name}: ${url}\n\n`;
+            });
+            
+            if (confirm(msg + 'Open Telegram?')) {
+                window.open('https://t.me/sk4film', '_blank');
+            }
+        }
+        
+        // Utilities
         function escapeHtml(text) {
             if (!text) return '';
             const div = document.createElement('div');
@@ -357,43 +631,86 @@
             return div.innerHTML;
         }
         
+        function escapeJs(text) {
+            if (!text) return '';
+            return text.replace(/'/g, "\\'").replace(/"/g, '\\"');
+        }
+        
         function formatDate(dateString) {
             if (!dateString) return 'Recent';
             try {
                 const date = new Date(dateString);
-                const now = new Date();
-                const diffHours = Math.ceil(Math.abs(now - date) / (1000 * 60 * 60));
-                return diffHours < 1 ? 'Now' : diffHours < 24 ? `${diffHours}h` : `${Math.ceil(diffHours / 24)}d`;
+                const hours = Math.ceil(Math.abs(new Date() - date) / (1000 * 60 * 60));
+                return hours < 1 ? 'Now' : hours < 24 ? `${hours}h` : `${Math.ceil(hours / 24)}d`;
             } catch {
                 return 'Recent';
             }
         }
         
-        // Initialize
+        function showNotification(message) {
+            const div = document.createElement('div');
+            div.style.cssText = `
+                position: fixed; top: 20px; right: 20px; z-index: 2000;
+                background: #007bff; color: white; padding: 12px 20px;
+                border-radius: 25px; font-weight: 600;
+            `;
+            div.innerHTML = `<i class="fas fa-search me-2"></i>${message}`;
+            document.body.appendChild(div);
+            
+            setTimeout(() => {
+                if (document.body.contains(div)) {
+                    div.style.opacity = '0';
+                    setTimeout(() => document.body.removeChild(div), 300);
+                }
+            }, 3000);
+        }
+        
+        // Initialize - PRESERVED ALL FEATURES
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('🔍 SK4FiLM Search - Real Data Only');
+            console.log('🚀 SK4FiLM - Latest Posts IMDB System');
             
-            const query = new URLSearchParams(window.location.search).get('query') || '';
-            const searchInput = document.getElementById('searchInput');
-            
-            if (searchInput) {
-                searchInput.value = query;
-                
-                document.getElementById('searchForm').addEventListener('submit', function(e) {
-                    e.preventDefault();
-                    const newQuery = searchInput.value.trim();
-                    if (newQuery && !isLoading) {
-                        performSearch(newQuery, 1);
+            // Search enter key
+            const input = document.getElementById('searchQuery');
+            if (input) {
+                input.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        doSearch();
                     }
                 });
             }
             
-            if (query) {
-                performSearch(query, 1);
+            // Load movies
+            loadLatestMoviesWithIMDB();
+            
+            // Visitor counter - PRESERVED
+            function updateCounter() {
+                const counter = document.getElementById('visitorCount');
+                if (counter) {
+                    const current = parseInt(counter.textContent) || 1247;
+                    counter.textContent = current + Math.floor(Math.random() * 4) + 1;
+                }
+            }
+            
+            updateCounter();
+            setInterval(updateCounter, 30000);
+            
+            // Audio - PRESERVED
+            const audio = document.getElementById('bg-audio');
+            if (audio) {
+                audio.volume = 0.3;
+                audio.play().catch(() => {
+                    document.addEventListener('click', () => audio.play(), { once: true });
+                });
             }
         });
         
-        console.log('%c🔍 REAL DATA SEARCH ONLY', 'color: #28a745; font-size: 16px;');
+        // Blink animation
+        const style = document.createElement('style');
+        style.textContent = '@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }';
+        document.head.appendChild(style);
+        
+        console.log('%c🎬 LATEST POSTS → IMDB → TELEGRAM SEARCH', 'color: #00ff00; font-size: 18px; font-weight: bold;');
     </script>
 </body>
 </html>
