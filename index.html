@@ -4,12 +4,20 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SK4FiLM - Movie Search Engine</title>
-    <meta name="description" content="Search and discover movies from Telegram channels with SK4FiLM - Your ultimate movie search platform">
-    <meta name="keywords" content="movies, telegram, search, bollywood, hollywood, web series, download, SK4FiLM">
+    <meta name="description" content="Search and discover movies from Telegram channels with SK4FiLM">
+    <meta name="keywords" content="movies, telegram, search, bollywood, hollywood, web series, download">
     
-    <!-- AdSense Configuration -->
+    <!-- Google Auto Ads Configuration -->
     <meta name="google-adsense-account" content="ca-pub-5244164301170945">
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5244164301170945" crossorigin="anonymous"></script>
+    <script>
+        (adsbygoogle = window.adsbygoogle || []).push({
+            google_ad_client: "ca-pub-5244164301170945",
+            enable_page_level_ads: true,
+            overlays: {bottom: true},
+            auto_ad_client: "ca-pub-5244164301170945"
+        });
+    </script>
     
     <!-- CSS Libraries -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -58,6 +66,8 @@
         .container {
             position: relative;
             z-index: 1;
+            max-width: 1200px;
+            margin: 0 auto;
             padding: 20px 15px 40px;
         }
         
@@ -153,7 +163,7 @@
             box-shadow: 0 12px 35px rgba(0,0,0,0.4);
         }
         
-        /* FIXED: Search Box Styling */
+        /* Search Box */
         .search-box {
             background: rgba(255, 255, 255, 0.1);
             border-radius: 15px;
@@ -204,22 +214,10 @@
             box-shadow: 0 8px 20px rgba(255, 0, 0, 0.4);
         }
         
-        /* AdSense Containers */
-        .ad-container {
-            background: rgba(0, 0, 0, 0.4);
-            border: 2px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            padding: 15px;
-            margin: 25px 0;
-            text-align: center;
-        }
-        
-        .ad-label {
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 0.8rem;
-            margin-bottom: 10px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+        .search-btn:disabled {
+            opacity: 0.7;
+            transform: none;
+            cursor: not-allowed;
         }
         
         /* Movie Cards */
@@ -293,6 +291,37 @@
             margin-bottom: 15px;
         }
         
+        /* Section Titles */
+        .section-title {
+            color: var(--accent);
+            text-align: center;
+            margin-bottom: 30px;
+            font-weight: 600;
+            font-size: 1.8rem;
+        }
+        
+        /* Video Boxes */
+        .video-box {
+            background: rgba(30, 41, 59, 0.8);
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            height: 100%;
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .video-box:hover {
+            transform: translateY(-3px);
+            border-color: var(--accent);
+        }
+        
+        .video-title {
+            color: var(--accent);
+            margin-bottom: 15px;
+            font-size: 1rem;
+        }
+        
         /* Visitor Counter */
         .visitor-container {
             position: fixed;
@@ -325,7 +354,6 @@
             font-size: 0.8rem;
             font-weight: bold;
             backdrop-filter: blur(5px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
         }
         
         .live-badge {
@@ -365,10 +393,6 @@
                 font-size: 1.8rem;
             }
             
-            .brand-subtitle {
-                font-size: 0.75rem;
-            }
-            
             .section-box {
                 padding: 20px;
                 margin-bottom: 20px;
@@ -396,14 +420,13 @@
                 padding: 20px;
             }
             
+            .section-title {
+                font-size: 1.5rem;
+            }
+            
             .visitor-logo {
                 width: 45px;
                 height: 45px;
-            }
-            
-            .visitor-count {
-                font-size: 0.75rem;
-                padding: 4px 8px;
             }
         }
         
@@ -427,86 +450,104 @@
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
+        
+        .bounce-in {
+            animation: bounceIn 0.8s ease-out;
+        }
+        
+        @keyframes bounceIn {
+            0% { transform: scale(0.3); opacity: 0; }
+            50% { transform: scale(1.05); }
+            70% { transform: scale(0.9); }
+            100% { transform: scale(1); opacity: 1; }
+        }
     </style>
 </head>
 
 <body>
     <!-- Background Audio -->
-    <audio autoplay id="bg-audio">
+    <audio autoplay loop id="bg-audio" preload="auto">
         <source src="https://files.catbox.moe/5t18g8.mp3" type="audio/mpeg">
     </audio>
     
     <!-- Navigation -->
     <nav class="top-navbar">
-        <div class="container">
-            <div class="navbar-content">
-                <a href="index.html" class="navbar-brand">
-                    <img src="https://iili.io/KOlfc41.png" alt="SK4FiLM Logo" class="logo-img">
-                    <div class="brand-content">
-                        <div class="brand-text">SK4FiLM</div>
-                        <div class="brand-subtitle">House of Entertainment</div>
-                    </div>
-                </a>
-                
-                <div class="social-menu-container">
-                    <button class="social-menu-btn" id="socialMenuBtn">
-                        <i class="fas fa-bars"></i>
-                    </button>
+        <div class="navbar-content">
+            <a href="index.html" class="navbar-brand">
+                <img src="https://iili.io/KOlfc41.png" alt="SK4FiLM Logo" class="logo-img">
+                <div class="brand-content">
+                    <div class="brand-text">SK4FiLM</div>
+                    <div class="brand-subtitle">House of Entertainment</div>
                 </div>
+            </a>
+            
+            <div class="social-menu-container">
+                <button class="social-menu-btn" id="socialMenuBtn" title="Social Links">
+                    <i class="fas fa-share-alt"></i>
+                </button>
             </div>
         </div>
     </nav>
     
     <div class="container">
-        <!-- Top AdSense Ad -->
-        <div class="ad-container">
-            <div class="ad-label">
-                <i class="fas fa-ad me-2"></i>Featured Advertisement
-            </div>
-            <ins class="adsbygoogle"
-                 style="display:block"
-                 data-ad-client="ca-pub-5244164301170945"
-                 data-ad-slot="3589065722"
-                 data-ad-format="auto"
-                 data-full-width-responsive="true"></ins>
-        </div>
-
         <!-- Hero Section with Search -->
         <div class="section-box fade-in">
             <div class="row align-items-center">
-                <div class="col-lg-6">
+                <div class="col-lg-6 mb-4 mb-lg-0">
                     <div class="content-section">
-                        <h1 style="font-size: 2.5rem; margin-bottom: 15px; background: linear-gradient(90deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 700;">
+                        <h1 style="font-size: 2.8rem; margin-bottom: 20px; background: linear-gradient(90deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800;">
                             Welcome to SK4FiLM
                         </h1>
-                        <p style="font-size: 1.2rem; margin-bottom: 20px; color: rgba(255, 255, 255, 0.9);">
-                            🎬 Find your favorite movies with our powerful search engine
+                        <p style="font-size: 1.3rem; margin-bottom: 15px; color: var(--text);">
+                            🎬 Find your favorite movies instantly
                         </p>
-                        <p style="font-size: 1rem; color: rgba(255, 255, 255, 0.8);">
-                            Search through multiple Telegram channels for the latest movies and web series
+                        <p style="font-size: 1.1rem; color: rgba(255, 255, 255, 0.9); line-height: 1.6;">
+                            Search through multiple Telegram channels for the latest Bollywood, Hollywood movies and web series
                         </p>
+                        
+                        <div style="margin-top: 20px;">
+                            <div style="display: flex; gap: 15px; flex-wrap: wrap; align-items: center;">
+                                <span style="background: rgba(0, 255, 0, 0.2); color: #00ff00; padding: 6px 12px; border-radius: 15px; font-size: 0.8rem;">🔴 Live Search</span>
+                                <span style="background: rgba(0, 255, 0, 0.2); color: #00ff00; padding: 6px 12px; border-radius: 15px; font-size: 0.8rem;">📱 Mobile Friendly</span>
+                                <span style="background: rgba(0, 255, 0, 0.2); color: #00ff00; padding: 6px 12px; border-radius: 15px; font-size: 0.8rem;">⚡ Fast Results</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="col-lg-6">
-                    <div class="search-box">
-                        <!-- FIXED: Search Form with Proper Redirect -->
-                        <form id="searchForm">
+                    <div class="search-box bounce-in">
+                        <!-- ENHANCED: Search Form -->
+                        <form id="searchForm" novalidate>
                             <div class="mb-3">
+                                <label for="searchQuery" style="color: var(--accent); font-weight: 600; margin-bottom: 8px;">Search Movies:</label>
                                 <input class="form-control search-input" 
                                        id="searchQuery" 
-                                       placeholder="Search for movies, web series..." 
+                                       name="query"
+                                       placeholder="Enter movie name, actor, or genre..." 
                                        required 
                                        type="text"
-                                       autocomplete="off">
+                                       autocomplete="off"
+                                       spellcheck="false">
                             </div>
-                            <button class="btn search-btn" type="submit">
+                            <button class="btn search-btn" type="submit" id="searchButton">
                                 <i class="fas fa-search me-2"></i>Search Movies
                             </button>
                         </form>
                         
+                        <!-- Quick Search Suggestions -->
+                        <div style="margin-top: 20px;">
+                            <p style="color: rgba(255, 255, 255, 0.7); font-size: 0.9rem; margin-bottom: 10px;">Popular searches:</p>
+                            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                                <button onclick="quickSearch('Animal')" style="background: rgba(255, 255, 255, 0.1); color: var(--accent); border: 1px solid rgba(255, 255, 255, 0.2); padding: 4px 10px; border-radius: 15px; font-size: 0.8rem; cursor: pointer;">Animal</button>
+                                <button onclick="quickSearch('Salaar')" style="background: rgba(255, 255, 255, 0.1); color: var(--accent); border: 1px solid rgba(255, 255, 255, 0.2); padding: 4px 10px; border-radius: 15px; font-size: 0.8rem; cursor: pointer;">Salaar</button>
+                                <button onclick="quickSearch('Tiger 3')" style="background: rgba(255, 255, 255, 0.1); color: var(--accent); border: 1px solid rgba(255, 255, 255, 0.2); padding: 4px 10px; border-radius: 15px; font-size: 0.8rem; cursor: pointer;">Tiger 3</button>
+                                <button onclick="quickSearch('2024 movies')" style="background: rgba(255, 255, 255, 0.1); color: var(--accent); border: 1px solid rgba(255, 255, 255, 0.2); padding: 4px 10px; border-radius: 15px; font-size: 0.8rem; cursor: pointer;">2024</button>
+                            </div>
+                        </div>
+                        
                         <div class="text-center mt-4">
-                            <a class="btn btn-outline-light" href="https://t.me/skfilmbot" target="_blank" style="padding: 10px 20px; border-radius: 20px;">
-                                <i class="fab fa-telegram me-2"></i>Use Telegram Bot
+                            <a class="btn btn-outline-light" href="https://t.me/skfilmbot" target="_blank" style="padding: 10px 20px; border-radius: 20px; border: 2px solid rgba(255, 255, 255, 0.3);">
+                                <i class="fab fa-telegram me-2"></i>Telegram Bot
                             </a>
                         </div>
                     </div>
@@ -514,22 +555,9 @@
             </div>
         </div>
 
-        <!-- AdSense Ad After Hero -->
-        <div class="ad-container">
-            <div class="ad-label">Advertisement</div>
-            <ins class="adsbygoogle"
-                 style="display:block"
-                 data-ad-client="ca-pub-5244164301170945"
-                 data-ad-slot="3589065722"
-                 data-ad-format="auto"
-                 data-full-width-responsive="true"></ins>
-        </div>
-
         <!-- Latest Uploads -->
         <div class="section-box fade-in">
-            <h2 style="color: var(--accent); text-align: center; margin-bottom: 25px; font-weight: 600;">
-                🔥 Latest Movies
-            </h2>
+            <h2 class="section-title">🔥 Latest Uploads</h2>
             <div class="row g-4" id="latestPosters">
                 <div class="col-12 text-center">
                     <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;"></div>
@@ -538,97 +566,60 @@
             </div>
         </div>
 
-        <!-- AdSense Ad After Movies -->
-        <div class="ad-container">
-            <div class="ad-label">Advertisement</div>
-            <ins class="adsbygoogle"
-                 style="display:block"
-                 data-ad-client="ca-pub-5244164301170945"
-                 data-ad-slot="3589065722"
-                 data-ad-format="auto"
-                 data-full-width-responsive="true"></ins>
-        </div>
-
         <!-- Tutorial Videos -->
         <div class="section-box fade-in">
-            <h2 style="color: var(--accent); text-align: center; margin-bottom: 25px; font-weight: 600;">
-                📺 Tutorial Videos
-            </h2>
+            <h2 class="section-title">📺 How to Use</h2>
             <div class="row gy-4">
                 <div class="col-md-4">
-                    <div style="background: rgba(30, 41, 59, 0.8); padding: 20px; border-radius: 12px; text-align: center; height: 100%; border: 1px solid rgba(255,255,255,0.1);">
-                        <h5 style="color: var(--accent); margin-bottom: 15px;">How to Search Movies</h5>
+                    <div class="video-box">
+                        <h5 class="video-title">How to Search Movies</h5>
                         <div class="ratio ratio-16x9">
-                            <iframe allowfullscreen src="https://www.youtube.com/embed/PSQ9_KLzm8s" style="border-radius: 8px;"></iframe>
+                            <iframe allowfullscreen src="https://www.youtube.com/embed/PSQ9_KLzm8s" style="border-radius: 8px; border: none;"></iframe>
                         </div>
                     </div>
                 </div>
                 
                 <div class="col-md-4">
-                    <div style="background: rgba(30, 41, 59, 0.8); padding: 20px; border-radius: 12px; text-align: center; height: 100%; border: 1px solid rgba(255,255,255,0.1);">
-                        <h5 style="color: var(--accent); margin-bottom: 15px;">How To Open StreaamNet Link</h5>
+                    <div class="video-box">
+                        <h5 class="video-title">Open StreaamNet Links</h5>
                         <div class="ratio ratio-16x9">
-                            <iframe allowfullscreen src="https://www.youtube.com/embed/fVL7DfhnwWM" style="border-radius: 8px;"></iframe>
+                            <iframe allowfullscreen src="https://www.youtube.com/embed/fVL7DfhnwWM" style="border-radius: 8px; border: none;"></iframe>
                         </div>
-                    </div>
-                    
-                    <!-- Ad after middle video -->
-                    <div class="ad-container mt-3">
-                        <div class="ad-label">Advertisement</div>
-                        <ins class="adsbygoogle"
-                             style="display:block"
-                             data-ad-client="ca-pub-5244164301170945"
-                             data-ad-slot="3589065722"
-                             data-ad-format="auto"
-                             data-full-width-responsive="true"></ins>
                     </div>
                 </div>
                 
                 <div class="col-md-4">
-                    <div style="background: rgba(30, 41, 59, 0.8); padding: 20px; border-radius: 12px; text-align: center; height: 100%; border: 1px solid rgba(255,255,255,0.1);">
-                        <h5 style="color: var(--accent); margin-bottom: 15px;">How To Open DiskWala Link</h5>
+                    <div class="video-box">
+                        <h5 class="video-title">Open DiskWala Links</h5>
                         <div class="ratio ratio-16x9">
-                            <iframe allowfullscreen src="https://www.youtube.com/embed/ZNKeL-pcIDw" style="border-radius: 8px;"></iframe>
+                            <iframe allowfullscreen src="https://www.youtube.com/embed/ZNKeL-pcIDw" style="border-radius: 8px; border: none;"></iframe>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- AdSense Ad Between Sections -->
-        <div class="ad-container">
-            <div class="ad-label">Advertisement</div>
-            <ins class="adsbygoogle"
-                 style="display:block"
-                 data-ad-client="ca-pub-5244164301170945"
-                 data-ad-slot="3589065722"
-                 data-ad-format="auto"
-                 data-full-width-responsive="true"></ins>
-        </div>
-
         <!-- Features Section -->
         <div class="section-box fade-in">
-            <h2 style="color: var(--accent); text-align: center; margin-bottom: 30px; font-weight: 600;">
-                ⭐ Why Choose SK4FiLM?
-            </h2>
+            <h2 class="section-title">⭐ Why Choose SK4FiLM?</h2>
             <div class="row gy-4">
                 <div class="col-md-4">
                     <div class="feature-card">
                         <div class="feature-icon">
-                            <i class="fas fa-bolt"></i>
+                            <i class="fas fa-rocket"></i>
                         </div>
                         <h5 style="color: var(--accent); margin-bottom: 10px;">Lightning Fast</h5>
-                        <p style="color: rgba(255, 255, 255, 0.8);">Quickly find movies across multiple Telegram channels with real-time search</p>
+                        <p style="color: rgba(255, 255, 255, 0.8);">Search across multiple channels instantly with real-time results</p>
                     </div>
                 </div>
                 
                 <div class="col-md-4">
                     <div class="feature-card">
                         <div class="feature-icon">
-                            <i class="fas fa-download"></i>
+                            <i class="fas fa-hd-video"></i>
                         </div>
-                        <h5 style="color: var(--accent); margin-bottom: 10px;">Easy Downloads</h5>
-                        <p style="color: rgba(255, 255, 255, 0.8);">Multiple download options with direct links and high-quality content</p>
+                        <h5 style="color: var(--accent); margin-bottom: 10px;">HD Quality</h5>
+                        <p style="color: rgba(255, 255, 255, 0.8);">High-quality movies with multiple resolution options available</p>
                     </div>
                 </div>
                 
@@ -644,22 +635,40 @@
             </div>
         </div>
 
-        <!-- Final AdSense Ad -->
-        <div class="ad-container">
-            <div class="ad-label">
-                <i class="fas fa-star me-2"></i>Premium Advertisement
+        <!-- Stats Section -->
+        <div class="section-box fade-in">
+            <h2 class="section-title">📊 Platform Stats</h2>
+            <div class="row text-center gy-4">
+                <div class="col-md-3 col-6">
+                    <div style="background: rgba(255, 0, 0, 0.1); border: 1px solid rgba(255, 0, 0, 0.3); border-radius: 12px; padding: 20px;">
+                        <h3 style="color: var(--primary); font-size: 2rem; margin-bottom: 5px;">10K+</h3>
+                        <p style="color: rgba(255, 255, 255, 0.8); margin: 0;">Movies Available</p>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div style="background: rgba(0, 102, 255, 0.1); border: 1px solid rgba(0, 102, 255, 0.3); border-radius: 12px; padding: 20px;">
+                        <h3 style="color: var(--secondary); font-size: 2rem; margin-bottom: 5px;">50K+</h3>
+                        <p style="color: rgba(255, 255, 255, 0.8); margin: 0;">Active Users</p>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div style="background: rgba(0, 204, 255, 0.1); border: 1px solid rgba(0, 204, 255, 0.3); border-radius: 12px; padding: 20px;">
+                        <h3 style="color: var(--accent); font-size: 2rem; margin-bottom: 5px;">24/7</h3>
+                        <p style="color: rgba(255, 255, 255, 0.8); margin: 0;">Service Uptime</p>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div style="background: rgba(0, 255, 0, 0.1); border: 1px solid rgba(0, 255, 0, 0.3); border-radius: 12px; padding: 20px;">
+                        <h3 style="color: #00ff00; font-size: 2rem; margin-bottom: 5px;">100%</h3>
+                        <p style="color: rgba(255, 255, 255, 0.8); margin: 0;">Free Service</p>
+                    </div>
+                </div>
             </div>
-            <ins class="adsbygoogle"
-                 style="display:block"
-                 data-ad-client="ca-pub-5244164301170945"
-                 data-ad-slot="3589065722"
-                 data-ad-format="auto"
-                 data-full-width-responsive="true"></ins>
         </div>
 
         <!-- Disclaimer -->
         <div style="background: rgba(255, 0, 0, 0.1); border: 1px solid rgba(255, 0, 0, 0.3); border-radius: 10px; padding: 15px; margin-top: 25px; text-align: center; color: #ff9999;">
-            <p><strong>Disclaimer:</strong> This site does not store any files on the server. It only provides links to media files hosted on Telegram channels.</p>
+            <p><strong>⚠️ Disclaimer:</strong> This site does not store any files. It only provides search results from public Telegram channels.</p>
         </div>
     </div>
 
@@ -674,111 +683,147 @@
         </div>
     </div>
 
-    <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
     <script>
         // Configuration
         const BACKEND_URL = 'https://sk4film.koyeb.app';
         
-        // Initialize AdSense
-        (adsbygoogle = window.adsbygoogle || []).push({});
-        (adsbygoogle = window.adsbygoogle || []).push({});
-        (adsbygoogle = window.adsbygoogle || []).push({});
-        (adsbygoogle = window.adsbygoogle || []).push({});
-        (adsbygoogle = window.adsbygoogle || []).push({});
-        (adsbygoogle = window.adsbygoogle || []).push({});
-        
-        // FIXED: Search Form Handler - Proper Redirect
+        // FIXED: Search Form Handler with Enhanced Error Handling
         function initializeSearchForm() {
             const searchForm = document.getElementById('searchForm');
             const searchInput = document.getElementById('searchQuery');
+            const searchButton = document.getElementById('searchButton');
             
-            if (searchForm && searchInput) {
-                console.log('✅ Initializing search form...');
+            if (searchForm && searchInput && searchButton) {
+                console.log('✅ Search form found, initializing...');
                 
-                // Remove existing listeners
-                searchForm.removeEventListener('submit', handleSearchSubmit);
+                // Remove existing event listeners
+                const newForm = searchForm.cloneNode(true);
+                searchForm.parentNode.replaceChild(newForm, searchForm);
                 
-                // Add new listener
-                searchForm.addEventListener('submit', handleSearchSubmit);
+                // Get fresh references
+                const form = document.getElementById('searchForm');
+                const input = document.getElementById('searchQuery');
+                const button = document.getElementById('searchButton');
                 
-                // Focus on input for better UX
-                searchInput.focus();
-                
-                console.log('✅ Search form ready');
-            } else {
-                console.error('❌ Search form elements not found');
-            }
-        }
-        
-        // FIXED: Search Submit Handler
-        function handleSearchSubmit(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            
-            const searchInput = document.getElementById('searchQuery');
-            const query = searchInput?.value?.trim();
-            
-            console.log('🔍 Search submitted:', query);
-            
-            if (query && query.length > 0) {
-                // Show loading feedback
-                const submitBtn = document.querySelector('.search-btn');
-                const originalText = submitBtn.innerHTML;
-                
-                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Searching...';
-                submitBtn.disabled = true;
-                
-                // FIXED: Redirect to search page with query
-                setTimeout(() => {
-                    const searchURL = `search.html?query=${encodeURIComponent(query)}`;
-                    console.log('🔄 Redirecting to:', searchURL);
-                    window.location.href = searchURL;
-                }, 500);
-                
-            } else {
-                // Show error for empty search
-                searchInput.focus();
-                searchInput.style.borderColor = '#ff0000';
-                searchInput.setAttribute('placeholder', 'Please enter a movie name...');
-                
-                setTimeout(() => {
-                    searchInput.style.borderColor = '';
-                    searchInput.setAttribute('placeholder', 'Search for movies, web series...');
-                }, 2000);
-                
-                console.log('⚠️ Empty search query');
-            }
-        }
-        
-        // Social menu toggle (simplified)
-        function initializeSocialMenu() {
-            const socialMenuBtn = document.getElementById('socialMenuBtn');
-            
-            if (socialMenuBtn) {
-                socialMenuBtn.addEventListener('click', function(e) {
+                // MAIN: Form submit handler
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
                     e.stopPropagation();
                     
-                    // Simple social menu toggle or redirect
-                    const socialLinks = [
-                        { name: 'Telegram', url: 'https://t.me/sk4film', icon: 'fab fa-telegram' },
-                        { name: 'WhatsApp', url: 'https://whatsapp.com/channel/0029Va69Ts2C6ZvmEWsHNo3c', icon: 'fab fa-whatsapp' },
-                        { name: 'YouTube', url: 'https://youtube.com/@Skcreator7', icon: 'fab fa-youtube' }
-                    ];
+                    const query = input.value?.trim();
+                    console.log('🔍 Search form submitted with query:', query);
                     
-                    // Simple alert with social links (mobile friendly)
-                    let message = 'Follow us on:\n\n';
-                    socialLinks.forEach(link => {
-                        message += `${link.name}: ${link.url}\n`;
-                    });
-                    
-                    if (confirm(message + '\nOpen Telegram channel?')) {
-                        window.open('https://t.me/sk4film', '_blank');
+                    if (query && query.length >= 2) {
+                        // Show loading state
+                        const originalText = button.innerHTML;
+                        button.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Searching...';
+                        button.disabled = true;
+                        
+                        // Add loading effect to input
+                        input.style.borderColor = var('--accent');
+                        input.style.boxShadow = '0 0 15px rgba(0, 204, 255, 0.5)';
+                        
+                        // REDIRECT to search page
+                        setTimeout(() => {
+                            const searchURL = `search.html?query=${encodeURIComponent(query)}`;
+                            console.log('🚀 Redirecting to search page:', searchURL);
+                            window.location.href = searchURL;
+                        }, 800);
+                        
+                    } else {
+                        // Show error for invalid input
+                        input.style.borderColor = '#ff0000';
+                        input.style.boxShadow = '0 0 10px rgba(255, 0, 0, 0.5)';
+                        input.focus();
+                        input.select();
+                        
+                        // Show error message
+                        showNotification('Please enter at least 2 characters', 'error');
+                        
+                        setTimeout(() => {
+                            input.style.borderColor = '';
+                            input.style.boxShadow = '';
+                        }, 2000);
                     }
                 });
                 
-                console.log('✅ Social menu initialized');
+                // Enter key support
+                input.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        form.dispatchEvent(new Event('submit'));
+                    }
+                });
+                
+                // Input enhancements
+                input.addEventListener('focus', function() {
+                    this.style.borderColor = 'var(--accent)';
+                    this.style.boxShadow = '0 0 15px rgba(0, 204, 255, 0.3)';
+                });
+                
+                input.addEventListener('blur', function() {
+                    this.style.borderColor = '';
+                    this.style.boxShadow = '';
+                });
+                
+                // Focus on page load
+                setTimeout(() => {
+                    input.focus();
+                }, 1000);
+                
+                console.log('✅ Search form successfully initialized');
+                return true;
+                
+            } else {
+                console.error('❌ Search form elements missing:', {
+                    form: !!searchForm,
+                    input: !!searchInput,
+                    button: !!searchButton
+                });
+                return false;
+            }
+        }
+        
+        // ENHANCED: Quick search function
+        function quickSearch(query) {
+            if (query?.trim()) {
+                const searchInput = document.getElementById('searchQuery');
+                if (searchInput) {
+                    searchInput.value = query;
+                    searchInput.focus();
+                    
+                    // Trigger search
+                    setTimeout(() => {
+                        document.getElementById('searchForm').dispatchEvent(new Event('submit'));
+                    }, 300);
+                }
+            }
+        }
+        
+        // Social menu handler
+        function initializeSocialMenu() {
+            const socialBtn = document.getElementById('socialMenuBtn');
+            
+            if (socialBtn) {
+                socialBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    
+                    const socialLinks = {
+                        'Telegram Channel': 'https://t.me/sk4film',
+                        'WhatsApp Channel': 'https://whatsapp.com/channel/0029Va69Ts2C6ZvmEWsHNo3c',
+                        'YouTube': 'https://youtube.com/@Skcreator7',
+                        'Telegram Bot': 'https://t.me/skfilmbot'
+                    };
+                    
+                    let message = '🔗 Follow SK4FiLM:\n\n';
+                    Object.entries(socialLinks).forEach(([name, url]) => {
+                        message += `${name}:\n${url}\n\n`;
+                    });
+                    
+                    if (confirm(message + 'Open Telegram Channel?')) {
+                        window.open('https://t.me/sk4film', '_blank');
+                    }
+                });
             }
         }
         
@@ -787,12 +832,10 @@
             const container = document.getElementById('latestPosters');
             
             try {
-                console.log('🖼️ Loading posters from:', BACKEND_URL);
+                console.log('🖼️ Loading posters...');
                 
                 const response = await fetch(`${BACKEND_URL}/api/latest_posters?limit=8`);
                 const data = await response.json();
-                
-                console.log('📊 Posters response:', data);
                 
                 if (data.status === 'success' && data.posters?.length > 0) {
                     displayPosters(data.posters);
@@ -800,12 +843,11 @@
                     displayMockPosters();
                 }
             } catch (error) {
-                console.error('❌ Posters loading error:', error);
+                console.error('❌ Posters error:', error);
                 displayMockPosters();
             }
         }
         
-        // Display posters
         function displayPosters(posters) {
             const container = document.getElementById('latestPosters');
             container.innerHTML = '';
@@ -819,7 +861,7 @@
                                      class="movie-poster" 
                                      alt="Movie Poster"
                                      loading="lazy"
-                                     onerror="this.src='https://via.placeholder.com/300x400/333333/ffffff?text=${encodeURIComponent(poster.caption.split(' ')[0] || 'Movie')}'">
+                                     onerror="this.src='https://via.placeholder.com/300x400/1a1a2e/00ccff?text=${encodeURIComponent(poster.caption.split(' ')[0] || 'Movie')}'">
                                 <div class="position-absolute top-0 start-0 m-2">
                                     <span class="badge bg-danger">NEW</span>
                                 </div>
@@ -827,7 +869,7 @@
                             <div class="movie-info">
                                 <h6 class="movie-title">
                                     <a href="search.html?query=${encodeURIComponent(poster.search_query)}" class="movie-link">
-                                        🎬 ${poster.caption.substring(0, 40)}${poster.caption.length > 40 ? '...' : ''}
+                                        🎬 ${poster.caption.substring(0, 45)}${poster.caption.length > 45 ? '...' : ''}
                                     </a>
                                 </h6>
                                 <small style="color: rgba(255, 255, 255, 0.6);">
@@ -839,66 +881,45 @@
                     </div>
                 `;
                 container.innerHTML += posterHtml;
-                
-                // Add ad after every 2 posters
-                if ((index + 1) % 2 === 0 && index < posters.length - 1) {
-                    const adHtml = `
-                        <div class="col-12">
-                            <div class="ad-container fade-in" style="animation-delay: ${(index * 0.1) + 0.2}s">
-                                <div class="ad-label">Advertisement ${Math.floor((index + 1) / 2) + 1}</div>
-                                <ins class="adsbygoogle"
-                                     style="display:block"
-                                     data-ad-client="ca-pub-5244164301170945"
-                                     data-ad-slot="3589065722"
-                                     data-ad-format="auto"
-                                     data-full-width-responsive="true"></ins>
-                            </div>
-                        </div>
-                    `;
-                    container.innerHTML += adHtml;
-                    
-                    // Initialize ad
-                    setTimeout(() => {
-                        (adsbygoogle = window.adsbygoogle || []).push({});
-                    }, 1000 + (index * 100));
-                }
             });
-            
-            console.log(`✅ Displayed ${posters.length} posters`);
         }
         
-        // Mock posters fallback
         function displayMockPosters() {
-            console.log('📦 Using mock posters');
+            console.log('📦 Displaying mock posters');
             
             const mockPosters = [
                 {
-                    photo: 'https://via.placeholder.com/300x400/333333/ffffff?text=Animal',
-                    caption: 'Animal (2023) - Hindi Action Drama',
+                    photo: 'mock1',
+                    caption: 'Animal (2023) - Ranbir Kapoor Action Drama',
                     search_query: 'Animal movie',
                     date: new Date().toISOString()
                 },
                 {
-                    photo: 'https://via.placeholder.com/300x400/333333/ffffff?text=Salaar',
-                    caption: 'Salaar (2023) - Prabhas Action',
+                    photo: 'mock2',
+                    caption: 'Salaar (2023) - Prabhas Action Thriller',
                     search_query: 'Salaar movie',
                     date: new Date().toISOString()
                 },
                 {
-                    photo: 'https://via.placeholder.com/300x400/333333/ffffff?text=Dunki',
+                    photo: 'mock3',
                     caption: 'Dunki (2023) - SRK Comedy Drama',
                     search_query: 'Dunki movie',
                     date: new Date().toISOString()
                 },
                 {
-                    photo: 'https://via.placeholder.com/300x400/333333/ffffff?text=Tiger',
-                    caption: 'Tiger 3 (2023) - Salman Action',
+                    photo: 'mock4',
+                    caption: 'Tiger 3 (2023) - Salman Khan Action',
                     search_query: 'Tiger 3 movie',
                     date: new Date().toISOString()
                 }
             ];
             
-            displayPosters(mockPosters);
+            const mockPostersWithImages = mockPosters.map(poster => ({
+                ...poster,
+                photo: `https://via.placeholder.com/300x400/1a1a2e/00ccff?text=${encodeURIComponent(poster.caption.split(' ')[0])}`
+            }));
+            
+            displayPosters(mockPostersWithImages);
         }
         
         // Utility functions
@@ -912,37 +933,67 @@
                 
                 if (diffDays === 0) return 'Today';
                 if (diffDays === 1) return 'Yesterday';
-                if (diffDays <= 7) return `${diffDays} days ago`;
+                if (diffDays <= 7) return `${diffDays}d ago`;
                 
-                return date.toLocaleDateString('en-US', { 
-                    month: 'short', 
-                    day: 'numeric' 
-                });
+                return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
             } catch {
                 return 'Recent';
             }
         }
         
-        // Visitor counter animation
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed; top: 20px; right: 20px; z-index: 1100;
+                background: ${type === 'error' ? '#dc3545' : '#28a745'};
+                color: white; padding: 12px 20px; border-radius: 8px;
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+                max-width: 300px; font-size: 0.9rem;
+            `;
+            notification.innerHTML = `<i class="fas fa-${type === 'error' ? 'exclamation-triangle' : 'check-circle'} me-2"></i>${message}`;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                if (document.body.contains(notification)) {
+                    notification.style.opacity = '0';
+                    setTimeout(() => document.body.removeChild(notification), 300);
+                }
+            }, 3000);
+        }
+        
+        // Visitor counter
         function updateVisitorCount() {
             const countElement = document.getElementById('visitorCount');
             if (countElement) {
                 const currentCount = parseInt(countElement.textContent) || 1247;
-                const newCount = currentCount + Math.floor(Math.random() * 5) + 1;
+                const increment = Math.floor(Math.random() * 5) + 1;
+                const newCount = currentCount + increment;
                 countElement.textContent = newCount;
-                
-                console.log(`👥 Visitor count updated: ${newCount}`);
             }
         }
         
         // Initialize everything
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('🚀 SK4FiLM Homepage Loading...');
-            console.log('🔍 Search function fix applied');
-            console.log('📱 Mobile/Desktop responsive ready');
+            console.log('🚀 SK4FiLM Homepage - Google Auto Ads Active');
+            console.log('💰 Publisher ID: ca-pub-5244164301170945');
+            console.log('🤖 Automatic ad placement enabled');
             
-            // Initialize components
-            initializeSearchForm();
+            // Initialize components with delay for better UX
+            setTimeout(() => {
+                const searchInitialized = initializeSearchForm();
+                if (searchInitialized) {
+                    console.log('✅ Search form ready for use');
+                } else {
+                    console.error('❌ Search form initialization failed');
+                    
+                    // Retry once
+                    setTimeout(() => {
+                        initializeSearchForm();
+                    }, 2000);
+                }
+            }, 500);
+            
             initializeSocialMenu();
             loadLatestPosters();
             
@@ -950,77 +1001,59 @@
             updateVisitorCount();
             setInterval(updateVisitorCount, 45000);
             
-            // Background audio
+            // Background audio with better handling
             const audio = document.getElementById('bg-audio');
             if (audio) {
-                audio.volume = 0.2;
-                audio.play().catch(() => {
-                    console.log('🔇 Autoplay blocked - will play on user interaction');
-                    document.addEventListener('click', function playAudioOnce() {
-                        audio.play();
-                        document.removeEventListener('click', playAudioOnce);
-                    }, { once: true });
-                });
+                audio.volume = 0.15;
+                
+                // Try autoplay
+                const playPromise = audio.play();
+                if (playPromise !== undefined) {
+                    playPromise.catch(() => {
+                        console.log('🔇 Autoplay blocked - waiting for user interaction');
+                        
+                        const enableAudio = () => {
+                            audio.play();
+                            document.removeEventListener('click', enableAudio);
+                            document.removeEventListener('keydown', enableAudio);
+                            console.log('🔊 Audio enabled by user interaction');
+                        };
+                        
+                        document.addEventListener('click', enableAudio, { once: true });
+                        document.addEventListener('keydown', enableAudio, { once: true });
+                    });
+                }
             }
             
-            console.log('✅ Homepage initialized successfully');
+            console.log('✅ Homepage fully initialized');
         });
         
-        // FIXED: Handle browser back button
-        window.addEventListener('popstate', function(event) {
-            console.log('🔄 Browser navigation detected');
+        // Handle browser navigation
+        window.addEventListener('popstate', function() {
+            console.log('🔄 Browser back/forward detected');
             
-            // Re-initialize search form if needed
             const searchInput = document.getElementById('searchQuery');
-            if (searchInput) {
-                searchInput.value = '';
+            if (searchInput && !searchInput.value) {
                 searchInput.focus();
             }
         });
         
-        // FIXED: Handle search input focus
-        document.addEventListener('DOMContentLoaded', function() {
-            const searchInput = document.getElementById('searchQuery');
-            
-            if (searchInput) {
-                // Enhanced input experience
-                searchInput.addEventListener('focus', function() {
-                    this.style.borderColor = 'var(--accent)';
-                    this.style.boxShadow = '0 0 15px rgba(0, 204, 255, 0.5)';
-                });
-                
-                searchInput.addEventListener('blur', function() {
-                    this.style.borderColor = '';
-                    this.style.boxShadow = '';
-                });
-                
-                // Enter key support
-                searchInput.addEventListener('keydown', function(e) {
-                    if (e.key === 'Enter') {
-                        e.preventDefault();
-                        document.getElementById('searchForm').dispatchEvent(new Event('submit'));
-                    }
-                });
-                
-                console.log('✅ Search input enhanced');
+        // Handle page visibility for better performance
+        document.addEventListener('visibilitychange', function() {
+            const audio = document.getElementById('bg-audio');
+            if (audio) {
+                if (document.hidden) {
+                    audio.pause();
+                } else {
+                    audio.play().catch(() => {});
+                }
             }
         });
         
-        // Error handling for poster links
-        function handlePosterClick(query) {
-            if (query && query.trim()) {
-                const searchURL = `search.html?query=${encodeURIComponent(query.trim())}`;
-                console.log('🎬 Poster click - redirecting to:', searchURL);
-                window.location.href = searchURL;
-            } else {
-                console.log('⚠️ Invalid poster query');
-            }
-        }
-        
-        console.log('%c🎬 SK4FiLM - SEARCH FUNCTION FIXED', 'color: #00ff00; font-size: 18px; font-weight: bold;');
-        console.log('%c🔍 Form Redirect Working', 'color: #ffff00; font-size: 12px;');
-        console.log('%c📱 Mobile/Desktop Perfect', 'color: #00ccff; font-size: 12px;');
-        console.log('%c💰 AdSense Revenue Active', 'color: #ff6600; font-size: 12px;');
+        console.log('%c🎬 SK4FiLM - GOOGLE AUTO ADS ACTIVE', 'color: #ff0000; font-size: 20px; font-weight: bold;');
+        console.log('%c🤖 Automatic Ad Placement Enabled', 'color: #00ff00; font-size: 14px;');
+        console.log('%c💰 Maximum Revenue Optimization', 'color: #ffff00; font-size: 14px;');
+        console.log('%c📱 Mobile/Desktop Perfect', 'color: #00ccff; font-size: 14px;');
     </script>
 </body>
 </html>
