@@ -12,6 +12,7 @@ import re
 from datetime import datetime
 from io import BytesIO
 import math
+import base64
 
 # Configuration
 class Config:
@@ -19,7 +20,7 @@ class Config:
     API_HASH = os.environ.get("API_HASH", "")
     USER_SESSION_STRING = os.environ.get("USER_SESSION_STRING", "")
     
-    # WORKING CHANNELS (from your logs)
+    # WORKING CHANNELS (confirmed from logs)
     TEXT_CHANNEL_IDS = [-1001891090100, -1002024811395]  # Movies Link, DISKWALA MOVIES
     POSTER_CHANNEL_ID = -1001891090100  # Use Movies Link for posters
     
@@ -53,35 +54,53 @@ User = None
 bot_started = False
 shutdown_event = asyncio.Event()
 
-def format_result(text):
-    """Enhanced text formatting for proper display"""
+def safe_format_text(text):
+    """FIXED: Safe text formatting to avoid UTF errors"""
     if not text:
         return ""
     
-    # Basic HTML escape
-    text = html.escape(text)
-    
-    # Convert URLs to clickable links
-    text = re.sub(r'(https?://[^\s]+)', r'<a href="\1" target="_blank" style="color: #00ccff;">\1</a>', text)
-    
-    # Convert newlines to HTML breaks
-    text = text.replace('\n', '<br>')
-    
-    # Format movie information
-    text = re.sub(r'📁\s*(Size[^|]*)', r'<span class="text-info">📁 \1</span>', text)
-    text = re.sub(r'📹\s*(Quality[^|]*)', r'<span class="text-success">📹 \1</span>', text)
-    text = re.sub(r'⭐\s*(Rating[^|]*)', r'<span class="text-warning">⭐ \1</span>', text)
-    text = re.sub(r'🎭\s*(Genre[^|]*)', r'<span class="text-primary">🎭 \1</span>', text)
-    
-    return text
+    try:
+        # Handle encoding issues
+        if isinstance(text, bytes):
+            try:
+                text = text.decode('utf-8')
+            except UnicodeDecodeError:
+                try:
+                    text = text.decode('latin-1')
+                except UnicodeDecodeError:
+                    text = str(text, errors='replace')
+        
+        # Clean text of problematic characters
+        text = text.replace('\u0000', '').replace('\ufffd', '')
+        
+        # Escape HTML
+        text = html.escape(text)
+        
+        # Convert URLs to links
+        text = re.sub(r'(https?://[^\s]+)', r'<a href="\1" target="_blank" style="color: #00ccff;">\1</a>', text)
+        
+        # Convert newlines
+        text = text.replace('\n', '<br>')
+        
+        # Format movie info tags
+        text = re.sub(r'📁\s*(Size[^|]*)', r'<span class="badge bg-info">📁 \1</span>', text)
+        text = re.sub(r'📹\s*(Quality[^|]*)', r'<span class="badge bg-success">📹 \1</span>', text)
+        text = re.sub(r'⭐\s*(Rating[^|]*)', r'<span class="badge bg-warning">⭐ \1</span>', text)
+        text = re.sub(r'🎭\s*(Genre[^|]*)', r'<span class="badge bg-primary">🎭 \1</span>', text)
+        
+        return text
+        
+    except Exception as e:
+        logger.warning(f"⚠️ Text formatting error: {e}")
+        return "Content formatting error"
 
 async def initialize_telegram():
-    """Initialize Telegram client with robust error handling"""
+    """Initialize Telegram with enhanced error handling"""
     global User, bot_started
     
     is_valid, missing = Config.validate()
     if not is_valid:
-        logger.error(f"❌ Configuration error - Missing: {', '.join(missing)}")
+        logger.error(f"❌ Missing config: {', '.join(missing)}")
         return False
     
     try:
@@ -91,42 +110,40 @@ async def initialize_telegram():
             api_id=Config.API_ID,
             api_hash=Config.API_HASH,
             session_string=Config.USER_SESSION_STRING,
-            workdir="/tmp"
+            workdir="/tmp",
+            sleep_threshold=60
         )
         
         await User.start()
-        logger.info("✅ Telegram User Client started successfully!")
-        
         me = await User.get_me()
         logger.info(f"✅ Logged in as: {me.first_name} (@{me.username})")
         
-        # Test channel access
+        # Verify channels
         working_channels = []
         for channel_id in Config.TEXT_CHANNEL_IDS:
             try:
                 chat = await User.get_chat(channel_id)
                 logger.info(f"✅ Access confirmed to channel: {chat.title}")
                 working_channels.append(channel_id)
-            except errors.PeerIdInvalid:
-                logger.error(f"❌ Invalid peer ID: {channel_id}")
             except Exception as e:
-                logger.warning(f"⚠️ Cannot access {channel_id}: {e}")
+                logger.warning(f"⚠️ Channel {channel_id} access issue: {e}")
         
         if working_channels:
             Config.TEXT_CHANNEL_IDS = working_channels
             Config.POSTER_CHANNEL_ID = working_channels[0]
             bot_started = True
+            logger.info("✅ All services ready!")
             return True
         else:
-            logger.error("❌ No accessible channels found!")
+            logger.error("❌ No working channels!")
             return False
         
     except Exception as e:
-        logger.error(f"❌ Telegram initialization failed: {e}")
+        logger.error(f"❌ Telegram init failed: {e}")
         return False
 
 async def search_telegram_channels(query, limit=20, offset=0):
-    """ENHANCED: Search with pagination support"""
+    """FIXED: Enhanced search with proper error handling"""
     if not User or not bot_started:
         return {"results": [], "total": 0, "has_more": False}
     
@@ -134,77 +151,91 @@ async def search_telegram_channels(query, limit=20, offset=0):
     logger.info(f"🔍 Searching for: '{query}' in {len(Config.TEXT_CHANNEL_IDS)} channels (offset: {offset}, limit: {limit})")
     
     try:
-        # Search in all text channels
+        # Search in text channels
         for channel_id in Config.TEXT_CHANNEL_IDS:
             try:
                 logger.info(f"🔍 Searching in channel: {channel_id}")
-                
-                # Get more messages for pagination
-                search_limit = max(50, limit + offset + 20)
                 message_count = 0
                 
+                # FIXED: Better search handling
                 async for message in User.search_messages(
                     chat_id=channel_id,
                     query=query,
-                    limit=search_limit
+                    limit=max(50, limit + offset + 10)
                 ):
                     message_count += 1
                     if message.text:
-                        # Enhanced result with more metadata
-                        result = {
-                            'type': 'text',
-                            'content': format_result(message.text)[:1000] + ("..." if len(message.text) > 1000 else ""),
-                            'raw_content': message.text[:200] + ("..." if len(message.text) > 200 else ""),
-                            'date': message.date.isoformat() if message.date else datetime.now().isoformat(),
-                            'message_id': message.id,
-                            'channel_id': channel_id,
-                            'channel_name': 'Movies Link' if channel_id == -1001891090100 else 'DISKWALA MOVIES',
-                            'has_links': bool(re.search(r'https?://', message.text or '')),
-                            'movie_info': extract_movie_info(message.text)
-                        }
-                        all_results.append(result)
-                        
+                        try:
+                            # FIXED: Safe content processing
+                            content = safe_format_text(message.text)
+                            raw_content = message.text[:300] + ("..." if len(message.text) > 300 else "")
+                            
+                            result = {
+                                'type': 'text',
+                                'content': content[:1200] + ("..." if len(content) > 1200 else ""),
+                                'raw_content': raw_content,
+                                'date': message.date.isoformat() if message.date else datetime.now().isoformat(),
+                                'message_id': message.id,
+                                'channel_id': channel_id,
+                                'channel_name': 'Movies Link' if channel_id == -1001891090100 else 'DISKWALA MOVIES',
+                                'has_links': bool(re.search(r'https?://', message.text or '')),
+                                'movie_info': extract_movie_info(message.text)
+                            }
+                            all_results.append(result)
+                            
+                        except Exception as e:
+                            logger.warning(f"⚠️ Message processing error: {e}")
+                            continue
+                            
                 logger.info(f"✅ Found {message_count} messages in channel {channel_id}")
                 
             except Exception as e:
                 logger.warning(f"⚠️ Channel {channel_id} search error: {e}")
                 continue
         
-        # Search in poster channel for images
+        # FIXED: Search in poster channel for images
         try:
             logger.info(f"🔍 Searching posters in channel: {Config.POSTER_CHANNEL_ID}")
             poster_count = 0
             
-            async for message in User.search_messages(
+            # Get messages with photos and captions
+            async for message in User.get_chat_history(
                 chat_id=Config.POSTER_CHANNEL_ID,
-                query=query,
-                limit=30
+                limit=50
             ):
-                poster_count += 1
-                if message.caption and message.photo:
-                    result = {
-                        'type': 'poster',
-                        'content': format_result(message.caption)[:800] + ("..." if len(message.caption) > 800 else ""),
-                        'raw_content': message.caption[:200] + ("..." if len(message.caption) > 200 else ""),
-                        'date': message.date.isoformat() if message.date else datetime.now().isoformat(),
-                        'message_id': message.id,
-                        'channel_id': Config.POSTER_CHANNEL_ID,
-                        'channel_name': 'Movies Link',
-                        'photo': message.photo.file_id,
-                        'has_links': bool(re.search(r'https?://', message.caption or '')),
-                        'movie_info': extract_movie_info(message.caption)
-                    }
-                    all_results.append(result)
-                    
+                if message.caption and message.photo and query.lower() in message.caption.lower():
+                    poster_count += 1
+                    try:
+                        # Process poster result
+                        content = safe_format_text(message.caption)
+                        raw_content = message.caption[:300] + ("..." if len(message.caption) > 300 else "")
+                        
+                        result = {
+                            'type': 'poster',
+                            'content': content[:1000] + ("..." if len(content) > 1000 else ""),
+                            'raw_content': raw_content,
+                            'date': message.date.isoformat() if message.date else datetime.now().isoformat(),
+                            'message_id': message.id,
+                            'channel_id': Config.POSTER_CHANNEL_ID,
+                            'channel_name': 'Movies Link',
+                            'photo': message.photo.file_id,  # REAL FILE ID
+                            'has_links': bool(re.search(r'https?://', message.caption or '')),
+                            'movie_info': extract_movie_info(message.caption)
+                        }
+                        all_results.append(result)
+                        
+                    except Exception as e:
+                        logger.warning(f"⚠️ Poster processing error: {e}")
+                        continue
+                        
             logger.info(f"✅ Found {poster_count} poster messages")
             
         except Exception as e:
-            logger.warning(f"⚠️ Poster channel search error: {e}")
+            logger.warning(f"⚠️ Poster search error: {e}")
         
-        # Sort by date (newest first)
+        # Sort and paginate
         all_results.sort(key=lambda x: x['date'], reverse=True)
         
-        # Calculate pagination
         total_results = len(all_results)
         start_index = offset
         end_index = offset + limit
@@ -226,34 +257,46 @@ async def search_telegram_channels(query, limit=20, offset=0):
         return {"results": [], "total": 0, "has_more": False}
 
 def extract_movie_info(text):
-    """Extract movie metadata from text"""
+    """Enhanced movie info extraction"""
     if not text:
         return {}
     
     info = {}
     
-    # Extract common patterns
-    size_match = re.search(r'📁[^|]*Size[^|]*?([0-9.]+\s*[GMK]B)', text, re.IGNORECASE)
-    if size_match:
-        info['size'] = size_match.group(1)
-    
-    quality_match = re.search(r'📹[^|]*Quality[^|]*?([0-9]+p)', text, re.IGNORECASE)
-    if quality_match:
-        info['quality'] = quality_match.group(1)
-    
-    rating_match = re.search(r'⭐[^|]*Rating[^|]*?([0-9.]+)', text, re.IGNORECASE)
-    if rating_match:
-        info['rating'] = rating_match.group(1)
-    
-    # Extract year
-    year_match = re.search(r'\((\d{4})\)', text)
-    if year_match:
-        info['year'] = year_match.group(1)
-    
-    return info
+    try:
+        # Extract file size
+        size_match = re.search(r'(?:📁|Size)[^|]*?([0-9.]+\s*[GMK]B)', text, re.IGNORECASE)
+        if size_match:
+            info['size'] = size_match.group(1)
+        
+        # Extract quality
+        quality_match = re.search(r'(?:📹|Quality)[^|]*?([0-9]+p)', text, re.IGNORECASE)
+        if quality_match:
+            info['quality'] = quality_match.group(1)
+        
+        # Extract rating
+        rating_match = re.search(r'(?:⭐|Rating)[^|]*?([0-9.]+(?:/10)?)', text, re.IGNORECASE)
+        if rating_match:
+            info['rating'] = rating_match.group(1)
+        
+        # Extract year
+        year_match = re.search(r'\((\d{4})\)', text)
+        if year_match:
+            info['year'] = year_match.group(1)
+        
+        # Extract genre
+        genre_match = re.search(r'(?:🎭|Genre)[^|]*?([A-Za-z, ]+)', text, re.IGNORECASE)
+        if genre_match:
+            info['genre'] = genre_match.group(1).strip()
+        
+        return info
+        
+    except Exception as e:
+        logger.warning(f"⚠️ Movie info extraction error: {e}")
+        return {}
 
 async def get_real_posters(limit=12, offset=0):
-    """Get posters with pagination support"""
+    """FIXED: Get real posters only from Telegram"""
     if not User or not bot_started:
         return {"posters": [], "total": 0, "has_more": False}
     
@@ -262,32 +305,37 @@ async def get_real_posters(limit=12, offset=0):
     try:
         logger.info(f"🖼️ Getting posters (offset: {offset}, limit: {limit})...")
         
-        # Get from all working channels
+        # Get from working channels
         for channel_id in Config.TEXT_CHANNEL_IDS:
             try:
-                poster_limit = max(50, limit + offset + 20)
-                
+                # Get recent messages with photos
                 async for message in User.get_chat_history(
                     chat_id=channel_id,
-                    limit=poster_limit
+                    limit=100  # Get enough messages to find posters
                 ):
+                    # FIXED: Only process messages with actual photos
                     if message.photo and message.caption:
-                        caption_lines = message.caption.split('\n')
-                        movie_name = caption_lines[0] if caption_lines else "Movie"
-                        
-                        poster = {
-                            'photo': message.photo.file_id,
-                            'caption': message.caption[:200] + ("..." if len(message.caption) > 200 else ""),
-                            'full_caption': message.caption,
-                            'search_query': movie_name.replace('📽️', '').replace('🎬', '').strip(),
-                            'date': message.date.isoformat() if message.date else datetime.now().isoformat(),
-                            'message_id': message.id,
-                            'channel_id': channel_id,
-                            'channel_name': 'Movies Link' if channel_id == -1001891090100 else 'DISKWALA MOVIES',
-                            'movie_info': extract_movie_info(message.caption)
-                        }
-                        all_posters.append(poster)
-                        
+                        try:
+                            caption_lines = message.caption.split('\n')
+                            movie_name = caption_lines[0] if caption_lines else "Movie"
+                            
+                            poster = {
+                                'photo': message.photo.file_id,  # REAL Telegram file_id
+                                'caption': message.caption[:200] + ("..." if len(message.caption) > 200 else ""),
+                                'full_caption': message.caption,
+                                'search_query': movie_name.replace('📽️', '').replace('🎬', '').replace('🎭', '').replace('🎪', '').strip(),
+                                'date': message.date.isoformat() if message.date else datetime.now().isoformat(),
+                                'message_id': message.id,
+                                'channel_id': channel_id,
+                                'channel_name': 'Movies Link' if channel_id == -1001891090100 else 'DISKWALA MOVIES',
+                                'movie_info': extract_movie_info(message.caption)
+                            }
+                            all_posters.append(poster)
+                            
+                        except Exception as e:
+                            logger.warning(f"⚠️ Poster processing error: {e}")
+                            continue
+                
                 logger.info(f"✅ Found posters in channel {channel_id}")
                 
             except Exception as e:
@@ -324,7 +372,6 @@ async def after_request(response):
     response.headers.add('Access-Control-Allow-Origin', '*')
     response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
     response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
-    response.headers.add('Access-Control-Allow-Credentials', 'false')
     return response
 
 @app.route('/options/<path:path>')
@@ -336,10 +383,11 @@ async def handle_options():
 async def home():
     return jsonify({
         "status": "healthy" if bot_started else "error",
-        "service": "SK4FiLM API",
+        "service": "SK4FiLM API v2.0",
         "mode": "REAL_DATA_WITH_PAGINATION",
         "telegram_connected": bot_started,
         "channels_working": len(Config.TEXT_CHANNEL_IDS) if bot_started else 0,
+        "features": ["search", "pagination", "posters", "real_data"],
         "timestamp": datetime.now().isoformat()
     })
 
@@ -348,28 +396,33 @@ async def health():
     return jsonify({
         "status": "healthy" if bot_started else "unhealthy",
         "telegram_ready": bot_started,
-        "channels_count": len(Config.TEXT_CHANNEL_IDS) if bot_started else 0
+        "channels_count": len(Config.TEXT_CHANNEL_IDS) if bot_started else 0,
+        "version": "2.0"
     })
 
 @app.route('/api/search')
 async def api_search():
-    """ENHANCED: Search with pagination support"""
+    """ENHANCED: Search with proper pagination"""
     try:
         query = request.args.get('query', '').strip()
         limit = int(request.args.get('limit', 10))
         page = int(request.args.get('page', 1))
         offset = (page - 1) * limit
         
+        # Validate inputs
         if not query:
             return jsonify({
                 "status": "error",
                 "message": "Search query is required"
             }), 400
         
+        if limit > 100:
+            limit = 100  # Max limit
+        
         if not bot_started:
             return jsonify({
                 "status": "error",
-                "message": "Telegram service not available",
+                "message": "Telegram service not available - Please wait for startup",
                 "telegram_connected": False
             }), 503
         
@@ -379,13 +432,13 @@ async def api_search():
         try:
             search_result = await asyncio.wait_for(
                 search_telegram_channels(query, limit, offset),
-                timeout=30.0
+                timeout=35.0
             )
         except asyncio.TimeoutError:
             logger.error(f"❌ Search timeout for query: {query}")
             return jsonify({
                 "status": "error",
-                "message": "Search timeout - please try again"
+                "message": "Search timeout - please try with shorter query"
             }), 408
         
         response_data = {
@@ -397,7 +450,9 @@ async def api_search():
                 "total_pages": search_result["total_pages"],
                 "has_more": search_result["has_more"],
                 "total_results": search_result["total"],
-                "results_per_page": limit
+                "results_per_page": limit,
+                "showing_start": offset + 1,
+                "showing_end": min(offset + limit, search_result["total"])
             },
             "source": "REAL_TELEGRAM_CHANNELS",
             "searched_channels": len(Config.TEXT_CHANNEL_IDS),
@@ -411,7 +466,7 @@ async def api_search():
         logger.error(f"❌ Search API error: {e}")
         return jsonify({
             "status": "error",
-            "message": "Search service temporarily unavailable",
+            "message": "Search service error",
             "error_details": str(e)
         }), 500
 
@@ -422,6 +477,9 @@ async def api_latest_posters():
         limit = int(request.args.get('limit', 8))
         page = int(request.args.get('page', 1))
         offset = (page - 1) * limit
+        
+        if limit > 50:
+            limit = 50  # Max limit for posters
         
         if not bot_started:
             return jsonify({
@@ -441,7 +499,7 @@ async def api_latest_posters():
             logger.error("❌ Posters request timeout")
             return jsonify({
                 "status": "error",
-                "message": "Request timeout"
+                "message": "Posters request timeout"
             }), 408
         
         response_data = {
@@ -452,7 +510,9 @@ async def api_latest_posters():
                 "total_pages": poster_result["total_pages"],
                 "has_more": poster_result["has_more"],
                 "total_posters": poster_result["total"],
-                "results_per_page": limit
+                "results_per_page": limit,
+                "showing_start": offset + 1,
+                "showing_end": min(offset + limit, poster_result["total"])
             },
             "source": "REAL_TELEGRAM_CHANNELS",
             "timestamp": datetime.now().isoformat()
@@ -470,44 +530,77 @@ async def api_latest_posters():
 
 @app.route('/api/get_poster')
 async def api_get_poster():
-    """Serve poster images with caching"""
+    """FIXED: Proper poster serving with validation"""
     try:
         file_id = request.args.get('file_id', '').strip()
         
-        if not file_id or file_id == 'null':
-            svg = '''<svg width="300" height="400" fill="#333333"><rect width="300" height="400" fill="#333333"/><text x="50%" y="50%" font-family="Arial" font-size="18" fill="#ffffff" text-anchor="middle" dy=".3em">No Poster Available</text></svg>'''
+        # FIXED: Validate file_id format
+        if not file_id or file_id == 'null' or file_id == 'None' or 'placeholder' in file_id:
+            # Return proper placeholder SVG
+            svg = '''<svg width="300" height="400" viewBox="0 0 300 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect width="300" height="400" fill="#1a1a2e"/>
+                <rect x="50" y="100" width="200" height="200" rx="10" fill="#16213e"/>
+                <text x="150" y="210" font-family="Arial, sans-serif" font-size="16" fill="#ffffff" text-anchor="middle">No Poster</text>
+                <text x="150" y="230" font-family="Arial, sans-serif" font-size="12" fill="#cccccc" text-anchor="middle">Available</text>
+            </svg>'''
             return Response(svg, mimetype='image/svg+xml')
         
         if not User or not bot_started:
-            svg = '''<svg width="300" height="400" fill="#ff6600"><rect width="300" height="400" fill="#ff6600"/><text x="50%" y="50%" font-family="Arial" font-size="16" fill="#ffffff" text-anchor="middle" dy=".3em">Service Unavailable</text></svg>'''
+            svg = '''<svg width="300" height="400" viewBox="0 0 300 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect width="300" height="400" fill="#ff6600"/>
+                <text x="150" y="200" font-family="Arial, sans-serif" font-size="14" fill="#ffffff" text-anchor="middle">Service</text>
+                <text x="150" y="220" font-family="Arial, sans-serif" font-size="14" fill="#ffffff" text-anchor="middle">Unavailable</text>
+            </svg>'''
             return Response(svg, mimetype='image/svg+xml')
         
-        # Download with timeout
+        # FIXED: Validate file_id is proper Telegram format
+        if not re.match(r'^[A-Za-z0-9_-]+$', file_id) or len(file_id) < 10:
+            logger.warning(f"⚠️ Invalid file_id format: {file_id}")
+            svg = '''<svg width="300" height="400" viewBox="0 0 300 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect width="300" height="400" fill="#ff3333"/>
+                <text x="150" y="200" font-family="Arial, sans-serif" font-size="14" fill="#ffffff" text-anchor="middle">Invalid</text>
+                <text x="150" y="220" font-family="Arial, sans-serif" font-size="14" fill="#ffffff" text-anchor="middle">File ID</text>
+            </svg>'''
+            return Response(svg, mimetype='image/svg+xml')
+        
+        # Download image with timeout
         try:
+            logger.info(f"📥 Downloading poster: {file_id}")
             file_data = await asyncio.wait_for(
                 User.download_media(file_id, in_memory=True),
                 timeout=20.0
             )
             
+            logger.info(f"✅ Poster downloaded successfully: {len(file_data.getvalue())} bytes")
+            
             return Response(
                 file_data.getvalue(),
                 mimetype='image/jpeg',
                 headers={
-                    'Cache-Control': 'public, max-age=86400',  # 24 hours cache
+                    'Cache-Control': 'public, max-age=86400',
                     'Content-Type': 'image/jpeg',
-                    'X-Content-Source': 'telegram'
+                    'X-Content-Source': 'telegram-real'
                 }
             )
         except asyncio.TimeoutError:
-            svg = '''<svg width="300" height="400" fill="#ff9900"><rect width="300" height="400" fill="#ff9900"/><text x="50%" y="50%" font-family="Arial" font-size="14" fill="#ffffff" text-anchor="middle" dy=".3em">Loading Timeout</text></svg>'''
+            logger.error(f"❌ Poster download timeout: {file_id}")
+            svg = '''<svg width="300" height="400" viewBox="0 0 300 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect width="300" height="400" fill="#ff9900"/>
+                <text x="150" y="200" font-family="Arial, sans-serif" font-size="14" fill="#ffffff" text-anchor="middle">Download</text>
+                <text x="150" y="220" font-family="Arial, sans-serif" font-size="14" fill="#ffffff" text-anchor="middle">Timeout</text>
+            </svg>'''
             return Response(svg, mimetype='image/svg+xml')
             
     except Exception as e:
         logger.error(f"❌ Poster download error: {e}")
-        svg = '''<svg width="300" height="400" fill="#ff0000"><rect width="300" height="400" fill="#ff0000"/><text x="50%" y="50%" font-family="Arial" font-size="16" fill="#ffffff" text-anchor="middle" dy=".3em">Error Loading</text></svg>'''
+        svg = '''<svg width="300" height="400" viewBox="0 0 300 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="300" height="400" fill="#dc3545"/>
+            <text x="150" y="200" font-family="Arial, sans-serif" font-size="14" fill="#ffffff" text-anchor="middle">Download</text>
+            <text x="150" y="220" font-family="Arial, sans-serif" font-size="14" fill="#ffffff" text-anchor="middle">Error</text>
+        </svg>'''
         return Response(svg, mimetype='image/svg+xml')
 
-# FIXED: Proper async lifecycle
+# FIXED: Enhanced cleanup
 async def cleanup():
     global User, bot_started
     
@@ -516,7 +609,7 @@ async def cleanup():
     
     if User:
         try:
-            await asyncio.wait_for(User.stop(), timeout=5.0)
+            await asyncio.wait_for(User.stop(), timeout=3.0)
             logger.info("✅ Telegram client stopped")
         except:
             logger.warning("⚠️ Telegram shutdown timeout")
@@ -527,6 +620,7 @@ def signal_handler(signum, frame):
     logger.info(f"🛑 Received signal {signum}")
     shutdown_event.set()
 
+# FIXED: Main server function
 async def run_server():
     global shutdown_event
     
@@ -536,22 +630,23 @@ async def run_server():
         
         logger.info("🚀 Starting SK4FiLM Backend...")
         
-        # Initialize services
+        # Initialize Telegram
         success = await initialize_telegram()
         
         if success:
-            logger.info("✅ All services ready!")
             logger.info("✅ Real Telegram search with PAGINATION active!")
         else:
             logger.error("❌ Service initialization failed!")
         
-        # Start server
+        # Configure server
         config = HyperConfig()
         config.bind = [f"0.0.0.0:{Config.WEB_SERVER_PORT}"]
         config.use_reloader = False
+        config.accesslog = None
         
         logger.info(f"🌐 Server starting on port {Config.WEB_SERVER_PORT}")
         
+        # Start server
         server_task = asyncio.create_task(serve(app, config))
         await shutdown_event.wait()
         
