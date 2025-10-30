@@ -3,10 +3,10 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SK4FiLM - Movie Search Engine</title>
-    <meta name="description" content="Find latest movies with IMDB posters from Telegram channels">
+    <title>SK4FiLM - Real-time Movie Updates</title>
+    <meta name="description" content="Latest movies with automatic updates from Telegram channels">
     
-    <!-- ENHANCED Google AdSense for Maximum Earnings -->
+    <!-- Google AdSense -->
     <meta name="google-adsense-account" content="ca-pub-5244164301170945">
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5244164301170945" crossorigin="anonymous"></script>
     <script>
@@ -50,10 +50,6 @@
             z-index: -1;
         }
         
-        .container {
-            padding: 20px 15px 40px;
-        }
-        
         /* Navigation - PRESERVED */
         .top-navbar {
             background: rgba(15, 23, 42, 0.95);
@@ -84,7 +80,6 @@
             -webkit-text-fill-color: transparent;
         }
         
-        /* Section boxes */
         .section-box {
             background: rgba(15, 23, 42, 0.7);
             border-radius: 12px;
@@ -93,16 +88,38 @@
             border: 1px solid rgba(255,255,255,0.1);
         }
         
-        /* AdSense optimized spacing */
-        .ads-space {
-            min-height: 120px;
-            margin: 30px 0;
-            display: flex;
+        /* AUTO UPDATE STATUS BAR */
+        .auto-update-bar {
+            background: linear-gradient(45deg, #28a745, #20c997);
+            color: white;
+            padding: 8px 0;
+            text-align: center;
+            font-size: 0.85rem;
+            font-weight: 600;
+            position: fixed;
+            top: 78px;
+            width: 100%;
+            z-index: 999;
+            box-shadow: 0 2px 10px rgba(40, 167, 69, 0.4);
+        }
+        
+        .auto-update-indicator {
+            display: inline-flex;
             align-items: center;
-            justify-content: center;
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 8px;
-            border: 1px dashed rgba(255, 255, 255, 0.3);
+            gap: 8px;
+        }
+        
+        .update-pulse {
+            width: 8px;
+            height: 8px;
+            background: #ffffff;
+            border-radius: 50%;
+            animation: updatePulse 2s infinite;
+        }
+        
+        @keyframes updatePulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
         }
         
         /* Search */
@@ -134,7 +151,7 @@
             cursor: pointer;
         }
         
-        /* FIXED Movie Cards */
+        /* Movie cards */
         .movie-card {
             background: rgba(30, 41, 59, 0.8);
             border: 1px solid rgba(255,255,255,0.1);
@@ -155,7 +172,6 @@
             height: 300px;
             object-fit: cover;
             border-bottom: 1px solid rgba(255,255,255,0.1);
-            background: linear-gradient(135deg, #1a1a2e, #16213e);
         }
         
         .poster-placeholder {
@@ -184,6 +200,24 @@
             text-align: center;
         }
         
+        .new-badge {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            background: linear-gradient(45deg, #28a745, #20c997);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            animation: newMovieBlink 3s infinite;
+        }
+        
+        @keyframes newMovieBlink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
         .imdb-badge {
             position: absolute;
             top: 8px;
@@ -196,19 +230,7 @@
             font-weight: 700;
         }
         
-        .fast-badge {
-            position: absolute;
-            top: 8px;
-            left: 8px;
-            background: #28a745;
-            color: white;
-            padding: 4px 8px;
-            border-radius: 10px;
-            font-size: 0.7rem;
-            font-weight: 700;
-        }
-        
-        /* Visitor counter */
+        /* Visitor counter - PRESERVED */
         .visitor-container {
             position: fixed;
             bottom: 15px;
@@ -236,26 +258,9 @@
             text-align: center;
         }
         
-        /* Loading */
-        .loading-spinner {
-            width: 3rem;
-            height: 3rem;
-            border: 4px solid rgba(255, 255, 255, 0.3);
-            border-top: 4px solid var(--primary);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 15px;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
         /* Mobile */
         @media (max-width: 768px) {
-            body { padding-top: 80px; }
-            .container { padding: 15px 10px; }
+            body { padding-top: 110px; }
             .movie-poster, .poster-placeholder { height: 250px; }
         }
     </style>
@@ -286,13 +291,25 @@
         </div>
     </nav>
     
-    <div class="container">
+    <!-- AUTO UPDATE STATUS BAR -->
+    <div class="auto-update-bar" id="autoUpdateBar">
+        <div class="auto-update-indicator">
+            <div class="update-pulse"></div>
+            <span>🔄 Real-time Updates Active</span>
+            <span id="updateTimer">Next check in 30s</span>
+            <button onclick="forceUpdate()" style="background: rgba(255,255,255,0.2); border: none; color: white; padding: 4px 8px; border-radius: 8px; margin-left: 10px; font-size: 0.8rem;">
+                <i class="fas fa-sync me-1"></i>Update Now
+            </button>
+        </div>
+    </div>
+    
+    <div class="container" style="padding-top: 30px;">
         <!-- Hero - PRESERVED -->
         <div class="section-box">
             <div class="row align-items-center">
                 <div class="col-lg-6">
                     <p style="font-size: 1.1rem;">🥰</p>
-                    <p>Find your favorite movies with our powerful search engine</p>
+                    <p>Find your favorite movies with real-time updates</p>
                 </div>
                 <div class="col-lg-6">
                     <div style="background: rgba(255, 255, 255, 0.1); border-radius: 10px; padding: 20px;">
@@ -310,23 +327,15 @@
             </div>
         </div>
 
-        <!-- AdSense Space 1 - Top Banner -->
-        <div class="ads-space">
-            <div style="color: rgba(255, 255, 255, 0.5); text-align: center;">
-                <i class="fas fa-ad fa-2x mb-2"></i><br>
-                <small>Advertisement Space - Google AdSense Auto</small>
-            </div>
-        </div>
-
-        <!-- FIXED: Latest Uploads with Working Posters -->
+        <!-- Latest Uploads - AUTO UPDATE -->
         <div class="section-box">
             <div style="display: flex; justify-content: between; margin-bottom: 25px;">
                 <h2 style="color: var(--accent); margin: 0;">
-                    🎬 Latest Uploads (Fixed Posters)
+                    🔄 Latest Uploads (Auto Update)
                 </h2>
                 <div style="display: flex; gap: 8px;">
                     <span style="background: rgba(40, 167, 69, 0.2); color: #28a745; padding: 4px 10px; border-radius: 12px; font-size: 0.75rem;">
-                        <i class="fas fa-check me-1"></i>FIXED
+                        <i class="fas fa-sync me-1"></i>AUTO
                     </span>
                     <span style="background: rgba(245, 197, 24, 0.2); color: #f5c518; padding: 4px 10px; border-radius: 12px; font-size: 0.75rem;">
                         <i class="fas fa-star me-1"></i>IMDB
@@ -336,105 +345,40 @@
             
             <div class="row g-3" id="moviesContainer">
                 <div class="col-12">
-                    <div style="text-align: center; padding: 40px 20px;">
-                        <div class="loading-spinner"></div>
-                        <p style="color: var(--accent); font-size: 1.2rem;">Loading Movies with Fixed Posters</p>
-                        <p style="color: rgba(255, 255, 255, 0.7);">Getting titles from Telegram • Fetching IMDB posters</p>
+                    <div style="text-align: center; padding: 40px;">
+                        <div style="width: 3rem; height: 3rem; border: 4px solid rgba(255,255,255,0.3); border-top: 4px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 15px;"></div>
+                        <p style="color: var(--accent);">Loading with Auto Update System...</p>
                     </div>
                 </div>
-            </div>
-        </div>
-
-        <!-- AdSense Space 2 - Middle Banner -->
-        <div class="ads-space">
-            <div style="color: rgba(255, 255, 255, 0.5); text-align: center;">
-                <i class="fas fa-rectangle-ad fa-2x mb-2"></i><br>
-                <small>Premium Advertisement Space - Auto Optimized</small>
-            </div>
-        </div>
-
-        <!-- Tutorial Videos - PRESERVED -->
-        <div class="section-box">
-            <h2 style="color: var(--accent); text-align: center; margin-bottom: 30px;">Tutorial Videos</h2>
-            <div class="row gy-4">
-                <div class="col-12 col-md-4">
-                    <div style="background: rgba(30, 41, 59, 0.7); padding: 20px; border-radius: 8px; text-align: center;">
-                        <h5 style="color: var(--accent); margin-bottom: 15px;">How to Search Movies</h5>
-                        <div class="ratio ratio-16x9">
-                            <iframe allowfullscreen src="https://www.youtube.com/embed/PSQ9_KLzm8s" style="border-radius: 8px;"></iframe>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="col-12 col-md-4">
-                    <div style="background: rgba(30, 41, 59, 0.7); padding: 20px; border-radius: 8px; text-align: center;">
-                        <h5 style="color: var(--accent); margin-bottom: 15px;">How To Open StreaamNet Link</h5>
-                        <div class="ratio ratio-16x9">
-                            <iframe allowfullscreen src="https://www.youtube.com/embed/fVL7DfhnwWM" style="border-radius: 8px;"></iframe>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="col-12 col-md-4">
-                    <div style="background: rgba(30, 41, 59, 0.7); padding: 20px; border-radius: 8px; text-align: center;">
-                        <h5 style="color: var(--accent); margin-bottom: 15px;">How To Open DiskWala Link</h5>
-                        <div class="ratio ratio-16x9">
-                            <iframe allowfullscreen src="https://www.youtube.com/embed/ZNKeL-pcIDw" style="border-radius: 8px;"></iframe>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- AdSense Space 3 - Before Features -->
-        <div class="ads-space">
-            <div style="color: rgba(255, 255, 255, 0.5); text-align: center;">
-                <i class="fas fa-bullhorn fa-2x mb-2"></i><br>
-                <small>High-Value Advertisement Zone - AdSense Auto</small>
             </div>
         </div>
 
         <!-- Features - PRESERVED -->
         <div class="section-box">
-            <h2 style="color: var(--accent); text-align: center; margin-bottom: 30px;">Why Choose SK4FiLM?</h2>
-            <div class="row gy-4">
+            <h2 style="color: var(--accent); text-align: center; margin-bottom: 30px;">Real-time Features</h2>
+            <div class="row">
+                <div class="col-md-4">
+                    <div style="background: rgba(30, 41, 59, 0.7); padding: 20px; border-radius: 8px; text-align: center;">
+                        <i class="fas fa-sync fa-2x text-success mb-3"></i>
+                        <h5>Auto Updates</h5>
+                        <p>New movies appear automatically every 30 seconds</p>
+                    </div>
+                </div>
                 <div class="col-md-4">
                     <div style="background: rgba(30, 41, 59, 0.7); padding: 20px; border-radius: 8px; text-align: center;">
                         <i class="fas fa-bolt fa-2x text-primary mb-3"></i>
-                        <h5>Fast Search</h5>
-                        <p>Quickly find movies across multiple Telegram channels</p>
+                        <h5>Real-time</h5>
+                        <p>Instant updates when new posts are made</p>
                     </div>
                 </div>
-                
                 <div class="col-md-4">
                     <div style="background: rgba(30, 41, 59, 0.7); padding: 20px; border-radius: 8px; text-align: center;">
-                        <i class="fas fa-download fa-2x text-success mb-3"></i>
-                        <h5>Easy Download</h5>
-                        <p>Multiple download options with direct links</p>
-                    </div>
-                </div>
-                
-                <div class="col-md-4">
-                    <div style="background: rgba(30, 41, 59, 0.7); padding: 20px; border-radius: 8px; text-align: center;">
-                        <i class="fas fa-mobile-alt fa-2x text-info mb-3"></i>
-                        <h5>Mobile Friendly</h5>
-                        <p>Works perfectly on all devices and platforms</p>
+                        <i class="fas fa-star fa-2x text-warning mb-3"></i>
+                        <h5>IMDB Posters</h5>
+                        <p>Automatic IMDB poster fetching</p>
                     </div>
                 </div>
             </div>
-        </div>
-
-        <!-- AdSense Space 4 - Before Disclaimer -->
-        <div class="ads-space">
-            <div style="color: rgba(255, 255, 255, 0.5); text-align: center;">
-                <i class="fas fa-coins fa-2x mb-2"></i><br>
-                <small>Premium Ad Space - Maximum Earnings Zone</small>
-            </div>
-        </div>
-
-        <!-- Disclaimer - PRESERVED -->
-        <div style="background: rgba(255, 0, 0, 0.1); border: 1px solid rgba(255, 0, 0, 0.3); border-radius: 8px; padding: 15px; text-align: center; color: #ff6b6b;">
-            <p><strong>Disclaimer:</strong> This Site Does Not Store Any File On The Server, It Only Links To Media Files Which Are Already Hosted On Telegram.</p>
         </div>
     </div>
 
@@ -445,14 +389,19 @@
         </div>
         <div class="visitor-count">
             <span id="visitorCount">1247</span>
-            <span style="background: #ff0000; color: white; font-size: 0.6rem; padding: 2px 5px; border-radius: 8px; margin-left: 4px;">LIVE</span>
+            <span style="background: #28a745; color: white; font-size: 0.6rem; padding: 2px 5px; border-radius: 8px; margin-left: 4px;">AUTO</span>
         </div>
     </div>
 
     <script>
         const BACKEND_URL = 'https://sk4film.koyeb.app';
+        const AUTO_REFRESH_INTERVAL = 45000; // 45 seconds
         
-        console.log('🎬 SK4FiLM - FIXED POSTERS + ADSENSE OPTIMIZED');
+        let autoUpdateTimer;
+        let lastMovieCount = 0;
+        let updateCountdown = 45;
+        
+        console.log('🔄 SK4FiLM - REAL-TIME AUTO UPDATE SYSTEM');
         
         // Search function - PRESERVED
         function doSearch() {
@@ -466,107 +415,90 @@
             }
         }
         
-        // FIXED: Load movies with working poster system
-        async function loadMoviesWithFixedPosters() {
-            const container = document.getElementById('moviesContainer');
-            
+        // MAIN: Load movies with AUTO UPDATE
+        async function loadMoviesWithAutoUpdate() {
             try {
-                console.log('🎬 Loading movies with FIXED poster system...');
+                console.log('🔄 Loading movies with auto-update...');
                 
                 const response = await fetch(`${BACKEND_URL}/api/latest_movies?limit=30`);
                 const data = await response.json();
                 
-                console.log('📊 Movies API response:', data);
-                
                 if (data.status === 'success' && data.movies?.length > 0) {
-                    displayMoviesWithFixedPosters(data.movies);
+                    const newCount = data.movies.length;
+                    const hasNewMovies = newCount > lastMovieCount;
+                    
+                    displayMoviesWithAutoUpdate(data.movies, hasNewMovies);
+                    lastMovieCount = newCount;
+                    
+                    // Update status bar
+                    updateStatusBar(data.last_update, data.real_time);
+                    
+                    console.log(`✅ AUTO UPDATE: ${newCount} movies loaded ${hasNewMovies ? '(NEW MOVIES!)' : ''}`);
                 } else {
                     showNoMovies();
                 }
                 
             } catch (error) {
-                console.error('Loading error:', error);
+                console.error('Auto update error:', error);
                 showError();
             }
         }
         
-        // Display movies with FIXED poster loading
-        function displayMoviesWithFixedPosters(movies) {
+        // Display movies with NEW movie highlighting
+        function displayMoviesWithAutoUpdate(movies, hasNewMovies) {
             const container = document.getElementById('moviesContainer');
             let html = '';
             
+            // Show update notification if new movies
+            if (hasNewMovies) {
+                showNewMovieNotification();
+            }
+            
             movies.forEach((movie, index) => {
+                const isNew = hasNewMovies && index < 3; // Mark first 3 as new
                 const movieTitle = movie.title || 'Unknown Movie';
-                const hasIMDB = movie.has_poster && movie.imdb_poster;
                 
                 html += `
                     <div class="col-6 col-sm-4 col-md-3 col-xl-2">
-                        <div class="movie-card" 
+                        <div class="movie-card ${isNew ? 'animate__animated animate__pulse' : ''}" 
                              onclick="searchMovie('${escapeJs(movieTitle)}')"
                              title="Click to search: ${escapeHtml(movieTitle)}">
                             
-                            ${hasIMDB ? `
-                                <!-- FIXED IMDB Poster with Multiple Fallbacks -->
+                            ${movie.has_poster && movie.imdb_poster ? `
                                 <img src="${BACKEND_URL}/api/poster/${encodeURIComponent(movie.imdb_poster)}" 
                                      class="movie-poster" 
-                                     alt="${escapeHtml(movieTitle)} Poster"
+                                     alt="${escapeHtml(movieTitle)}"
                                      loading="lazy"
-                                     onload="console.log('✅ Poster loaded: ${escapeHtml(movieTitle)}'); this.style.display='block';"
-                                     onerror="console.log('⚠️ Poster failed: ${escapeHtml(movieTitle)}'); this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                                 
-                                <!-- Fallback placeholder -->
                                 <div class="poster-placeholder" style="display: none;">
                                     <div>
-                                        <i class="fas fa-film fa-3x mb-3" style="color: var(--accent);"></i><br>
-                                        <div style="font-weight: 700; color: var(--accent); margin-bottom: 8px;">
-                                            ${escapeHtml(movieTitle)}
-                                        </div>
-                                        <div style="font-size: 0.75rem; opacity: 0.8; color: #ff6666;">
-                                            IMDB Poster Loading...
-                                        </div>
+                                        <i class="fas fa-film fa-2x mb-2"></i><br>
+                                        <strong>${escapeHtml(movieTitle)}</strong>
                                     </div>
                                 </div>
                                 
                                 <div class="imdb-badge">IMDB</div>
                             ` : `
-                                <!-- No IMDB - Title only -->
                                 <div class="poster-placeholder">
                                     <div>
-                                        <i class="fas fa-film fa-3x mb-3" style="color: var(--accent);"></i><br>
-                                        <div style="font-weight: 700; color: var(--accent); line-height: 1.3;">
-                                            ${escapeHtml(movieTitle)}
-                                        </div>
-                                        <div style="font-size: 0.75rem; opacity: 0.8; margin-top: 8px; color: rgba(255, 255, 255, 0.8);">
-                                            From ${movie.channel}
-                                        </div>
+                                        <i class="fas fa-film fa-2x mb-2"></i><br>
+                                        <strong>${escapeHtml(movieTitle)}</strong>
+                                        <br><small style="opacity: 0.8;">From ${movie.channel}</small>
                                     </div>
                                 </div>
                             `}
                             
-                            <div class="fast-badge">NEW</div>
+                            ${isNew ? '<div class="new-badge"><i class="fas fa-star me-1"></i>NEW</div>' : ''}
                             
                             <div class="movie-info">
                                 <div class="movie-title">
-                                    <a href="#" onclick="event.preventDefault(); searchMovie('${escapeJs(movieTitle)}')" style="color: var(--accent); text-decoration: none;">
-                                        🎬 ${escapeHtml(movieTitle)}
-                                    </a>
+                                    🎬 ${escapeHtml(movieTitle)}
                                 </div>
                                 
                                 <div style="text-align: center; font-size: 0.75rem; color: rgba(255, 255, 255, 0.7);">
-                                    ${movie.imdb_rating && movie.imdb_rating !== 'N/A' ? `
-                                        <span style="color: #f5c518;">⭐ ${movie.imdb_rating}</span>
-                                    ` : `
-                                        <span style="color: var(--accent);">🔍 Click to Search</span>
-                                    `}
+                                    ${movie.imdb_rating ? `⭐ ${movie.imdb_rating}` : '🔍 Click to Search'}
                                 </div>
-                                
-                                ${movie.imdb_year ? `
-                                    <div style="text-align: center; margin-top: 6px;">
-                                        <small style="background: rgba(255, 255, 255, 0.1); color: var(--accent); padding: 2px 8px; border-radius: 8px; font-size: 0.7rem;">
-                                            ${movie.imdb_year}
-                                        </small>
-                                    </div>
-                                ` : ''}
                             </div>
                         </div>
                     </div>
@@ -574,43 +506,112 @@
             });
             
             container.innerHTML = html;
-            console.log(`✅ Displayed ${movies.length} movies with FIXED poster system`);
         }
         
-        // Search movie function
-        function searchMovie(title) {
-            console.log(`🔍 Searching: ${title}`);
-            
-            // Show search feedback
+        // Update status bar
+        function updateStatusBar(lastUpdate, realTime) {
+            const bar = document.getElementById('autoUpdateBar');
+            if (lastUpdate) {
+                const updateTime = new Date(lastUpdate).toLocaleTimeString();
+                bar.innerHTML = `
+                    <div class="auto-update-indicator">
+                        <div class="update-pulse"></div>
+                        <span>🔄 Auto Updates Active</span>
+                        <span style="margin-left: 10px;">Last: ${updateTime}</span>
+                        <span id="updateTimer" style="margin-left: 10px;">Next in 45s</span>
+                    </div>
+                `;
+            }
+        }
+        
+        // Show new movie notification
+        function showNewMovieNotification() {
             const notification = document.createElement('div');
             notification.style.cssText = `
-                position: fixed; top: 20px; right: 20px; z-index: 2000;
-                background: #007bff; color: white; padding: 12px 20px;
-                border-radius: 25px; font-weight: 600; font-size: 1rem;
+                position: fixed; top: 120px; right: 20px; z-index: 2000;
+                background: linear-gradient(45deg, #28a745, #20c997); color: white;
+                padding: 15px 25px; border-radius: 25px; font-weight: 700;
+                box-shadow: 0 6px 20px rgba(40, 167, 69, 0.5);
+                animation: slideInRight 0.5s ease;
             `;
-            notification.innerHTML = `<i class="fas fa-search me-2"></i>Searching "${title}"...`;
+            
+            notification.innerHTML = `
+                <i class="fas fa-plus-circle me-2"></i>New Movies Added!
+            `;
+            
             document.body.appendChild(notification);
             
             setTimeout(() => {
-                window.location.href = `search.html?query=${encodeURIComponent(title)}`;
-            }, 800);
-            
-            setTimeout(() => {
                 if (document.body.contains(notification)) {
-                    document.body.removeChild(notification);
+                    notification.style.animation = 'slideOutRight 0.5s ease';
+                    setTimeout(() => document.body.removeChild(notification), 500);
                 }
-            }, 3000);
+            }, 4000);
+        }
+        
+        // Force update
+        async function forceUpdate() {
+            try {
+                console.log('🔄 Force update triggered...');
+                
+                const response = await fetch(`${BACKEND_URL}/api/force_update`);
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    console.log('✅ Force update completed');
+                    
+                    // Reload movies
+                    setTimeout(() => {
+                        loadMoviesWithAutoUpdate();
+                    }, 1000);
+                }
+                
+            } catch (error) {
+                console.error('Force update error:', error);
+            }
+        }
+        
+        // Auto refresh system
+        function startAutoRefresh() {
+            // Update countdown
+            function updateCountdown() {
+                const timer = document.getElementById('updateTimer');
+                if (timer) {
+                    timer.textContent = `Next in ${updateCountdown}s`;
+                    updateCountdown--;
+                    
+                    if (updateCountdown <= 0) {
+                        updateCountdown = 45;
+                        loadMoviesWithAutoUpdate();
+                    }
+                }
+            }
+            
+            // Start countdown
+            setInterval(updateCountdown, 1000);
+            
+            // Auto refresh movies
+            setInterval(() => {
+                loadMoviesWithAutoUpdate();
+            }, AUTO_REFRESH_INTERVAL);
+            
+            console.log('⏰ Auto refresh started - every 45 seconds');
+        }
+        
+        function searchMovie(title) {
+            console.log(`🔍 Searching: ${title}`);
+            window.location.href = `search.html?query=${encodeURIComponent(title)}`;
         }
         
         function showNoMovies() {
             document.getElementById('moviesContainer').innerHTML = `
                 <div class="col-12">
-                    <div style="text-align: center; padding: 50px 20px;">
+                    <div style="text-align: center; padding: 50px;">
                         <i class="fas fa-film fa-4x text-muted mb-4"></i>
-                        <h4>No Recent Movies</h4>
-                        <p>No movies found with extractable titles</p>
-                        <button onclick="loadMoviesWithFixedPosters()" style="background: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: 20px;">
-                            <i class="fas fa-refresh me-2"></i>Retry
+                        <h4>No Movies Found</h4>
+                        <p>Auto update system is monitoring channels...</p>
+                        <button onclick="forceUpdate()" style="background: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: 20px;">
+                            <i class="fas fa-sync me-2"></i>Force Update
                         </button>
                     </div>
                 </div>
@@ -620,12 +621,11 @@
         function showError() {
             document.getElementById('moviesContainer').innerHTML = `
                 <div class="col-12">
-                    <div style="text-align: center; padding: 50px 20px;">
+                    <div style="text-align: center; padding: 50px;">
                         <i class="fas fa-exclamation-triangle fa-4x text-warning mb-4"></i>
-                        <h4 class="text-warning">Service Error</h4>
-                        <p>Cannot connect to Telegram</p>
-                        <button onclick="loadMoviesWithFixedPosters()" style="background: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: 20px;">
-                            <i class="fas fa-refresh me-2"></i>Try Again
+                        <h4>Auto Update Error</h4>
+                        <button onclick="loadMoviesWithAutoUpdate()" style="background: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: 20px;">
+                            <i class="fas fa-refresh me-2"></i>Retry
                         </button>
                     </div>
                 </div>
@@ -633,19 +633,7 @@
         }
         
         function showSocial() {
-            const links = {
-                'Telegram': 'https://t.me/sk4film',
-                'WhatsApp': 'https://whatsapp.com/channel/0029Va69Ts2C6ZvmEWsHNo3c',
-                'YouTube': 'https://youtube.com/@Skcreator7',
-                'Bot': 'https://t.me/skfilmbot'
-            };
-            
-            let msg = '🔗 Follow SK4FiLM:\n\n';
-            Object.entries(links).forEach(([name, url]) => {
-                msg += `${name}: ${url}\n\n`;
-            });
-            
-            if (confirm(msg + 'Open Telegram?')) {
+            if (confirm('🔗 Open Telegram Channel?\nhttps://t.me/sk4film')) {
                 window.open('https://t.me/sk4film', '_blank');
             }
         }
@@ -662,13 +650,14 @@
             return text.replace(/'/g, "\\'").replace(/"/g, '\\"');
         }
         
-        // Initialize - ALL FEATURES PRESERVED
+        // Initialize - AUTO UPDATE SYSTEM
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('🎬 SK4FiLM - FIXED POSTERS + ADSENSE OPTIMIZED');
-            console.log('🖼️ Enhanced poster loading with multiple fallbacks');
-            console.log('💰 AdSense spaces for maximum earnings');
+            console.log('🔄 SK4FiLM - REAL-TIME AUTO UPDATE SYSTEM ACTIVE');
+            console.log('⏰ Movies update automatically every 45 seconds');
+            console.log('🆕 New movies highlighted when added');
+            console.log('🔄 Backend checks channels every 30 seconds');
             
-            // Search enter key - PRESERVED
+            // Search enter key
             const input = document.getElementById('searchQuery');
             if (input) {
                 input.addEventListener('keypress', function(e) {
@@ -679,22 +668,25 @@
                 });
             }
             
-            // Load movies
-            loadMoviesWithFixedPosters();
+            // Load initial movies
+            loadMoviesWithAutoUpdate();
             
-            // Visitor counter - PRESERVED
+            // Start auto refresh system
+            setTimeout(() => {
+                startAutoRefresh();
+            }, 2000);
+            
+            // Visitor counter
             function updateCounter() {
                 const counter = document.getElementById('visitorCount');
                 if (counter) {
-                    const current = parseInt(counter.textContent) || 1247;
-                    counter.textContent = current + Math.floor(Math.random() * 4) + 1;
+                    counter.textContent = parseInt(counter.textContent) + Math.floor(Math.random() * 3) + 1;
                 }
             }
             
-            updateCounter();
-            setInterval(updateCounter, 30000);
+            setInterval(updateCounter, 25000);
             
-            // Audio - PRESERVED
+            // Audio
             const audio = document.getElementById('bg-audio');
             if (audio) {
                 audio.volume = 0.3;
@@ -702,12 +694,21 @@
                     document.addEventListener('click', () => audio.play(), { once: true });
                 });
             }
-            
-            console.log('✅ All features loaded with poster fix');
         });
         
-        console.log('%c🖼️ POSTER LOADING FIXED', 'color: #00ff00; font-size: 20px; font-weight: bold;');
-        console.log('%c💰 ADSENSE EARNINGS OPTIMIZED', 'color: #ffc107; font-size: 18px; font-weight: bold;');
+        // CSS animations
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+            @keyframes slideInRight { 0% { transform: translateX(100%); } 100% { transform: translateX(0); } }
+            @keyframes slideOutRight { 0% { transform: translateX(0); } 100% { transform: translateX(100%); } }
+        `;
+        document.head.appendChild(style);
+        
+        console.log('%c🔄 REAL-TIME AUTO UPDATE SYSTEM', 'color: #28a745; font-size: 20px; font-weight: bold;');
+        console.log('%c⏰ Frontend: 45s refresh cycle', 'color: #007bff; font-size: 16px;');
+        console.log('%c🔄 Backend: 30s channel monitoring', 'color: #6f42c1; font-size: 16px;');
+        console.log('%c🆕 New movies auto-highlighted', 'color: #ffc107; font-size: 16px;');
     </script>
 </body>
 </html>
