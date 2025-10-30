@@ -21,7 +21,7 @@ class Config:
     
     # Working channels from logs
     TEXT_CHANNEL_IDS = [-1001891090100, -1002024811395]
-    POSTER_CHANNEL_ID = -1001891090100
+    POSTER_CHANNEL_ID = -1002708802395
     
     SECRET_KEY = os.environ.get("SECRET_KEY", "sk4film-secret-key-2024")
     WEB_SERVER_PORT = int(os.environ.get("PORT", 8000))
