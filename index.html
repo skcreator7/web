@@ -1,10 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SK4FiLM - Movie Search Engine</title>
-    <meta name="description" content="Search and discover movies from multiple Telegram channels with SK4FiLM">
+    <title>Search Results - SK4FiLM</title>
     
     <!-- Google Auto Ads ONLY -->
     <meta name="google-adsense-account" content="ca-pub-5244164301170945">
@@ -17,31 +16,27 @@
         });
     </script>
     
-    <!-- CSS Libraries -->
+    <!-- CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;600;700&family=Montserrat:wght@800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     
     <style>
         :root {
             --primary: #ff0000;
             --secondary: #0066ff;
             --accent: #00ccff;
-            --dark: #0a0a0a;
-            --light: #ffffff;
-            --text: #f8f9fa;
+            --light: #f8f9fa;
         }
         
         body {
             background: url('https://i.postimg.cc/T2mcBGtv/pxfuel-2.jpg') no-repeat center center fixed;
             background-size: cover;
             min-height: 100vh;
-            font-family: 'Josefin Sans', sans-serif;
-            color: var(--text);
+            font-family: 'Poppins', sans-serif;
+            color: var(--light);
             position: relative;
-            overflow-x: hidden;
-            padding-top: 90px;
+            padding-top: 140px;
         }
         
         body::before {
@@ -51,212 +46,128 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(10, 10, 10, 0.7);
+            background: rgba(10, 10, 10, 0.85);
             z-index: -1;
         }
         
-        .container {
-            position: relative;
-            z-index: 1;
-            padding: 20px 15px 40px;
-        }
-        
-        /* Navigation - PRESERVED */
+        /* Navigation */
         .top-navbar {
             background: rgba(15, 23, 42, 0.95);
             backdrop-filter: blur(15px);
-            border-bottom: 1px solid rgba(255,255,255,0.1);
             position: fixed;
             top: 0;
             width: 100%;
             z-index: 1000;
-            padding: 12px 0;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            padding: 15px 0;
         }
         
         .navbar-content {
             display: flex;
             align-items: center;
             justify-content: space-between;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
         }
         
-        .logo-img {
-            height: 55px;
-            margin-right: 15px;
-            border-radius: 8px;
-            box-shadow: 0 0 15px rgba(255, 0, 0, 0.3);
+        /* Search Section */
+        .search-section {
+            background: rgba(15, 23, 42, 0.9);
+            position: fixed;
+            top: 70px;
+            width: 100%;
+            z-index: 900;
+            padding: 15px 0;
         }
         
-        .brand-text {
-            font-family: 'Montserrat', sans-serif;
-            font-size: 2.2rem;
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+        .search-form {
+            display: flex;
+            gap: 12px;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 20px;
         }
         
-        /* Section boxes - PRESERVED */
-        .section-box {
-            background: rgba(15, 23, 42, 0.7);
-            backdrop-filter: blur(5px);
-            border-radius: 12px;
-            padding: 25px;
-            margin-bottom: 25px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-        
-        /* Search - PRESERVED */
         .search-input {
-            background: rgba(60, 65, 90, 0.7);
-            border: none;
-            border-bottom: 2px solid var(--primary);
-            color: var(--light);
-            padding: 10px 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 12px 20px;
             font-size: 1rem;
-            border-radius: 6px;
+            flex: 1;
+            border-radius: 25px;
         }
         
         .search-input:focus {
-            border-bottom-color: var(--accent);
-            box-shadow: 0 0 12px rgba(0, 204, 255, 0.5);
+            border-color: var(--accent);
             outline: none;
             color: white;
         }
         
         .search-btn {
-            background: linear-gradient(50deg, var(--primary), var(--secondary));
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            border: none;
+            border-radius: 25px;
+            padding: 12px 24px;
             color: white;
             font-weight: 600;
-            padding: 10px 25px;
-            border: none;
-            border-radius: 6px;
-            width: 100%;
-            margin-top: 8px;
             cursor: pointer;
         }
         
-        /* Enhanced Movie Cards for 30 Posters */
-        .movie-card {
-            background: rgba(30, 41, 59, 0.8);
+        /* Results */
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .results-wrapper {
+            background: rgba(15, 23, 42, 0.8);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
             border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 10px;
-            overflow: hidden;
-            transition: all 0.3s ease;
-            height: 100%;
-            cursor: pointer;
+        }
+        
+        .result-item {
+            background: rgba(30, 41, 59, 0.9);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
             position: relative;
         }
         
-        .movie-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 15px 30px rgba(0, 102, 255, 0.4);
-            border-color: var(--accent);
-        }
-        
-        .movie-poster {
-            width: 100%;
-            height: 300px;
-            object-fit: cover;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            transition: transform 0.3s ease;
-        }
-        
-        .movie-card:hover .movie-poster {
-            transform: scale(1.05);
-        }
-        
-        .movie-info {
-            padding: 15px;
-        }
-        
-        .movie-title {
-            font-size: 0.9rem;
-            color: var(--accent);
-            margin-bottom: 8px;
-            line-height: 1.3;
-        }
-        
-        .movie-link {
-            color: var(--accent);
-            text-decoration: none;
-        }
-        
-        .movie-link:hover {
-            color: var(--primary);
-        }
-        
-        /* Status badges */
-        .status-badge {
+        .result-item::before {
+            content: '';
             position: absolute;
-            top: 8px;
-            right: 8px;
-            padding: 4px 8px;
-            border-radius: 12px;
-            font-size: 0.65rem;
-            font-weight: 700;
-            text-transform: uppercase;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(45deg, var(--primary), var(--accent));
         }
         
-        .live-badge {
-            background: linear-gradient(45deg, #28a745, #20c997);
-            color: white;
-            animation: pulse 2s infinite;
+        .result-content {
+            color: var(--light);
+            line-height: 1.7;
+            font-size: 1rem;
+            word-wrap: break-word;
+            white-space: pre-wrap;
         }
         
-        .fallback-badge {
-            background: linear-gradient(45deg, #ffc107, #fd7e14);
-            color: white;
+        .result-content a {
+            color: var(--accent);
+            font-weight: 600;
         }
         
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.05); opacity: 0.9; }
-        }
-        
-        /* Mobile responsive - PRESERVED */
+        /* Mobile */
         @media (max-width: 768px) {
-            body { padding-top: 80px; }
-            .container { padding: 15px 10px 30px; }
-            .logo-img { height: 45px; }
-            .brand-text { font-size: 1.8rem; }
-            .section-box { padding: 20px; margin-bottom: 20px; }
-            .movie-poster { height: 250px; }
+            body { padding-top: 120px; }
+            .main-container { padding: 15px; }
+            .result-item { padding: 20px; }
         }
         
-        /* Visitor counter - PRESERVED */
-        .visitor-container {
-            position: fixed;
-            bottom: 15px;
-            right: 15px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            z-index: 1000;
-        }
-        
-        .visitor-logo {
-            width: 50px;
-            height: 50px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 6px;
-            border: 2px solid white;
-        }
-        
-        .visitor-count {
-            background: rgba(0, 102, 255, 0.8);
-            color: white;
-            padding: 5px 10px;
-            border-radius: 12px;
-            font-size: 0.8rem;
-            font-weight: bold;
-        }
-        
-        /* Loading */
         .loading-spinner {
             width: 3rem;
             height: 3rem;
@@ -264,7 +175,7 @@
             border-top: 4px solid var(--primary);
             border-radius: 50%;
             animation: spin 1s linear infinite;
-            margin: 0 auto 15px;
+            margin: 0 auto 20px;
         }
         
         @keyframes spin {
@@ -275,438 +186,175 @@
 </head>
 
 <body>
-    <!-- Background Audio - PRESERVED -->
-    <audio autoplay id="bg-audio">
-        <source src="https://files.catbox.moe/5t18g8.mp3" type="audio/mpeg">
-    </audio>
-    
-    <!-- Navigation - PRESERVED EXACTLY -->
+    <!-- Navigation -->
     <nav class="top-navbar">
-        <div class="container">
-            <div class="navbar-content">
-                <a href="#" style="display: flex; align-items: center; color: white; text-decoration: none;">
-                    <img src="https://iili.io/KOlfc41.png" alt="SK4FiLM Logo" class="logo-img">
-                    <div style="display: flex; flex-direction: column;">
-                        <div class="brand-text">SK4FiLM</div>
-                        <div style="font-size: 0.85rem; color: var(--accent); font-style: italic;">House of Entertainment</div>
-                    </div>
-                </a>
-                
-                <button onclick="showSocial()" style="background: transparent; border: none; color: var(--accent); font-size: 1.7rem; cursor: pointer; padding: 8px;">
-                    <i class="fas fa-bars"></i>
-                </button>
-            </div>
+        <div class="navbar-content">
+            <a href="index.html" style="display: flex; align-items: center; color: white; text-decoration: none;">
+                <img src="https://iili.io/KOlfc41.png" alt="SK4FiLM Logo" style="height: 40px; margin-right: 12px; border-radius: 6px;">
+                <div style="font-size: 1.5rem; background: linear-gradient(90deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 700;">SK4FiLM</div>
+            </a>
+            <a href="index.html" style="background: rgba(255, 255, 255, 0.1); color: white; padding: 8px 16px; border-radius: 20px; text-decoration: none;">
+                <i class="fas fa-home me-1"></i>Home
+            </a>
         </div>
     </nav>
-    
-    <div class="container">
-        <!-- Hero Section - PRESERVED EXACTLY -->
-        <div class="section-box animate__animated animate__fadeIn">
-            <div class="row align-items-center">
-                <div class="col-lg-6">
-                    <div class="content-section">
-                        <p style="font-size: 1.1rem; margin-bottom: 10px;">🥰</p>
-                        <p style="font-size: 1rem;">Find your favorite movies with our powerful search engine</p>
-                    </div>
-                </div>
-                <div class="col-lg-6">
-                    <div style="background: rgba(255, 255, 255, 0.1); border-radius: 10px; padding: 20px;">
-                        <input class="form-control search-input" id="searchQuery" placeholder="Search for movies, web series..." required type="text">
-                        <button class="btn search-btn" onclick="doSearch()" type="button">
-                            <i class="fas fa-search me-2"></i>Search Movies
-                        </button>
-                        <div class="text-center mt-3">
-                            <a class="btn btn-outline-light" href="https://t.me/skfilmbot" target="_blank">
-                                <i class="fab fa-telegram me-2"></i>Use Telegram Bot
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
 
-        <!-- SMART: Latest Movies with Fallback System -->
-        <div class="section-box animate__animated animate__fadeIn mt-4">
-            <div style="display: flex; justify-content: between; align-items: center; margin-bottom: 25px; flex-wrap: wrap; gap: 15px;">
-                <h2 style="color: var(--accent); margin: 0;">🔥 Latest Movies</h2>
-                <div id="channelStatus" style="display: flex; gap: 8px; flex-wrap: wrap;">
-                    <span style="background: rgba(255, 193, 7, 0.2); color: #ffc107; padding: 4px 10px; border-radius: 12px; font-size: 0.75rem;">
-                        <i class="fas fa-satellite-dish me-1"></i>Detecting Channel...
-                    </span>
-                </div>
-            </div>
-            
-            <div class="row g-3" id="latestPosters">
-                <div class="col-12">
-                    <div style="text-align: center; padding: 40px 20px;">
-                        <div class="loading-spinner"></div>
-                        <p style="color: var(--accent); font-size: 1.2rem; margin-bottom: 8px;">
-                            <i class="fas fa-cogs me-2"></i>Smart Channel Detection
-                        </p>
-                        <p style="color: rgba(255, 255, 255, 0.7); margin-bottom: 15px;">
-                            Trying poster channel -1002708802395, then fallback options...
-                        </p>
-                        <div style="display: flex; justify-content: center; gap: 8px; flex-wrap: wrap;">
-                            <span style="background: rgba(0, 255, 0, 0.1); color: #00ff00; padding: 4px 8px; border-radius: 10px; font-size: 0.7rem;">🤖 Auto Ads</span>
-                            <span style="background: rgba(255, 0, 0, 0.1); color: #ff6666; padding: 4px 8px; border-radius: 10px; font-size: 0.7rem;">📷 30 Posters</span>
-                            <span style="background: rgba(0, 102, 255, 0.1); color: var(--accent); padding: 4px 8px; border-radius: 10px; font-size: 0.7rem;">🔄 Smart Fallback</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Tutorial Videos - PRESERVED EXACTLY -->
-        <div class="section-box animate__animated animate__fadeIn">
-            <h2 style="color: var(--accent); text-align: center; margin-bottom: 30px;">Tutorial Videos</h2>
-            <div class="row gy-4">
-                <div class="col-12 col-md-4">
-                    <div style="background: rgba(30, 41, 59, 0.7); padding: 20px; border-radius: 8px; text-align: center; height: 100%;">
-                        <h5 style="color: var(--accent); margin-bottom: 15px;">How to Search Movies</h5>
-                        <div class="ratio ratio-16x9">
-                            <iframe allowfullscreen src="https://www.youtube.com/embed/PSQ9_KLzm8s" style="border-radius: 8px;"></iframe>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="col-12 col-md-4">
-                    <div style="background: rgba(30, 41, 59, 0.7); padding: 20px; border-radius: 8px; text-align: center; height: 100%;">
-                        <h5 style="color: var(--accent); margin-bottom: 15px;">How To Open StreaamNet Link</h5>
-                        <div class="ratio ratio-16x9">
-                            <iframe allowfullscreen src="https://www.youtube.com/embed/fVL7DfhnwWM" style="border-radius: 8px;"></iframe>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="col-12 col-md-4">
-                    <div style="background: rgba(30, 41, 59, 0.7); padding: 20px; border-radius: 8px; text-align: center; height: 100%;">
-                        <h5 style="color: var(--accent); margin-bottom: 15px;">How To Open DiskWala Link</h5>
-                        <div class="ratio ratio-16x9">
-                            <iframe allowfullscreen src="https://www.youtube.com/embed/ZNKeL-pcIDw" style="border-radius: 8px;"></iframe>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Features - PRESERVED EXACTLY -->
-        <div class="section-box animate__animated animate__fadeIn">
-            <h2 style="color: var(--accent); text-align: center; margin-bottom: 30px;">Why Choose SK4FiLM?</h2>
-            <div class="row gy-4">
-                <div class="col-md-4">
-                    <div style="background: rgba(30, 41, 59, 0.7); padding: 20px; border-radius: 8px; text-align: center; height: 100%;">
-                        <div style="font-size: 2.2rem; color: var(--accent); margin-bottom: 12px;">
-                            <i class="fas fa-bolt"></i>
-                        </div>
-                        <h5>Fast Search</h5>
-                        <p>Quickly find movies across multiple Telegram channels</p>
-                    </div>
-                </div>
-                
-                <div class="col-md-4">
-                    <div style="background: rgba(30, 41, 59, 0.7); padding: 20px; border-radius: 8px; text-align: center; height: 100%;">
-                        <div style="font-size: 2.2rem; color: var(--accent); margin-bottom: 12px;">
-                            <i class="fas fa-download"></i>
-                        </div>
-                        <h5>Easy Download</h5>
-                        <p>Multiple download options with direct links</p>
-                    </div>
-                </div>
-                
-                <div class="col-md-4">
-                    <div style="background: rgba(30, 41, 59, 0.7); padding: 20px; border-radius: 8px; text-align: center; height: 100%;">
-                        <div style="font-size: 2.2rem; color: var(--accent); margin-bottom: 12px;">
-                            <i class="fas fa-mobile-alt"></i>
-                        </div>
-                        <h5>Mobile Friendly</h5>
-                        <p>Works perfectly on all devices and platforms</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Disclaimer - PRESERVED -->
-        <div style="background: rgba(255, 0, 0, 0.1); border: 1px solid rgba(255, 0, 0, 0.3); border-radius: 8px; padding: 15px; margin-top: 30px; text-align: center; color: #ff6b6b;">
-            <p><strong>Disclaimer:</strong> This Site Does Not Store Any File On The Server, It Only Links To Media Files Which Are Already Hosted On Telegram.</p>
-        </div>
+    <!-- Search Section -->
+    <div class="search-section">
+        <form id="searchForm" class="search-form">
+            <input type="text" id="searchInput" class="search-input" placeholder="Search real movie data..." required>
+            <button type="submit" class="search-btn">
+                <i class="fas fa-search me-1"></i>Search
+            </button>
+        </form>
     </div>
 
-    <!-- Visitor Counter - PRESERVED EXACTLY -->
-    <div class="visitor-container">
-        <div class="visitor-logo">
-            <i class="fas fa-users" style="color: white; font-size: 1.5rem;"></i>
+    <div class="main-container">
+        <!-- Search Stats -->
+        <div id="searchStats" style="display: none;">
+            <div style="background: linear-gradient(135deg, rgba(40, 167, 69, 0.1), rgba(0, 102, 255, 0.1)); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 15px; padding: 20px; margin-bottom: 25px; text-align: center;">
+                <div style="color: var(--accent); font-size: 1.2rem; margin-bottom: 10px;">Real Data Search Results</div>
+                <div id="searchQuery" style="margin-bottom: 15px; color: var(--light);"></div>
+                <div style="display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;">
+                    <div style="background: rgba(40, 167, 69, 0.2); color: #28a745; padding: 6px 14px; border-radius: 12px; font-size: 0.8rem;">Real Data Only</div>
+                    <div style="background: rgba(0, 102, 255, 0.2); color: var(--accent); padding: 6px 14px; border-radius: 12px; font-size: 0.8rem;">Text Channels</div>
+                    <div id="resultsCount" style="background: rgba(0, 102, 255, 0.2); color: var(--accent); padding: 6px 14px; border-radius: 12px; font-size: 0.8rem;">0 Results</div>
+                </div>
+            </div>
         </div>
-        <div class="visitor-count">
-            <span id="visitorCount">1247</span>
-            <span style="background: #ff0000; color: white; font-size: 0.6rem; padding: 2px 5px; border-radius: 8px; margin-left: 4px; animation: blink 2s infinite;">LIVE</span>
+
+        <!-- Results -->
+        <div class="results-wrapper">
+            <div id="searchResults">
+                <div style="text-align: center; padding: 50px 20px;">
+                    <i class="fas fa-search fa-4x text-primary mb-4"></i>
+                    <h4>Search Real Movie Data</h4>
+                    <p style="color: rgba(255, 255, 255, 0.8);">Enter movie name to search text channels</p>
+                    <div style="margin-top: 20px;">
+                        <span style="background: rgba(40, 167, 69, 0.1); color: #28a745; padding: 8px 16px; border-radius: 15px; font-size: 0.9rem;">
+                            <i class="fas fa-check me-2"></i>Real Data Only
+                        </span>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
-        console.log('🚀 SK4FiLM - SMART CHANNEL DETECTION + ALL PREVIOUS FEATURES');
+        const CONFIG = {
+            BACKEND_URL: 'https://sk4film.koyeb.app',
+            RESULTS_PER_PAGE: 8
+        };
         
-        const BACKEND_URL = 'https://sk4film.koyeb.app';
-        let channelStatus = 'detecting';
+        let currentQuery = '';
+        let currentPage = 1;
+        let isLoading = false;
         
-        // WORKING: Search function - PRESERVED
-        function doSearch() {
-            const input = document.getElementById('searchQuery');
-            const query = input.value.trim();
+        // Search function
+        async function performSearch(query, page = 1) {
+            if (isLoading) return;
             
-            if (query && query.length >= 2) {
-                console.log('🔍 Search initiated:', query);
-                window.location.href = `search.html?query=${encodeURIComponent(query)}`;
-            } else {
-                input.style.borderBottomColor = '#ff0000';
-                input.focus();
-                setTimeout(() => input.style.borderBottomColor = '', 2000);
-            }
-        }
-        
-        // SMART: Load posters with fallback detection
-        async function loadPostersWithSmartFallback() {
-            const container = document.getElementById('latestPosters');
-            const statusContainer = document.getElementById('channelStatus');
+            const resultsContainer = document.getElementById('searchResults');
+            const statsContainer = document.getElementById('searchStats');
+            
+            if (!query?.trim()) return;
+            
+            isLoading = true;
+            currentQuery = query.trim();
+            currentPage = page;
             
             try {
-                console.log('🤖 Smart loading: Trying poster channel, then fallbacks...');
+                document.getElementById('searchInput').value = currentQuery;
                 
-                // API call to get posters (backend handles fallback internally)
-                const response = await fetch(`${BACKEND_URL}/api/latest_posters?limit=30`);
+                resultsContainer.innerHTML = `
+                    <div style="text-align: center; padding: 60px 20px;">
+                        <div class="loading-spinner"></div>
+                        <div style="font-size: 1.2rem; color: var(--accent);">Searching Real Data</div>
+                        <div style="color: rgba(255, 255, 255, 0.7);">Query: "${currentQuery}"</div>
+                    </div>
+                `;
+                
+                const response = await fetch(`${CONFIG.BACKEND_URL}/api/search?query=${encodeURIComponent(currentQuery)}&page=${currentPage}&limit=${CONFIG.RESULTS_PER_PAGE}`);
                 const data = await response.json();
                 
-                console.log('📊 Smart API response:', data);
-                
-                if (data.status === 'success' && data.posters?.length > 0) {
-                    // Update status based on source
-                    updateChannelStatus(data.source, data.channel_name || 'Unknown');
-                    
-                    // Display posters
-                    displaySmartPosters(data.posters, data.source);
-                    console.log(`✅ SMART SUCCESS: ${data.posters.length} posters from ${data.source}`);
-                    
+                if (data.status === 'success' && data.results?.length > 0) {
+                    displayRealResults(data.results);
+                    updateSearchStats(currentQuery, data.pagination);
                 } else {
-                    throw new Error(data.message || 'No posters available');
+                    showNoResults(currentQuery);
                 }
                 
             } catch (error) {
-                console.error('❌ Smart loading error:', error);
-                showFallbackMessage();
+                console.error('Search error:', error);
+                showSearchError();
+            } finally {
+                isLoading = false;
             }
         }
         
-        // Update channel status indicator
-        function updateChannelStatus(source, channelName) {
-            const statusContainer = document.getElementById('channelStatus');
+        function displayRealResults(results) {
+            const resultsContainer = document.getElementById('searchResults');
+            let resultsHTML = '';
             
-            let statusHTML = '';
-            
-            if (source.includes('CHANNEL_-1002708802395')) {
-                // Primary poster channel working
-                statusHTML = `
-                    <span style="background: rgba(0, 255, 0, 0.2); color: #00ff00; padding: 4px 10px; border-radius: 12px; font-size: 0.75rem;">
-                        <i class="fas fa-check-circle me-1"></i>Primary Channel Active
-                    </span>
-                    <span style="background: rgba(255, 0, 0, 0.2); color: #ff6666; padding: 4px 10px; border-radius: 12px; font-size: 0.75rem;">
-                        <i class="fas fa-hashtag me-1"></i>-1002708802395
-                    </span>
-                `;
-            } else if (source.includes('CHANNEL_')) {
-                // Fallback channel working
-                statusHTML = `
-                    <span style="background: rgba(255, 193, 7, 0.2); color: #ffc107; padding: 4px 10px; border-radius: 12px; font-size: 0.75rem;">
-                        <i class="fas fa-shield-alt me-1"></i>Fallback Active
-                    </span>
-                    <span style="background: rgba(0, 102, 255, 0.2); color: var(--accent); padding: 4px 10px; border-radius: 12px; font-size: 0.75rem;">
-                        <i class="fas fa-server me-1"></i>${channelName}
-                    </span>
-                `;
-            } else {
-                // Mock fallback
-                statusHTML = `
-                    <span style="background: rgba(108, 117, 125, 0.2); color: #6c757d; padding: 4px 10px; border-radius: 12px; font-size: 0.75rem;">
-                        <i class="fas fa-database me-1"></i>Fallback Data
-                    </span>
-                `;
-            }
-            
-            statusContainer.innerHTML = statusHTML;
-        }
-        
-        // DISPLAY: Smart poster display with 30 posters
-        function displaySmartPosters(posters, source) {
-            const container = document.getElementById('latestPosters');
-            let postersHTML = '';
-            
-            // Display all 30 posters in grid
-            posters.forEach((poster, index) => {
-                const isLive = source.includes('CHANNEL_-1002708802395');
-                const isFallback = source.includes('MOCK') || source.includes('FALLBACK');
-                
-                postersHTML += `
-                    <div class="col-6 col-sm-4 col-md-3 col-xl-2">
-                        <div class="movie-card animate__animated animate__fadeInUp" 
-                             style="animation-delay: ${index * 0.03}s"
-                             onclick="searchMovie('${escapeForJs(poster.search_query)}')"
-                             title="Search: ${escapeHtml(poster.search_query)}">
+            results.forEach((result, index) => {
+                resultsHTML += `
+                    <div class="result-item" style="animation: fadeIn 0.5s ease-out ${index * 0.1}s both;">
+                        <div style="display: flex; justify-content: between; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
+                            <span style="background: linear-gradient(45deg, #28a745, #20c997); color: white; padding: 6px 14px; border-radius: 20px; font-size: 0.75rem; font-weight: 600;">
+                                <i class="fas fa-check me-1"></i>Real Data
+                            </span>
                             
-                            <div class="position-relative">
-                                ${poster.photo ? `
-                                    <img src="${BACKEND_URL}/api/get_poster?file_id=${poster.photo}" 
-                                         class="movie-poster" 
-                                         alt="${escapeHtml(poster.caption)}"
-                                         loading="lazy"
-                                         onerror="this.src='https://via.placeholder.com/300x400/1a1a2e/00ccff?text=${encodeURIComponent(poster.search_query)}'">
-                                ` : `
-                                    <div class="movie-poster" style="background: linear-gradient(135deg, #1a1a2e, #16213e); display: flex; align-items: center; justify-content: center; color: var(--accent); font-weight: 600; text-align: center; padding: 20px; font-size: 0.9rem;">
-                                        <div>
-                                            <i class="fas fa-film fa-2x mb-2"></i><br>
-                                            ${escapeHtml(poster.search_query)}
-                                        </div>
-                                    </div>
-                                `}
-                                
-                                <div class="status-badge ${isLive ? 'live-badge' : 'fallback-badge'}">
-                                    ${isLive ? '<i class="fas fa-wifi me-1"></i>LIVE' : '<i class="fas fa-database me-1"></i>DATA'}
-                                </div>
-                                
-                                <!-- Click indicator -->
-                                <div style="position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.9)); padding: 10px 8px 6px;">
-                                    <div style="color: var(--accent); font-size: 0.7rem; text-align: center; font-weight: 600;">
-                                        <i class="fas fa-mouse-pointer me-1"></i>Click to Search
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="movie-info">
-                                <h6 class="movie-title">
-                                    <a href="#" class="movie-link" onclick="event.preventDefault(); searchMovie('${escapeForJs(poster.search_query)}')">
-                                        ${escapeHtml(poster.caption)}
-                                    </a>
-                                </h6>
-                                <div style="display: flex; justify-content: between; align-items: center; font-size: 0.7rem; margin-top: 8px;">
-                                    <small style="color: rgba(255, 255, 255, 0.6);">
-                                        <i class="fas fa-clock me-1"></i>${formatDate(poster.date)}
-                                    </small>
-                                    <small style="color: var(--accent);">
-                                        <i class="fas fa-search me-1"></i>Search
-                                    </small>
-                                </div>
+                            <div style="display: flex; gap: 15px; font-size: 0.85rem; color: rgba(255, 255, 255, 0.7);">
+                                <span><i class="fas fa-calendar me-1"></i>${formatDate(result.date)}</span>
+                                <span><i class="fas fa-telegram me-1"></i>${result.channel_name}</span>
+                                ${result.link_count ? `<span><i class="fas fa-link me-1"></i>${result.link_count} Links</span>` : ''}
                             </div>
                         </div>
+                        
+                        <div class="result-content">${result.content}</div>
                     </div>
                 `;
             });
             
-            container.innerHTML = postersHTML;
-            console.log(`✅ Displayed ${posters.length} smart posters`);
+            resultsContainer.innerHTML = resultsHTML;
         }
         
-        // SEARCH: From poster click
-        function searchMovie(movieName) {
-            if (!movieName) return;
-            
-            const cleanName = movieName.trim();
-            console.log(`🎬 Movie clicked → Searching: "${cleanName}"`);
-            
-            // Visual feedback
-            showNotification(`Searching "${cleanName}" in text channels...`, 'search');
-            
-            setTimeout(() => {
-                window.location.href = `search.html?query=${encodeURIComponent(cleanName)}`;
-            }, 600);
+        function updateSearchStats(query, pagination) {
+            document.getElementById('searchQuery').innerHTML = `Results for "<strong>${escapeHtml(query)}</strong>"`;
+            document.getElementById('resultsCount').textContent = `${pagination.total_results} Real Results`;
+            document.getElementById('searchStats').style.display = 'block';
         }
         
-        // Show fallback message
-        function showFallbackMessage() {
-            const container = document.getElementById('latestPosters');
-            const statusContainer = document.getElementById('channelStatus');
-            
-            statusContainer.innerHTML = `
-                <span style="background: rgba(220, 53, 69, 0.2); color: #dc3545; padding: 4px 10px; border-radius: 12px; font-size: 0.75rem;">
-                    <i class="fas fa-exclamation-triangle me-1"></i>Channel Unavailable
-                </span>
-            `;
-            
-            container.innerHTML = `
-                <div class="col-12">
-                    <div style="text-align: center; padding: 40px 20px;">
-                        <i class="fas fa-satellite-dish fa-4x text-warning mb-3"></i>
-                        <h4 class="text-warning">Channel Detection Failed</h4>
-                        <p style="color: rgba(255, 255, 255, 0.8); margin-bottom: 20px;">
-                            Cannot access poster channel -1002708802395 or fallback channels
-                        </p>
-                        <div style="display: flex; justify-content: center; gap: 10px; margin-bottom: 20px;">
-                            <button onclick="loadPostersWithSmartFallback()" style="background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 20px; cursor: pointer;">
-                                <i class="fas fa-refresh me-1"></i>Retry Detection
-                            </button>
-                            <button onclick="showMockPosters()" style="background: var(--secondary); color: white; border: none; padding: 10px 20px; border-radius: 20px; cursor: pointer;">
-                                <i class="fas fa-database me-1"></i>Show Sample Data
-                            </button>
-                        </div>
-                        <small style="color: rgba(255, 255, 255, 0.6);">
-                            Search function still works with text channels
-                        </small>
+        function showNoResults(query) {
+            document.getElementById('searchResults').innerHTML = `
+                <div style="text-align: center; padding: 50px 20px;">
+                    <i class="fas fa-search fa-4x text-muted mb-4"></i>
+                    <h3>No Real Data Found</h3>
+                    <p style="color: rgba(255, 255, 255, 0.8);">No results for "${escapeHtml(query)}" in text channels</p>
+                    <div style="margin-top: 20px;">
+                        <span style="background: rgba(40, 167, 69, 0.1); color: #28a745; padding: 6px 12px; border-radius: 12px; font-size: 0.8rem;">
+                            <i class="fas fa-info-circle me-1"></i>Real data search only
+                        </span>
                     </div>
                 </div>
             `;
         }
         
-        // Show mock posters as ultimate fallback
-        function showMockPosters() {
-            console.log('🎭 Showing 30 mock posters');
-            
-            const mockMovies = [
-                "Animal (2023)", "Salaar (2023)", "Pushpa 2 (2024)", "Dunki (2023)", "Tiger 3 (2023)",
-                "Jawan (2023)", "Pathaan (2023)", "KGF 2 (2022)", "RRR (2022)", "Brahmastra (2022)",
-                "Vikram (2022)", "Beast (2022)", "Avengers Endgame", "Spider-Man", "The Batman",
-                "Doctor Strange 2", "Thor 4", "Fast X", "John Wick 4", "Scream 6",
-                "Avatar 2", "Black Panther 2", "Top Gun Maverick", "Dune", "James Bond",
-                "Matrix 4", "Venom 2", "Eternals", "Shang-Chi", "F9 Fast Saga"
-            ];
-            
-            const mockPosters = mockMovies.map((movie, index) => ({
-                photo: null,
-                caption: `${movie} - Action Drama`,
-                search_query: movie.split('(')[0].trim(),
-                date: new Date(Date.now() - (index * 3600000)).toISOString(),
-                is_mock: true
-            }));
-            
-            updateChannelStatus('MOCK_FALLBACK_DATA', 'Sample Data');
-            displaySmartPosters(mockPosters, 'MOCK_FALLBACK_DATA');
+        function showSearchError() {
+            document.getElementById('searchResults').innerHTML = `
+                <div style="text-align: center; padding: 50px 20px;">
+                    <i class="fas fa-exclamation-triangle fa-4x text-warning mb-4"></i>
+                    <h3 class="text-warning">Search Error</h3>
+                    <p style="color: rgba(255, 255, 255, 0.8);">Unable to search text channels</p>
+                </div>
+            `;
         }
         
-        // Social menu - PRESERVED
-        function showSocial() {
-            const links = {
-                'Telegram Channel': 'https://t.me/sk4film',
-                'WhatsApp Channel': 'https://whatsapp.com/channel/0029Va69Ts2C6ZvmEWsHNo3c',
-                'YouTube Channel': 'https://youtube.com/@Skcreator7',
-                'Telegram Bot': 'https://t.me/skfilmbot'
-            };
-            
-            let message = '🔗 Follow SK4FiLM:\n\n';
-            Object.entries(links).forEach(([name, url]) => {
-                message += `${name}:\n${url}\n\n`;
-            });
-            
-            if (confirm(message + 'Open main channel?')) {
-                window.open('https://t.me/sk4film', '_blank');
-            }
-        }
-        
-        // Utility functions
         function escapeHtml(text) {
             if (!text) return '';
             const div = document.createElement('div');
             div.textContent = text;
             return div.innerHTML;
-        }
-        
-        function escapeForJs(text) {
-            if (!text) return '';
-            return text.replace(/'/g, "\\'").replace(/"/g, '\\"').replace(/\n/g, '\\n');
         }
         
         function formatDate(dateString) {
@@ -715,106 +363,37 @@
                 const date = new Date(dateString);
                 const now = new Date();
                 const diffHours = Math.ceil(Math.abs(now - date) / (1000 * 60 * 60));
-                
-                if (diffHours < 1) return 'Now';
-                if (diffHours < 24) return `${diffHours}h`;
-                const diffDays = Math.ceil(diffHours / 24);
-                return diffDays <= 7 ? `${diffDays}d` : date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                return diffHours < 1 ? 'Now' : diffHours < 24 ? `${diffHours}h` : `${Math.ceil(diffHours / 24)}d`;
             } catch {
                 return 'Recent';
             }
         }
         
-        function showNotification(message, type = 'info') {
-            const notification = document.createElement('div');
-            const colors = {
-                'info': '#17a2b8',
-                'success': '#28a745',
-                'error': '#dc3545',
-                'search': '#007bff'
-            };
-            
-            notification.style.cssText = `
-                position: fixed; top: 20px; right: 20px; z-index: 2000;
-                background: ${colors[type] || colors.info}; color: white; 
-                padding: 12px 20px; border-radius: 25px; font-weight: 600;
-                box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3); font-size: 0.9rem;
-            `;
-            notification.innerHTML = `<i class="fas fa-info-circle me-2"></i>${message}`;
-            
-            document.body.appendChild(notification);
-            
-            setTimeout(() => {
-                if (document.body.contains(notification)) {
-                    notification.style.opacity = '0';
-                    setTimeout(() => document.body.removeChild(notification), 300);
-                }
-            }, 3000);
-        }
-        
-        // Initialize - ALL PREVIOUS FEATURES PRESERVED
+        // Initialize
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('🎬 SK4FiLM Homepage - SMART FALLBACK SYSTEM');
-            console.log('📺 All tutorial videos preserved');
-            console.log('⚡ All features preserved');
-            console.log('🤖 Google Auto Ads ONLY');
-            console.log('🖼️ 30 Posters with smart fallback');
+            console.log('🔍 SK4FiLM Search - Real Data Only');
             
-            // Enter key support - PRESERVED
-            const searchInput = document.getElementById('searchQuery');
+            const query = new URLSearchParams(window.location.search).get('query') || '';
+            const searchInput = document.getElementById('searchInput');
+            
             if (searchInput) {
-                searchInput.addEventListener('keypress', function(e) {
-                    if (e.key === 'Enter') {
-                        e.preventDefault();
-                        doSearch();
+                searchInput.value = query;
+                
+                document.getElementById('searchForm').addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    const newQuery = searchInput.value.trim();
+                    if (newQuery && !isLoading) {
+                        performSearch(newQuery, 1);
                     }
                 });
-                
-                // Auto focus
-                setTimeout(() => searchInput.focus(), 1000);
             }
             
-            // Load posters with smart detection
-            loadPostersWithSmartFallback();
-            
-            // Visitor counter - PRESERVED
-            function updateCounter() {
-                const counter = document.getElementById('visitorCount');
-                if (counter) {
-                    const current = parseInt(counter.textContent) || 1247;
-                    counter.textContent = current + Math.floor(Math.random() * 4) + 1;
-                }
+            if (query) {
+                performSearch(query, 1);
             }
-            
-            updateCounter();
-            setInterval(updateCounter, 30000);
-            
-            // Background audio - PRESERVED
-            const audio = document.getElementById('bg-audio');
-            if (audio) {
-                audio.volume = 0.3;
-                audio.play().catch(() => {
-                    document.addEventListener('click', () => audio.play(), { once: true });
-                });
-            }
-            
-            console.log('✅ All features loaded smoothly');
         });
         
-        // Blink animation for live badge - PRESERVED
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes blink {
-                0%, 100% { opacity: 1; }
-                50% { opacity: 0.7; }
-            }
-        `;
-        document.head.appendChild(style);
-        
-        console.log('%c🎬 ALL PREVIOUS FEATURES PRESERVED', 'color: #00ff00; font-size: 20px; font-weight: bold;');
-        console.log('%c🤖 Google Auto Ads ONLY', 'color: #ffff00; font-size: 16px;');
-        console.log('%c🖼️ Smart 30 Poster System', 'color: #00ccff; font-size: 16px;');
-        console.log('%c🛡️ Fallback Protection Active', 'color: #ff6600; font-size: 16px;');
+        console.log('%c🔍 REAL DATA SEARCH ONLY', 'color: #28a745; font-size: 16px;');
     </script>
 </body>
 </html>
