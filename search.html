@@ -4,38 +4,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Search Results - SK4FiLM</title>
-    <meta name="description" content="Search results for movies and web series on SK4FiLM">
     
-    <!-- Google Auto Ads Configuration -->
+    <!-- Enhanced Google AdSense for Search Pages -->
     <meta name="google-adsense-account" content="ca-pub-5244164301170945">
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5244164301170945" crossorigin="anonymous"></script>
     <script>
         (adsbygoogle = window.adsbygoogle || []).push({
             google_ad_client: "ca-pub-5244164301170945",
             enable_page_level_ads: true,
-            overlays: {bottom: true},
-            auto_ad_client: "ca-pub-5244164301170945"
+            overlays: {bottom: true, top: true}  // Enhanced for search pages
         });
     </script>
     
-    <!-- CSS Libraries -->
+    <!-- CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     
     <style>
         :root {
             --primary: #ff0000;
             --secondary: #0066ff;
             --accent: #00ccff;
-            --dark: #0a0a0a;
             --light: #f8f9fa;
-        }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
         }
         
         body {
@@ -44,7 +35,6 @@
             min-height: 100vh;
             font-family: 'Poppins', sans-serif;
             color: var(--light);
-            position: relative;
             padding-top: 140px;
         }
         
@@ -55,14 +45,12 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(10, 10, 10, 0.85);
+            background: rgba(10, 10, 10, 0.8);
             z-index: -1;
         }
         
-        /* Navigation */
         .top-navbar {
             background: rgba(15, 23, 42, 0.95);
-            backdrop-filter: blur(15px);
             position: fixed;
             top: 0;
             width: 100%;
@@ -70,165 +58,41 @@
             padding: 15px 0;
         }
         
-        .navbar-content {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-        
-        .navbar-brand {
-            display: flex;
-            align-items: center;
-            color: white;
-            text-decoration: none;
-        }
-        
-        .logo-img {
-            height: 40px;
-            margin-right: 12px;
-            border-radius: 6px;
-        }
-        
-        .brand-text {
-            font-size: 1.5rem;
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            font-weight: 700;
-        }
-        
-        .back-btn {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: white;
-            border-radius: 20px;
-            padding: 8px 16px;
-            text-decoration: none;
-            transition: all 0.3s ease;
-        }
-        
-        /* Search Section */
         .search-section {
             background: rgba(15, 23, 42, 0.9);
-            backdrop-filter: blur(15px);
             position: fixed;
             top: 70px;
             width: 100%;
             z-index: 900;
             padding: 15px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
         
-        .search-form {
-            display: flex;
-            gap: 12px;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-        
-        .search-input {
-            background: rgba(255, 255, 255, 0.1);
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            color: white;
-            padding: 12px 20px;
-            font-size: 1rem;
-            flex: 1;
-            border-radius: 25px;
-            transition: all 0.3s ease;
-        }
-        
-        .search-input:focus {
-            background: rgba(255, 255, 255, 0.15);
-            border-color: var(--accent);
-            box-shadow: 0 0 15px rgba(0, 204, 255, 0.5);
-            outline: none;
-            color: white;
-        }
-        
-        .search-input::placeholder {
-            color: rgba(255, 255, 255, 0.7);
-        }
-        
-        .search-btn {
-            background: linear-gradient(45deg, var(--primary), var(--secondary));
-            border: none;
-            border-radius: 25px;
-            padding: 12px 24px;
-            color: white;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            white-space: nowrap;
-        }
-        
-        .search-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(255, 0, 0, 0.4);
-        }
-        
-        /* Main Container */
         .main-container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
         }
         
-        /* Results Container */
-        .results-wrapper {
-            background: rgba(15, 23, 42, 0.8);
-            backdrop-filter: blur(10px);
-            border-radius: 15px;
-            padding: 25px;
-            margin-bottom: 25px;
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-        
-        /* Search Stats */
-        .search-stats {
-            background: linear-gradient(135deg, rgba(255, 0, 0, 0.1), rgba(0, 102, 255, 0.1));
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 25px;
-            text-align: center;
-        }
-        
-        .stats-title {
-            color: var(--accent);
-            font-size: 1.2rem;
-            margin-bottom: 10px;
-            font-weight: 600;
-        }
-        
-        .stats-badges {
-            display: flex;
-            justify-content: center;
-            gap: 12px;
-            flex-wrap: wrap;
-        }
-        
-        .stats-badge {
-            background: rgba(0, 255, 0, 0.2);
-            color: #00ff00;
-            padding: 6px 14px;
+        /* AdSense optimized ad spaces */
+        .search-ad-space {
+            min-height: 100px;
+            margin: 25px 0;
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px dashed rgba(255, 255, 255, 0.2);
             border-radius: 12px;
-            font-size: 0.8rem;
-            border: 1px solid rgba(0, 255, 0, 0.3);
-            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.9rem;
         }
         
-        /* Result Item */
         .result-item {
             background: rgba(30, 41, 59, 0.9);
             border: 1px solid rgba(255,255,255,0.15);
             border-radius: 15px;
             padding: 25px;
-            margin-bottom: 20px;
-            transition: all 0.3s ease;
+            margin-bottom: 25px;
             position: relative;
         }
         
@@ -242,150 +106,28 @@
             background: linear-gradient(45deg, var(--primary), var(--accent));
         }
         
-        .result-item:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(0, 102, 255, 0.3);
-        }
-        
         .result-content {
             color: var(--light);
             line-height: 1.7;
             font-size: 1rem;
-            word-wrap: break-word;
-            white-space: pre-wrap;
         }
         
         .result-content a {
             color: var(--accent);
+            font-weight: 600;
             text-decoration: none;
-            font-weight: 500;
-            padding: 2px 4px;
+            padding: 2px 6px;
+            background: rgba(0, 204, 255, 0.1);
             border-radius: 4px;
-            transition: all 0.3s ease;
+            margin: 2px;
+            display: inline-block;
         }
         
-        .result-content a:hover {
-            color: white;
-            background: var(--primary);
-        }
-        
-        .result-poster {
-            width: 100%;
-            max-width: 250px;
-            height: 350px;
-            object-fit: cover;
-            border-radius: 12px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
-        }
-        
-        /* Auto Ad Spacing - Google will insert ads automatically */
-        .content-section {
-            margin: 30px 0;
-            min-height: 200px; /* Space for auto ads */
-        }
-        
-        /* Pagination */
-        .pagination-container {
-            background: rgba(15, 23, 42, 0.8);
-            border-radius: 15px;
-            padding: 25px;
-            margin: 30px 0;
-            text-align: center;
-        }
-        
-        .page-btn {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: white;
-            padding: 10px 16px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin: 0 4px;
-        }
-        
-        .page-btn:hover {
-            background: var(--primary);
-        }
-        
-        .page-btn.active {
-            background: var(--accent);
-            color: var(--dark);
-        }
-        
-        /* Loading */
-        .loading-spinner {
-            width: 3rem;
-            height: 3rem;
-            border: 4px solid rgba(255, 255, 255, 0.3);
-            border-top: 4px solid var(--primary);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 20px;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        /* Mobile Responsive */
+        /* Mobile */
         @media (max-width: 768px) {
-            body {
-                padding-top: 120px;
-            }
-            
-            .navbar-content {
-                padding: 0 15px;
-            }
-            
-            .logo-img {
-                height: 35px;
-            }
-            
-            .brand-text {
-                font-size: 1.3rem;
-            }
-            
-            .search-form {
-                flex-direction: column;
-                gap: 8px;
-                padding: 0 15px;
-            }
-            
-            .search-input {
-                padding: 10px 16px;
-            }
-            
-            .search-btn {
-                padding: 10px 20px;
-            }
-            
-            .main-container {
-                padding: 15px;
-            }
-            
-            .results-wrapper {
-                padding: 20px;
-            }
-            
-            .result-item {
-                padding: 20px;
-            }
-            
-            .result-poster {
-                max-width: 200px;
-                height: 280px;
-            }
-        }
-        
-        .fade-in {
-            animation: fadeIn 0.5s ease-out;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+            body { padding-top: 120px; }
+            .main-container { padding: 15px; }
+            .result-item { padding: 20px; }
         }
     </style>
 </head>
@@ -393,390 +135,172 @@
 <body>
     <!-- Navigation -->
     <nav class="top-navbar">
-        <div class="navbar-content">
-            <a href="index.html" class="navbar-brand">
-                <img src="https://iili.io/KOlfc41.png" alt="SK4FiLM Logo" class="logo-img">
-                <div class="brand-text">SK4FiLM</div>
+        <div style="max-width: 1200px; margin: 0 auto; padding: 0 20px; display: flex; justify-content: between; align-items: center;">
+            <a href="index.html" style="display: flex; align-items: center; color: white; text-decoration: none;">
+                <img src="https://iili.io/KOlfc41.png" alt="SK4FiLM" style="height: 40px; margin-right: 12px; border-radius: 6px;">
+                <div style="font-size: 1.5rem; background: linear-gradient(90deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 700;">SK4FiLM</div>
             </a>
-            <a href="index.html" class="back-btn">
+            <a href="index.html" style="background: rgba(255, 255, 255, 0.1); color: white; padding: 8px 16px; border-radius: 20px; text-decoration: none;">
                 <i class="fas fa-home me-1"></i>Home
             </a>
         </div>
     </nav>
 
-    <!-- Search Section -->
+    <!-- Search -->
     <div class="search-section">
-        <form id="searchForm" class="search-form">
-            <input type="text" id="searchInput" class="search-input" 
-                   placeholder="Search again for movies..." required>
-            <button type="submit" class="search-btn">
-                <i class="fas fa-search me-1"></i>Search
-            </button>
-        </form>
+        <div style="max-width: 800px; margin: 0 auto; padding: 0 20px;">
+            <div style="display: flex; gap: 12px;">
+                <input type="text" id="searchInput" placeholder="Search movies..." style="background: rgba(255, 255, 255, 0.1); border: 2px solid rgba(255, 255, 255, 0.2); color: white; padding: 12px 20px; flex: 1; border-radius: 25px;">
+                <button onclick="doSearch()" style="background: linear-gradient(45deg, var(--primary), var(--secondary)); border: none; border-radius: 25px; padding: 12px 24px; color: white; font-weight: 600;">
+                    <i class="fas fa-search me-1"></i>Search
+                </button>
+            </div>
+        </div>
     </div>
 
     <div class="main-container">
-        <!-- Search Stats -->
-        <div id="searchStats" style="display: none;">
-            <div class="search-stats fade-in">
-                <div class="stats-title">Search Results</div>
-                <div id="searchQuery" style="margin-bottom: 15px; color: var(--light);"></div>
-                <div class="stats-badges">
-                    <div class="stats-badge">Google Auto Ads</div>
-                    <div class="stats-badge">Full Content</div>
-                    <div class="stats-badge" id="resultsCount">0 Results</div>
-                </div>
+        <!-- Top Ad Space -->
+        <div class="search-ad-space">
+            <div style="text-align: center;">
+                <i class="fas fa-ad fa-2x mb-2"></i><br>
+                <small>Top Search Results Advertisement</small>
             </div>
         </div>
 
-        <!-- Results Container with Auto Ad Spacing -->
-        <div class="results-wrapper">
-            <div id="searchResults" class="content-section">
+        <!-- Search Stats -->
+        <div id="searchStats" style="display: none; background: rgba(15, 23, 42, 0.8); border-radius: 15px; padding: 20px; margin-bottom: 25px; text-align: center;">
+            <div style="color: var(--accent); font-size: 1.2rem; margin-bottom: 10px;">Search Results</div>
+            <div id="searchQuery"></div>
+            <div id="resultsCount" style="margin-top: 10px; color: #28a745;"></div>
+        </div>
+
+        <!-- Middle Ad Space -->
+        <div class="search-ad-space">
+            <div style="text-align: center;">
+                <i class="fas fa-rectangle-ad fa-2x mb-2"></i><br>
+                <small>Premium Search Advertisement Zone</small>
+            </div>
+        </div>
+
+        <!-- Results -->
+        <div style="background: rgba(15, 23, 42, 0.8); border-radius: 15px; padding: 25px;">
+            <div id="searchResults">
                 <div style="text-align: center; padding: 50px 20px;">
                     <i class="fas fa-search fa-4x text-primary mb-4"></i>
-                    <h4>Ready to Search Movies</h4>
-                    <p style="color: rgba(255, 255, 255, 0.8);">Use the search box above to find movies</p>
-                    <div style="margin-top: 20px;">
-                        <span style="background: rgba(0, 255, 0, 0.1); color: #00ff00; padding: 8px 16px; border-radius: 15px; font-size: 0.9rem;">
-                            <i class="fas fa-robot me-2"></i>Google Auto Ads Active
-                        </span>
-                    </div>
+                    <h4>Search Movies</h4>
+                    <p style="color: rgba(255, 255, 255, 0.8);">Enter movie name to search</p>
                 </div>
             </div>
         </div>
 
-        <!-- Pagination Container -->
-        <div id="paginationContainer" style="display: none;">
-            <div class="pagination-container fade-in">
-                <div id="paginationInfo" style="color: var(--accent); font-size: 1.1rem; margin-bottom: 8px;"></div>
-                <div id="paginationDetails" style="color: rgba(255, 255, 255, 0.8); margin-bottom: 20px;"></div>
-                <div id="paginationControls" style="display: flex; justify-content: center; gap: 8px; flex-wrap: wrap;"></div>
+        <!-- Bottom Ad Space -->
+        <div class="search-ad-space">
+            <div style="text-align: center;">
+                <i class="fas fa-bullhorn fa-2x mb-2"></i><br>
+                <small>High-Value Bottom Advertisement</small>
             </div>
         </div>
     </div>
 
     <script>
-        // Configuration
-        const CONFIG = {
-            BACKEND_URL: 'https://sk4film.koyeb.app',
-            RESULTS_PER_PAGE: 6,  // Optimal for auto ads
-            TIMEOUT: 30000
-        };
+        const BACKEND_URL = 'https://sk4film.koyeb.app';
         
-        let currentQuery = '';
-        let currentPage = 1;
-        let isLoading = false;
-        
-        // Utilities
-        const utils = {
-            getQueryParameter: () => new URLSearchParams(window.location.search).get('query') || '',
-            getPageParameter: () => parseInt(new URLSearchParams(window.location.search).get('page')) || 1,
+        function doSearch() {
+            const input = document.getElementById('searchInput');
+            const query = input.value.trim();
             
-            updateURL: (query, page) => {
-                const url = new URL(window.location);
-                url.searchParams.set('query', query);
-                url.searchParams.set('page', page);
-                window.history.pushState({query, page}, '', url.toString());
-                document.title = `${query} - Page ${page} | SK4FiLM`;
-            },
-            
-            escapeHtml: (text) => {
-                if (!text) return '';
-                const div = document.createElement('div');
-                div.textContent = text;
-                return div.innerHTML;
-            },
-            
-            formatDate: (dateString) => {
-                if (!dateString) return 'Recently';
-                try {
-                    const date = new Date(dateString);
-                    const now = new Date();
-                    const diffHours = Math.ceil(Math.abs(now - date) / (1000 * 60 * 60));
-                    
-                    if (diffHours < 1) return 'Now';
-                    if (diffHours < 24) return `${diffHours}h`;
-                    
-                    const diffDays = Math.ceil(diffHours / 24);
-                    return diffDays <= 7 ? `${diffDays}d` : date.toLocaleDateString('en', { month: 'short', day: 'numeric' });
-                } catch {
-                    return 'Recently';
-                }
+            if (query) {
+                performSearch(query);
             }
-        };
+        }
         
-        // MAIN: Search function with Google Auto Ads support
-        async function performSearch(query, page = 1) {
-            if (isLoading) return;
+        async function performSearch(query) {
+            const container = document.getElementById('searchResults');
             
-            const resultsContainer = document.getElementById('searchResults');
-            const statsContainer = document.getElementById('searchStats');
-            const paginationContainer = document.getElementById('paginationContainer');
-            
-            if (!query?.trim()) {
-                showError('Please enter a search term');
-                return;
-            }
-            
-            isLoading = true;
-            currentQuery = query.trim();
-            currentPage = page;
+            container.innerHTML = `
+                <div style="text-align: center; padding: 40px;">
+                    <div style="width: 3rem; height: 3rem; border: 4px solid rgba(255,255,255,0.3); border-top: 4px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 20px;"></div>
+                    <div style="color: var(--accent);">Searching...</div>
+                </div>
+            `;
             
             try {
-                console.log(`🔍 Auto Ads Search: "${currentQuery}" (page: ${currentPage})`);
-                
-                utils.updateURL(currentQuery, currentPage);
-                document.getElementById('searchInput').value = currentQuery;
-                
-                // Loading state
-                resultsContainer.innerHTML = `
-                    <div style="text-align: center; padding: 60px 20px;">
-                        <div class="loading-spinner"></div>
-                        <div style="font-size: 1.2rem; color: var(--accent); margin-bottom: 10px;">
-                            Searching "${utils.escapeHtml(currentQuery)}"
-                        </div>
-                        <div style="color: rgba(255, 255, 255, 0.7);">
-                            Page ${currentPage} - Google Auto Ads will appear
-                        </div>
-                    </div>
-                `;
-                
-                statsContainer.style.display = 'none';
-                paginationContainer.style.display = 'none';
-                
-                // API call
-                const response = await fetch(`${CONFIG.BACKEND_URL}/api/search?query=${encodeURIComponent(currentQuery)}&page=${currentPage}&limit=${CONFIG.RESULTS_PER_PAGE}`);
+                const response = await fetch(`${BACKEND_URL}/api/search?query=${encodeURIComponent(query)}&limit=10`);
                 const data = await response.json();
                 
-                if (data.status === 'success') {
-                    if (data.results?.length > 0) {
-                        displayResultsForAutoAds(data.results, currentQuery, data.pagination);
-                        updateSearchStats(currentQuery, data.pagination);
-                        
-                        if (data.pagination.total_pages > 1) {
-                            updatePagination(data.pagination);
-                        }
-                        
-                        // Trigger Google Auto Ads refresh
-                        setTimeout(() => {
-                            if (window.adsbygoogle && window.adsbygoogle.loaded) {
-                                window.adsbygoogle.push({});
-                            }
-                        }, 1500);
-                        
-                    } else {
-                        showNoResults(currentQuery);
-                    }
+                if (data.status === 'success' && data.results?.length > 0) {
+                    displayResults(data.results, query, data.pagination);
                 } else {
-                    throw new Error(data.message || 'Search failed');
+                    showNoResults(query);
                 }
                 
             } catch (error) {
-                console.error('❌ Search error:', error);
-                showError(error.message);
-            } finally {
-                isLoading = false;
+                showError();
             }
         }
         
-        // OPTIMIZED: Display results with spacing for Google Auto Ads
-        function displayResultsForAutoAds(results, query, pagination) {
-            const resultsContainer = document.getElementById('searchResults');
-            let resultsHTML = '';
+        function displayResults(results, query, pagination) {
+            document.getElementById('searchQuery').innerHTML = `Results for "<strong>${query}</strong>"`;
+            document.getElementById('resultsCount').textContent = `${pagination.total_results} Results Found`;
+            document.getElementById('searchStats').style.display = 'block';
             
+            let html = '';
             results.forEach((result, index) => {
-                resultsHTML += `
-                    <div class="result-item fade-in content-section" style="animation-delay: ${index * 0.1}s">
-                        <!-- Result Header -->
-                        <div style="display: flex; justify-content: between; align-items: flex-start; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
-                            <div>
-                                <span style="padding: 6px 14px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; ${result.type === 'poster' ? 'background: linear-gradient(45deg, var(--primary), #cc0000);' : 'background: linear-gradient(45deg, var(--secondary), var(--accent));'} color: white;">
-                                    ${result.type === 'poster' ? 
-                                      '<i class="fas fa-image me-1"></i>Poster' : 
-                                      '<i class="fas fa-file-text me-1"></i>Text'
-                                    }
-                                </span>
-                                ${result.movie_info?.quality ? `<span style="background: #28a745; color: white; padding: 4px 10px; border-radius: 12px; font-size: 0.75rem; margin-left: 8px;">${result.movie_info.quality}</span>` : ''}
-                                ${result.movie_info?.size ? `<span style="background: #17a2b8; color: white; padding: 4px 10px; border-radius: 12px; font-size: 0.75rem; margin-left: 8px;">${result.movie_info.size}</span>` : ''}
-                            </div>
-                            
-                            <div style="display: flex; gap: 15px; align-items: center; font-size: 0.85rem; color: rgba(255, 255, 255, 0.7); flex-wrap: wrap;">
-                                <div style="display: flex; align-items: center; gap: 4px;">
-                                    <i class="fas fa-calendar-alt text-info"></i>
-                                    <span>${utils.formatDate(result.date)}</span>
-                                </div>
-                                <div style="display: flex; align-items: center; gap: 4px;">
-                                    <i class="fas fa-telegram text-primary"></i>
-                                    <span>${result.channel_name}</span>
-                                </div>
-                                ${result.link_count ? `
-                                    <div style="display: flex; align-items: center; gap: 4px;">
-                                        <i class="fas fa-download text-success"></i>
-                                        <span>${result.link_count}</span>
-                                    </div>
-                                ` : ''}
-                            </div>
+                html += `
+                    <div class="result-item">
+                        <div style="display: flex; justify-content: between; margin-bottom: 15px;">
+                            <span style="background: rgba(0, 136, 204, 0.2); color: #0088cc; padding: 6px 12px; border-radius: 15px; font-size: 0.75rem;">
+                                <i class="fab fa-telegram me-1"></i>${result.channel}
+                            </span>
+                            <span style="color: rgba(255, 255, 255, 0.7); font-size: 0.8rem;">
+                                <i class="fas fa-link me-1"></i>${result.links} Links
+                            </span>
                         </div>
-                        
-                        <!-- Movie Info Tags -->
-                        ${Object.keys(result.movie_info || {}).length > 0 ? `
-                            <div style="display: flex; gap: 8px; margin: 15px 0; flex-wrap: wrap;">
-                                ${result.movie_info.year ? `<span style="background: rgba(255, 255, 255, 0.1); color: var(--accent); padding: 4px 10px; border-radius: 12px; font-size: 0.75rem;">${result.movie_info.year}</span>` : ''}
-                                ${result.movie_info.rating ? `<span style="background: rgba(255, 255, 255, 0.1); color: var(--accent); padding: 4px 10px; border-radius: 12px; font-size: 0.75rem;">⭐ ${result.movie_info.rating}</span>` : ''}
-                                ${result.movie_info.genre ? `<span style="background: rgba(255, 255, 255, 0.1); color: var(--accent); padding: 4px 10px; border-radius: 12px; font-size: 0.75rem;">${result.movie_info.genre}</span>` : ''}
-                            </div>
-                        ` : ''}
-                        
-                        <!-- Full Content -->
-                        <div style="margin: 20px 0;">
-                            ${result.type === 'poster' && result.photo ? `
-                                <div class="row align-items-start">
-                                    <div class="col-md-4 col-lg-3 mb-3 mb-md-0">
-                                        <img src="${CONFIG.BACKEND_URL}/api/get_poster?file_id=${result.photo}" 
-                                             alt="Movie Poster" class="result-poster"
-                                             loading="lazy"
-                                             onerror="this.style.display='none';">
-                                    </div>
-                                    <div class="col-md-8 col-lg-9">
-                                        <div class="result-content">${result.content}</div>
-                                    </div>
-                                </div>
-                            ` : `
-                                <div class="result-content">${result.content}</div>
-                            `}
-                        </div>
+                        <div class="result-content">${result.content}</div>
                     </div>
                 `;
-                
-                // Add spacing every 2 results for Google Auto Ads
-                if ((index + 1) % 2 === 0) {
-                    resultsHTML += `<div class="content-section" style="min-height: 100px;"></div>`;
-                }
             });
             
-            resultsContainer.innerHTML = resultsHTML;
-            
-            // Notify Google Auto Ads of new content
-            setTimeout(() => {
-                if (window.adsbygoogle) {
-                    window.adsbygoogle.push({});
-                }
-            }, 1000);
-        }
-        
-        function updateSearchStats(query, pagination) {
-            document.getElementById('searchQuery').innerHTML = `Results for "<strong>${utils.escapeHtml(query)}</strong>"`;
-            document.getElementById('resultsCount').textContent = `${pagination.total_results} Results`;
-            document.getElementById('searchStats').style.display = 'block';
-        }
-        
-        function updatePagination(pagination) {
-            const container = document.getElementById('paginationContainer');
-            const info = document.getElementById('paginationInfo');
-            const details = document.getElementById('paginationDetails');
-            const controls = document.getElementById('paginationControls');
-            
-            info.textContent = `Page ${pagination.current_page} of ${pagination.total_pages}`;
-            details.textContent = `Showing ${pagination.showing_start}-${pagination.showing_end} of ${pagination.total_results} results`;
-            
-            let controlsHTML = '';
-            
-            if (pagination.current_page > 1) {
-                controlsHTML += `<button class="page-btn" onclick="performSearch('${currentQuery}', ${pagination.current_page - 1})"><i class="fas fa-chevron-left me-1"></i>Prev</button>`;
-            }
-            
-            const start = Math.max(1, pagination.current_page - 1);
-            const end = Math.min(pagination.total_pages, pagination.current_page + 1);
-            
-            for (let i = start; i <= end; i++) {
-                controlsHTML += `<button class="page-btn ${i === pagination.current_page ? 'active' : ''}" onclick="performSearch('${currentQuery}', ${i})">${i}</button>`;
-            }
-            
-            if (pagination.current_page < pagination.total_pages) {
-                controlsHTML += `<button class="page-btn" onclick="performSearch('${currentQuery}', ${pagination.current_page + 1})">Next<i class="fas fa-chevron-right ms-1"></i></button>`;
-            }
-            
-            controls.innerHTML = controlsHTML;
-            container.style.display = 'block';
+            document.getElementById('searchResults').innerHTML = html;
         }
         
         function showNoResults(query) {
             document.getElementById('searchResults').innerHTML = `
-                <div class="content-section" style="text-align: center; padding: 50px 20px;">
-                    <i class="fas fa-search fa-4x text-muted mb-4"></i>
-                    <h3>No Results Found</h3>
-                    <p style="color: rgba(255, 255, 255, 0.8);">No movies found for "${utils.escapeHtml(query)}"</p>
-                    <p style="font-size: 0.9rem; color: rgba(255, 255, 255, 0.6);">
-                        Try different keywords or check spelling
-                    </p>
+                <div style="text-align: center; padding: 40px;">
+                    <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                    <h4>No Results</h4>
+                    <p>No results for "${query}"</p>
                 </div>
             `;
         }
         
-        function showError(message) {
+        function showError() {
             document.getElementById('searchResults').innerHTML = `
-                <div class="content-section" style="text-align: center; padding: 50px 20px;">
-                    <i class="fas fa-exclamation-triangle fa-4x text-warning mb-4"></i>
-                    <h3 class="text-warning">Search Error</h3>
-                    <p style="color: rgba(255, 255, 255, 0.8);">${utils.escapeHtml(message)}</p>
-                    <button onclick="retrySearch()" style="background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 20px; cursor: pointer;">
-                        <i class="fas fa-redo me-1"></i>Try Again
-                    </button>
+                <div style="text-align: center; padding: 40px;">
+                    <i class="fas fa-exclamation-triangle fa-3x text-warning mb-3"></i>
+                    <h4>Search Error</h4>
+                    <p>Unable to search</p>
                 </div>
             `;
         }
         
-        function retrySearch() {
-            if (currentQuery) {
-                performSearch(currentQuery, currentPage);
-            }
-        }
-        
-        // Initialize
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('🚀 SK4FiLM Search - Google Auto Ads');
-            console.log('🤖 Automatic ad placement active');
+            const query = new URLSearchParams(window.location.search).get('query');
+            const input = document.getElementById('searchInput');
             
-            const query = utils.getQueryParameter();
-            const page = utils.getPageParameter();
-            const searchInput = document.getElementById('searchInput');
-            
-            if (searchInput) {
-                searchInput.value = query || '';
-                
-                // Enhanced search form
-                document.getElementById('searchForm').addEventListener('submit', function(e) {
-                    e.preventDefault();
-                    const newQuery = searchInput.value.trim();
-                    if (newQuery && !isLoading) {
-                        performSearch(newQuery, 1);
+            if (input) {
+                input.value = query || '';
+                input.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        doSearch();
                     }
                 });
-                
-                if (!query) {
-                    searchInput.focus();
-                }
             }
             
             if (query) {
-                performSearch(query, page);
+                performSearch(query);
             }
         });
-        
-        window.addEventListener('popstate', function() {
-            const query = utils.getQueryParameter();
-            const page = utils.getPageParameter();
-            
-            document.getElementById('searchInput').value = query || '';
-            
-            if (query && !isLoading) {
-                performSearch(query, page);
-            }
-        });
-        
-        console.log('%c🎬 SK4FiLM - GOOGLE AUTO ADS ACTIVE', 'color: #ff0000; font-size: 18px; font-weight: bold;');
-        console.log('%c🤖 Automatic Ad Placement Enabled', 'color: #00ff00; font-size: 14px;');
-        console.log('%c💰 Maximum Revenue with Auto Optimization', 'color: #ffff00; font-size: 14px;');
     </script>
 </body>
 </html>
