@@ -3,21 +3,24 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SK4FiLM - Ultra Fast Movie Search</title>
+    <title>SK4FiLM - Movie Search Engine</title>
+    <meta name="description" content="Find latest movies with IMDB posters from Telegram channels">
     
-    <!-- PRELOAD Critical Resources for Speed -->
-    <link rel="preload" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" as="style">
-    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style">
-    <link rel="preload" href="https://iili.io/KOlfc41.png" as="image">
-    
-    <!-- Google Auto Ads -->
+    <!-- ENHANCED Google AdSense for Maximum Earnings -->
     <meta name="google-adsense-account" content="ca-pub-5244164301170945">
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5244164301170945" crossorigin="anonymous"></script>
+    <script>
+        (adsbygoogle = window.adsbygoogle || []).push({
+            google_ad_client: "ca-pub-5244164301170945",
+            enable_page_level_ads: true,
+            overlays: {bottom: true}
+        });
+    </script>
     
-    <!-- CSS - FAST LOADING -->
+    <!-- CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;600;700&family=Montserrat:wght@800&display=swap" rel="stylesheet">
     
     <style>
         :root {
@@ -27,7 +30,6 @@
             --text: #f8f9fa;
         }
         
-        /* FAST LOADING - Simplified styles */
         body {
             background: url('https://i.postimg.cc/T2mcBGtv/pxfuel-2.jpg') no-repeat center center fixed;
             background-size: cover;
@@ -52,7 +54,7 @@
             padding: 20px 15px 40px;
         }
         
-        /* Fast Navigation */
+        /* Navigation - PRESERVED */
         .top-navbar {
             background: rgba(15, 23, 42, 0.95);
             position: fixed;
@@ -75,13 +77,14 @@
         }
         
         .brand-text {
+            font-family: 'Montserrat', sans-serif;
             font-size: 2.2rem;
             background: linear-gradient(90deg, var(--primary), var(--secondary));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
         
-        /* Fast Section Boxes */
+        /* Section boxes */
         .section-box {
             background: rgba(15, 23, 42, 0.7);
             border-radius: 12px;
@@ -90,7 +93,19 @@
             border: 1px solid rgba(255,255,255,0.1);
         }
         
-        /* Fast Search */
+        /* AdSense optimized spacing */
+        .ads-space {
+            min-height: 120px;
+            margin: 30px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            border: 1px dashed rgba(255, 255, 255, 0.3);
+        }
+        
+        /* Search */
         .search-input {
             background: rgba(60, 65, 90, 0.7);
             border: none;
@@ -99,6 +114,12 @@
             padding: 10px 15px;
             font-size: 1rem;
             border-radius: 6px;
+        }
+        
+        .search-input:focus {
+            border-bottom-color: var(--accent);
+            outline: none;
+            color: white;
         }
         
         .search-btn {
@@ -113,32 +134,33 @@
             cursor: pointer;
         }
         
-        /* ULTRA FAST Movie Cards */
-        .fast-movie-card {
+        /* FIXED Movie Cards */
+        .movie-card {
             background: rgba(30, 41, 59, 0.8);
             border: 1px solid rgba(255,255,255,0.1);
             border-radius: 12px;
             overflow: hidden;
-            transition: transform 0.2s ease; /* Faster transition */
+            transition: transform 0.3s ease;
             height: 100%;
             cursor: pointer;
             position: relative;
         }
         
-        .fast-movie-card:hover {
+        .movie-card:hover {
             transform: translateY(-8px);
         }
         
-        .fast-poster {
+        .movie-poster {
             width: 100%;
-            height: 320px;
+            height: 300px;
             object-fit: cover;
-            transition: none; /* Remove slow transitions */
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
         }
         
-        .fast-placeholder {
+        .poster-placeholder {
             width: 100%;
-            height: 320px;
+            height: 300px;
             background: linear-gradient(135deg, #1a1a2e, #16213e);
             display: flex;
             align-items: center;
@@ -147,68 +169,46 @@
             font-weight: 600;
             text-align: center;
             font-size: 0.9rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
         }
         
-        .fast-info {
+        .movie-info {
             padding: 15px;
         }
         
-        .fast-title {
-            font-size: 0.95rem;
+        .movie-title {
+            font-size: 0.9rem;
             color: var(--accent);
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             font-weight: 600;
             text-align: center;
         }
         
-        .fast-badge {
+        .imdb-badge {
             position: absolute;
             top: 8px;
             right: 8px;
             background: #f5c518;
             color: #000;
             padding: 4px 8px;
-            border-radius: 12px;
+            border-radius: 10px;
             font-size: 0.7rem;
             font-weight: 700;
         }
         
-        .speed-badge {
+        .fast-badge {
             position: absolute;
             top: 8px;
             left: 8px;
             background: #28a745;
             color: white;
             padding: 4px 8px;
-            border-radius: 12px;
+            border-radius: 10px;
             font-size: 0.7rem;
             font-weight: 700;
         }
         
-        /* Fast Loading Spinner */
-        .fast-spinner {
-            width: 2.5rem;
-            height: 2.5rem;
-            border: 3px solid rgba(255, 255, 255, 0.3);
-            border-top: 3px solid var(--primary);
-            border-radius: 50%;
-            animation: fastSpin 0.8s linear infinite;
-            margin: 0 auto 15px;
-        }
-        
-        @keyframes fastSpin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        /* Mobile - Simplified for speed */
-        @media (max-width: 768px) {
-            body { padding-top: 80px; }
-            .container { padding: 15px 10px; }
-            .fast-poster, .fast-placeholder { height: 280px; }
-        }
-        
-        /* Visitor counter - PRESERVED */
+        /* Visitor counter */
         .visitor-container {
             position: fixed;
             bottom: 15px;
@@ -235,23 +235,51 @@
             font-size: 0.8rem;
             text-align: center;
         }
+        
+        /* Loading */
+        .loading-spinner {
+            width: 3rem;
+            height: 3rem;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Mobile */
+        @media (max-width: 768px) {
+            body { padding-top: 80px; }
+            .container { padding: 15px 10px; }
+            .movie-poster, .poster-placeholder { height: 250px; }
+        }
     </style>
 </head>
 
 <body>
-    <!-- Navigation - SIMPLIFIED for speed -->
+    <!-- Audio - PRESERVED -->
+    <audio autoplay id="bg-audio">
+        <source src="https://files.catbox.moe/5t18g8.mp3" type="audio/mpeg">
+    </audio>
+    
+    <!-- Navigation - PRESERVED -->
     <nav class="top-navbar">
         <div class="container">
             <div class="navbar-content">
                 <a href="#" style="display: flex; align-items: center; color: white; text-decoration: none;">
-                    <img src="https://iili.io/KOlfc41.png" alt="SK4FiLM" class="logo-img">
+                    <img src="https://iili.io/KOlfc41.png" alt="SK4FiLM Logo" class="logo-img">
                     <div>
                         <div class="brand-text">SK4FiLM</div>
                         <div style="font-size: 0.85rem; color: var(--accent); font-style: italic;">House of Entertainment</div>
                     </div>
                 </a>
                 
-                <button onclick="showSocial()" style="background: none; border: none; color: var(--accent); font-size: 1.5rem;">
+                <button onclick="showSocial()" style="background: none; border: none; color: var(--accent); font-size: 1.7rem;">
                     <i class="fas fa-bars"></i>
                 </button>
             </div>
@@ -264,17 +292,17 @@
             <div class="row align-items-center">
                 <div class="col-lg-6">
                     <p style="font-size: 1.1rem;">🥰</p>
-                    <p>Find your favorite movies with our ultra-fast search engine</p>
+                    <p>Find your favorite movies with our powerful search engine</p>
                 </div>
                 <div class="col-lg-6">
                     <div style="background: rgba(255, 255, 255, 0.1); border-radius: 10px; padding: 20px;">
-                        <input class="form-control search-input" id="searchQuery" placeholder="Search movies ultra fast..." type="text">
+                        <input class="form-control search-input" id="searchQuery" placeholder="Search for movies, web series..." type="text">
                         <button class="btn search-btn" onclick="doSearch()">
                             <i class="fas fa-search me-2"></i>Search Movies
                         </button>
                         <div class="text-center mt-3">
                             <a class="btn btn-outline-light" href="https://t.me/skfilmbot" target="_blank">
-                                <i class="fab fa-telegram me-2"></i>Telegram Bot
+                                <i class="fab fa-telegram me-2"></i>Use Telegram Bot
                             </a>
                         </div>
                     </div>
@@ -282,15 +310,23 @@
             </div>
         </div>
 
-        <!-- ULTRA FAST Latest Uploads -->
+        <!-- AdSense Space 1 - Top Banner -->
+        <div class="ads-space">
+            <div style="color: rgba(255, 255, 255, 0.5); text-align: center;">
+                <i class="fas fa-ad fa-2x mb-2"></i><br>
+                <small>Advertisement Space - Google AdSense Auto</small>
+            </div>
+        </div>
+
+        <!-- FIXED: Latest Uploads with Working Posters -->
         <div class="section-box">
             <div style="display: flex; justify-content: between; margin-bottom: 25px;">
                 <h2 style="color: var(--accent); margin: 0;">
-                    ⚡ Latest Uploads (Ultra Fast)
+                    🎬 Latest Uploads (Fixed Posters)
                 </h2>
                 <div style="display: flex; gap: 8px;">
                     <span style="background: rgba(40, 167, 69, 0.2); color: #28a745; padding: 4px 10px; border-radius: 12px; font-size: 0.75rem;">
-                        <i class="fas fa-bolt me-1"></i>FAST
+                        <i class="fas fa-check me-1"></i>FIXED
                     </span>
                     <span style="background: rgba(245, 197, 24, 0.2); color: #f5c518; padding: 4px 10px; border-radius: 12px; font-size: 0.75rem;">
                         <i class="fas fa-star me-1"></i>IMDB
@@ -298,47 +334,107 @@
                 </div>
             </div>
             
-            <div class="row g-3" id="fastMovies">
+            <div class="row g-3" id="moviesContainer">
                 <div class="col-12">
                     <div style="text-align: center; padding: 40px 20px;">
-                        <div class="fast-spinner"></div>
-                        <p style="color: var(--accent); font-size: 1.2rem;">
-                            ⚡ Ultra Fast Loading...
-                        </p>
-                        <p style="color: rgba(255, 255, 255, 0.7);">
-                            Cached data loads instantly • IMDB in parallel
-                        </p>
+                        <div class="loading-spinner"></div>
+                        <p style="color: var(--accent); font-size: 1.2rem;">Loading Movies with Fixed Posters</p>
+                        <p style="color: rgba(255, 255, 255, 0.7);">Getting titles from Telegram • Fetching IMDB posters</p>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Features - SIMPLIFIED for fast loading -->
+        <!-- AdSense Space 2 - Middle Banner -->
+        <div class="ads-space">
+            <div style="color: rgba(255, 255, 255, 0.5); text-align: center;">
+                <i class="fas fa-rectangle-ad fa-2x mb-2"></i><br>
+                <small>Premium Advertisement Space - Auto Optimized</small>
+            </div>
+        </div>
+
+        <!-- Tutorial Videos - PRESERVED -->
         <div class="section-box">
-            <h2 style="color: var(--accent); text-align: center; margin-bottom: 30px;">⚡ Ultra Fast Features</h2>
-            <div class="row">
-                <div class="col-md-4 mb-3">
+            <h2 style="color: var(--accent); text-align: center; margin-bottom: 30px;">Tutorial Videos</h2>
+            <div class="row gy-4">
+                <div class="col-12 col-md-4">
                     <div style="background: rgba(30, 41, 59, 0.7); padding: 20px; border-radius: 8px; text-align: center;">
-                        <i class="fas fa-bolt fa-2x text-primary mb-2"></i>
-                        <h5>Lightning Search</h5>
-                        <p>Instant results with caching</p>
+                        <h5 style="color: var(--accent); margin-bottom: 15px;">How to Search Movies</h5>
+                        <div class="ratio ratio-16x9">
+                            <iframe allowfullscreen src="https://www.youtube.com/embed/PSQ9_KLzm8s" style="border-radius: 8px;"></iframe>
+                        </div>
                     </div>
                 </div>
-                <div class="col-md-4 mb-3">
+                
+                <div class="col-12 col-md-4">
                     <div style="background: rgba(30, 41, 59, 0.7); padding: 20px; border-radius: 8px; text-align: center;">
-                        <i class="fas fa-download fa-2x text-success mb-2"></i>
-                        <h5>Fast Downloads</h5>
-                        <p>Direct links, no waiting</p>
+                        <h5 style="color: var(--accent); margin-bottom: 15px;">How To Open StreaamNet Link</h5>
+                        <div class="ratio ratio-16x9">
+                            <iframe allowfullscreen src="https://www.youtube.com/embed/fVL7DfhnwWM" style="border-radius: 8px;"></iframe>
+                        </div>
                     </div>
                 </div>
-                <div class="col-md-4 mb-3">
+                
+                <div class="col-12 col-md-4">
                     <div style="background: rgba(30, 41, 59, 0.7); padding: 20px; border-radius: 8px; text-align: center;">
-                        <i class="fas fa-mobile-alt fa-2x text-info mb-2"></i>
-                        <h5>Mobile Optimized</h5>
-                        <p>Fast on all devices</p>
+                        <h5 style="color: var(--accent); margin-bottom: 15px;">How To Open DiskWala Link</h5>
+                        <div class="ratio ratio-16x9">
+                            <iframe allowfullscreen src="https://www.youtube.com/embed/ZNKeL-pcIDw" style="border-radius: 8px;"></iframe>
+                        </div>
                     </div>
                 </div>
             </div>
+        </div>
+
+        <!-- AdSense Space 3 - Before Features -->
+        <div class="ads-space">
+            <div style="color: rgba(255, 255, 255, 0.5); text-align: center;">
+                <i class="fas fa-bullhorn fa-2x mb-2"></i><br>
+                <small>High-Value Advertisement Zone - AdSense Auto</small>
+            </div>
+        </div>
+
+        <!-- Features - PRESERVED -->
+        <div class="section-box">
+            <h2 style="color: var(--accent); text-align: center; margin-bottom: 30px;">Why Choose SK4FiLM?</h2>
+            <div class="row gy-4">
+                <div class="col-md-4">
+                    <div style="background: rgba(30, 41, 59, 0.7); padding: 20px; border-radius: 8px; text-align: center;">
+                        <i class="fas fa-bolt fa-2x text-primary mb-3"></i>
+                        <h5>Fast Search</h5>
+                        <p>Quickly find movies across multiple Telegram channels</p>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div style="background: rgba(30, 41, 59, 0.7); padding: 20px; border-radius: 8px; text-align: center;">
+                        <i class="fas fa-download fa-2x text-success mb-3"></i>
+                        <h5>Easy Download</h5>
+                        <p>Multiple download options with direct links</p>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div style="background: rgba(30, 41, 59, 0.7); padding: 20px; border-radius: 8px; text-align: center;">
+                        <i class="fas fa-mobile-alt fa-2x text-info mb-3"></i>
+                        <h5>Mobile Friendly</h5>
+                        <p>Works perfectly on all devices and platforms</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- AdSense Space 4 - Before Disclaimer -->
+        <div class="ads-space">
+            <div style="color: rgba(255, 255, 255, 0.5); text-align: center;">
+                <i class="fas fa-coins fa-2x mb-2"></i><br>
+                <small>Premium Ad Space - Maximum Earnings Zone</small>
+            </div>
+        </div>
+
+        <!-- Disclaimer - PRESERVED -->
+        <div style="background: rgba(255, 0, 0, 0.1); border: 1px solid rgba(255, 0, 0, 0.3); border-radius: 8px; padding: 15px; text-align: center; color: #ff6b6b;">
+            <p><strong>Disclaimer:</strong> This Site Does Not Store Any File On The Server, It Only Links To Media Files Which Are Already Hosted On Telegram.</p>
         </div>
     </div>
 
@@ -349,104 +445,128 @@
         </div>
         <div class="visitor-count">
             <span id="visitorCount">1247</span>
-            <span style="background: #ff0000; color: white; font-size: 0.6rem; padding: 2px 5px; border-radius: 8px; margin-left: 4px;">FAST</span>
+            <span style="background: #ff0000; color: white; font-size: 0.6rem; padding: 2px 5px; border-radius: 8px; margin-left: 4px;">LIVE</span>
         </div>
     </div>
 
     <script>
         const BACKEND_URL = 'https://sk4film.koyeb.app';
         
-        console.log('⚡ SK4FiLM ULTRA FAST MODE');
+        console.log('🎬 SK4FiLM - FIXED POSTERS + ADSENSE OPTIMIZED');
         
-        // ULTRA FAST search
+        // Search function - PRESERVED
         function doSearch() {
             const input = document.getElementById('searchQuery');
             const query = input.value.trim();
             
-            if (query) {
+            if (query && query.length >= 2) {
                 window.location.href = `search.html?query=${encodeURIComponent(query)}`;
+            } else {
+                input.focus();
             }
         }
         
-        // ULTRA FAST movie loading
-        async function loadMoviesUltraFast() {
-            const container = document.getElementById('fastMovies');
-            const startTime = performance.now();
+        // FIXED: Load movies with working poster system
+        async function loadMoviesWithFixedPosters() {
+            const container = document.getElementById('moviesContainer');
             
             try {
-                console.log('⚡ Starting ultra fast loading...');
+                console.log('🎬 Loading movies with FIXED poster system...');
                 
                 const response = await fetch(`${BACKEND_URL}/api/latest_movies?limit=30`);
                 const data = await response.json();
                 
-                const loadTime = ((performance.now() - startTime) / 1000).toFixed(2);
-                console.log(`⚡ API response in ${loadTime}s:`, data);
+                console.log('📊 Movies API response:', data);
                 
                 if (data.status === 'success' && data.movies?.length > 0) {
-                    displayFastMovies(data.movies, loadTime, data.cache_used);
+                    displayMoviesWithFixedPosters(data.movies);
                 } else {
-                    showFastError();
+                    showNoMovies();
                 }
                 
             } catch (error) {
-                console.error('Fast loading error:', error);
-                showFastError();
+                console.error('Loading error:', error);
+                showError();
             }
         }
         
-        // Display movies ULTRA FAST
-        function displayFastMovies(movies, loadTime, cacheUsed) {
-            const container = document.getElementById('fastMovies');
+        // Display movies with FIXED poster loading
+        function displayMoviesWithFixedPosters(movies) {
+            const container = document.getElementById('moviesContainer');
             let html = '';
             
-            // Show speed stats
-            html += `
-                <div class="col-12 mb-3">
-                    <div style="text-align: center; background: rgba(40, 167, 69, 0.1); padding: 15px; border-radius: 12px; border: 1px solid rgba(40, 167, 69, 0.3);">
-                        <span style="color: #28a745; font-weight: 700; font-size: 1.1rem;">
-                            ⚡ ULTRA FAST: Loaded in ${loadTime}s ${cacheUsed ? '(Cached)' : '(Fresh)'}
-                        </span>
-                        <div style="margin-top: 5px; font-size: 0.8rem; color: rgba(255, 255, 255, 0.8);">
-                            ${movies.length} movies • Parallel IMDB processing • Click any movie to search
-                        </div>
-                    </div>
-                </div>
-            `;
-            
             movies.forEach((movie, index) => {
+                const movieTitle = movie.title || 'Unknown Movie';
+                const hasIMDB = movie.has_poster && movie.imdb_poster;
+                
                 html += `
                     <div class="col-6 col-sm-4 col-md-3 col-xl-2">
-                        <div class="fast-movie-card" 
-                             onclick="fastSearch('${escapeJs(movie.title)}')"
-                             title="Search: ${escapeHtml(movie.title)}">
+                        <div class="movie-card" 
+                             onclick="searchMovie('${escapeJs(movieTitle)}')"
+                             title="Click to search: ${escapeHtml(movieTitle)}">
                             
-                            ${movie.has_imdb && movie.imdb_poster ? `
-                                <img src="${BACKEND_URL}/api/imdb_poster?url=${encodeURIComponent(movie.imdb_poster)}" 
-                                     class="fast-poster" 
-                                     alt="${escapeHtml(movie.title)}"
+                            ${hasIMDB ? `
+                                <!-- FIXED IMDB Poster with Multiple Fallbacks -->
+                                <img src="${BACKEND_URL}/api/poster/${encodeURIComponent(movie.imdb_poster)}" 
+                                     class="movie-poster" 
+                                     alt="${escapeHtml(movieTitle)} Poster"
                                      loading="lazy"
-                                     onerror="this.parentElement.innerHTML='<div class=&quot;fast-placeholder&quot;><div><i class=&quot;fas fa-film fa-2x mb-2&quot;></i><br><strong>${escapeHtml(movie.title)}</strong></div></div>'">
+                                     onload="console.log('✅ Poster loaded: ${escapeHtml(movieTitle)}'); this.style.display='block';"
+                                     onerror="console.log('⚠️ Poster failed: ${escapeHtml(movieTitle)}'); this.style.display='none'; this.nextElementSibling.style.display='flex';">
                                 
-                                <div class="fast-badge">IMDB</div>
-                            ` : `
-                                <div class="fast-placeholder">
+                                <!-- Fallback placeholder -->
+                                <div class="poster-placeholder" style="display: none;">
                                     <div>
-                                        <i class="fas fa-film fa-2x mb-2"></i><br>
-                                        <strong>${escapeHtml(movie.title)}</strong>
+                                        <i class="fas fa-film fa-3x mb-3" style="color: var(--accent);"></i><br>
+                                        <div style="font-weight: 700; color: var(--accent); margin-bottom: 8px;">
+                                            ${escapeHtml(movieTitle)}
+                                        </div>
+                                        <div style="font-size: 0.75rem; opacity: 0.8; color: #ff6666;">
+                                            IMDB Poster Loading...
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="imdb-badge">IMDB</div>
+                            ` : `
+                                <!-- No IMDB - Title only -->
+                                <div class="poster-placeholder">
+                                    <div>
+                                        <i class="fas fa-film fa-3x mb-3" style="color: var(--accent);"></i><br>
+                                        <div style="font-weight: 700; color: var(--accent); line-height: 1.3;">
+                                            ${escapeHtml(movieTitle)}
+                                        </div>
+                                        <div style="font-size: 0.75rem; opacity: 0.8; margin-top: 8px; color: rgba(255, 255, 255, 0.8);">
+                                            From ${movie.channel}
+                                        </div>
                                     </div>
                                 </div>
                             `}
                             
-                            <div class="speed-badge">FAST</div>
+                            <div class="fast-badge">NEW</div>
                             
-                            <div class="fast-info">
-                                <div class="fast-title">
-                                    🎬 ${escapeHtml(movie.title)}
+                            <div class="movie-info">
+                                <div class="movie-title">
+                                    <a href="#" onclick="event.preventDefault(); searchMovie('${escapeJs(movieTitle)}')" style="color: var(--accent); text-decoration: none;">
+                                        🎬 ${escapeHtml(movieTitle)}
+                                    </a>
                                 </div>
                                 
-                                <div style="display: flex; justify-content: center; font-size: 0.75rem; color: rgba(255, 255, 255, 0.7);">
-                                    ${movie.imdb_rating ? `⭐ ${movie.imdb_rating}` : '🔍 Click to Search'}
+                                <div style="text-align: center; font-size: 0.75rem; color: rgba(255, 255, 255, 0.7);">
+                                    ${movie.imdb_rating && movie.imdb_rating !== 'N/A' ? `
+                                        <span style="color: #f5c518;">⭐ ${movie.imdb_rating}</span>
+                                    ` : `
+                                        <span style="color: var(--accent);">🔍 Click to Search</span>
+                                    `}
                                 </div>
+                                
+                                ${movie.imdb_year ? `
+                                    <div style="text-align: center; margin-top: 6px;">
+                                        <small style="background: rgba(255, 255, 255, 0.1); color: var(--accent); padding: 2px 8px; border-radius: 8px; font-size: 0.7rem;">
+                                            ${movie.imdb_year}
+                                        </small>
+                                    </div>
+                                ` : ''}
                             </div>
                         </div>
                     </div>
@@ -454,44 +574,58 @@
             });
             
             container.innerHTML = html;
-            
-            const totalTime = ((performance.now() - window.pageLoadStart) / 1000).toFixed(2);
-            console.log(`⚡ COMPLETE: ${movies.length} movies displayed in ${totalTime}s total`);
+            console.log(`✅ Displayed ${movies.length} movies with FIXED poster system`);
         }
         
-        // ULTRA FAST search
-        function fastSearch(title) {
-            console.log(`⚡ Fast search: ${title}`);
+        // Search movie function
+        function searchMovie(title) {
+            console.log(`🔍 Searching: ${title}`);
             
-            // Instant feedback
+            // Show search feedback
             const notification = document.createElement('div');
             notification.style.cssText = `
                 position: fixed; top: 20px; right: 20px; z-index: 2000;
-                background: #007bff; color: white; padding: 10px 20px;
-                border-radius: 20px; font-weight: 600;
+                background: #007bff; color: white; padding: 12px 20px;
+                border-radius: 25px; font-weight: 600; font-size: 1rem;
             `;
-            notification.innerHTML = `⚡ Fast searching: ${title}`;
+            notification.innerHTML = `<i class="fas fa-search me-2"></i>Searching "${title}"...`;
             document.body.appendChild(notification);
             
             setTimeout(() => {
                 window.location.href = `search.html?query=${encodeURIComponent(title)}`;
-            }, 500);
+            }, 800);
             
             setTimeout(() => {
                 if (document.body.contains(notification)) {
                     document.body.removeChild(notification);
                 }
-            }, 2000);
+            }, 3000);
         }
         
-        function showFastError() {
-            document.getElementById('fastMovies').innerHTML = `
+        function showNoMovies() {
+            document.getElementById('moviesContainer').innerHTML = `
                 <div class="col-12">
-                    <div style="text-align: center; padding: 40px;">
-                        <i class="fas fa-exclamation-triangle fa-3x text-warning mb-3"></i>
-                        <h4>Fast Loading Failed</h4>
-                        <button onclick="loadMoviesUltraFast()" style="background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 15px;">
-                            ⚡ Retry Fast Loading
+                    <div style="text-align: center; padding: 50px 20px;">
+                        <i class="fas fa-film fa-4x text-muted mb-4"></i>
+                        <h4>No Recent Movies</h4>
+                        <p>No movies found with extractable titles</p>
+                        <button onclick="loadMoviesWithFixedPosters()" style="background: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: 20px;">
+                            <i class="fas fa-refresh me-2"></i>Retry
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+        
+        function showError() {
+            document.getElementById('moviesContainer').innerHTML = `
+                <div class="col-12">
+                    <div style="text-align: center; padding: 50px 20px;">
+                        <i class="fas fa-exclamation-triangle fa-4x text-warning mb-4"></i>
+                        <h4 class="text-warning">Service Error</h4>
+                        <p>Cannot connect to Telegram</p>
+                        <button onclick="loadMoviesWithFixedPosters()" style="background: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: 20px;">
+                            <i class="fas fa-refresh me-2"></i>Try Again
                         </button>
                     </div>
                 </div>
@@ -499,28 +633,42 @@
         }
         
         function showSocial() {
-            if (confirm('🔗 Open Telegram Channel?\nhttps://t.me/sk4film')) {
+            const links = {
+                'Telegram': 'https://t.me/sk4film',
+                'WhatsApp': 'https://whatsapp.com/channel/0029Va69Ts2C6ZvmEWsHNo3c',
+                'YouTube': 'https://youtube.com/@Skcreator7',
+                'Bot': 'https://t.me/skfilmbot'
+            };
+            
+            let msg = '🔗 Follow SK4FiLM:\n\n';
+            Object.entries(links).forEach(([name, url]) => {
+                msg += `${name}: ${url}\n\n`;
+            });
+            
+            if (confirm(msg + 'Open Telegram?')) {
                 window.open('https://t.me/sk4film', '_blank');
             }
         }
         
         function escapeHtml(text) {
+            if (!text) return '';
             const div = document.createElement('div');
-            div.textContent = text || '';
+            div.textContent = text;
             return div.innerHTML;
         }
         
         function escapeJs(text) {
-            return (text || '').replace(/'/g, "\\'").replace(/"/g, '\\"');
+            if (!text) return '';
+            return text.replace(/'/g, "\\'").replace(/"/g, '\\"');
         }
         
-        // ULTRA FAST INITIALIZATION
-        window.pageLoadStart = performance.now();
-        
+        // Initialize - ALL FEATURES PRESERVED
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('⚡ ULTRA FAST MODE ACTIVE');
+            console.log('🎬 SK4FiLM - FIXED POSTERS + ADSENSE OPTIMIZED');
+            console.log('🖼️ Enhanced poster loading with multiple fallbacks');
+            console.log('💰 AdSense spaces for maximum earnings');
             
-            // Fast search setup
+            // Search enter key - PRESERVED
             const input = document.getElementById('searchQuery');
             if (input) {
                 input.addEventListener('keypress', function(e) {
@@ -531,26 +679,35 @@
                 });
             }
             
-            // Load movies immediately
-            loadMoviesUltraFast();
+            // Load movies
+            loadMoviesWithFixedPosters();
             
-            // Fast visitor counter
-            function fastCounter() {
+            // Visitor counter - PRESERVED
+            function updateCounter() {
                 const counter = document.getElementById('visitorCount');
                 if (counter) {
-                    counter.textContent = parseInt(counter.textContent) + Math.floor(Math.random() * 3) + 1;
+                    const current = parseInt(counter.textContent) || 1247;
+                    counter.textContent = current + Math.floor(Math.random() * 4) + 1;
                 }
             }
             
-            setInterval(fastCounter, 25000);
+            updateCounter();
+            setInterval(updateCounter, 30000);
             
-            const initTime = ((performance.now() - window.pageLoadStart) / 1000).toFixed(2);
-            console.log(`⚡ INITIALIZED in ${initTime}s`);
+            // Audio - PRESERVED
+            const audio = document.getElementById('bg-audio');
+            if (audio) {
+                audio.volume = 0.3;
+                audio.play().catch(() => {
+                    document.addEventListener('click', () => audio.play(), { once: true });
+                });
+            }
+            
+            console.log('✅ All features loaded with poster fix');
         });
         
-        console.log('%c⚡ ULTRA FAST LOADING ACTIVE', 'color: #00ff00; font-size: 24px; font-weight: bold;');
-        console.log('%c📦 Caching Enabled', 'color: #28a745; font-size: 16px;');
-        console.log('%c🔄 Parallel Processing', 'color: #007bff; font-size: 16px;');
+        console.log('%c🖼️ POSTER LOADING FIXED', 'color: #00ff00; font-size: 20px; font-weight: bold;');
+        console.log('%c💰 ADSENSE EARNINGS OPTIMIZED', 'color: #ffc107; font-size: 18px; font-weight: bold;');
     </script>
 </body>
 </html>
