@@ -4,9 +4,9 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SK4FiLM - Real-time Movie Updates</title>
-    <meta name="description" content="Latest movies with automatic updates from Telegram channels">
+    <meta name="description" content="Latest movies with automatic updates From Powerfull Database">
     
-    <!-- Google AdSense -->
+    <!-- Google AdSense for Maximum Earnings -->
     <meta name="google-adsense-account" content="ca-pub-5244164301170945">
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5244164301170945" crossorigin="anonymous"></script>
     <script>
@@ -17,10 +17,11 @@
         });
     </script>
     
-    <!-- CSS -->
+    <!-- CSS Libraries -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;600;700&family=Montserrat:wght@800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;600;700&family=Montserrat:wght@800&display=swap" rel="stylesheet">
     
     <style>
         :root {
@@ -36,6 +37,7 @@
             min-height: 100vh;
             font-family: 'Josefin Sans', sans-serif;
             color: var(--text);
+            position: relative;
             padding-top: 90px;
         }
         
@@ -50,14 +52,23 @@
             z-index: -1;
         }
         
-        /* Navigation - PRESERVED */
+        .container {
+            position: relative;
+            z-index: 1;
+            padding: 20px 15px 40px;
+        }
+        
+        /* Navigation with 3-Line Menu */
         .top-navbar {
             background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
             position: fixed;
             top: 0;
             width: 100%;
             z-index: 1000;
             padding: 12px 0;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
         }
         
         .navbar-content {
@@ -70,6 +81,7 @@
             height: 55px;
             margin-right: 15px;
             border-radius: 8px;
+            box-shadow: 0 0 15px rgba(255, 0, 0, 0.3);
         }
         
         .brand-text {
@@ -80,46 +92,62 @@
             -webkit-text-fill-color: transparent;
         }
         
+        /* 3-Line Menu Button */
+        .menu-button {
+            background: rgba(0, 204, 255, 0.1);
+            border: 2px solid var(--accent);
+            color: var(--accent);
+            padding: 12px 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .menu-button:hover {
+            background: rgba(0, 204, 255, 0.2);
+            box-shadow: 0 0 15px rgba(0, 204, 255, 0.5);
+            transform: scale(1.05);
+        }
+        
+        .menu-lines {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+        
+        .menu-line {
+            width: 20px;
+            height: 2px;
+            background: var(--accent);
+            transition: all 0.3s ease;
+        }
+        
+        .menu-button:hover .menu-line {
+            background: #ffffff;
+        }
+        
+        /* Section boxes */
         .section-box {
             background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(5px);
             border-radius: 12px;
             padding: 25px;
             margin-bottom: 25px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
             border: 1px solid rgba(255,255,255,0.1);
         }
         
-        /* AUTO UPDATE STATUS BAR */
-        .auto-update-bar {
-            background: linear-gradient(45deg, #28a745, #20c997);
-            color: white;
-            padding: 8px 0;
-            text-align: center;
-            font-size: 0.85rem;
-            font-weight: 600;
-            position: fixed;
-            top: 78px;
-            width: 100%;
-            z-index: 999;
-            box-shadow: 0 2px 10px rgba(40, 167, 69, 0.4);
-        }
-        
-        .auto-update-indicator {
-            display: inline-flex;
+        /* AdSense Space */
+        .ads-space {
+            min-height: 120px;
+            margin: 30px 0;
+            display: flex;
             align-items: center;
-            gap: 8px;
-        }
-        
-        .update-pulse {
-            width: 8px;
-            height: 8px;
-            background: #ffffff;
-            border-radius: 50%;
-            animation: updatePulse 2s infinite;
-        }
-        
-        @keyframes updatePulse {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.5; transform: scale(1.2); }
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            border: 1px dashed rgba(255, 255, 255, 0.3);
         }
         
         /* Search */
@@ -135,6 +163,7 @@
         
         .search-input:focus {
             border-bottom-color: var(--accent);
+            box-shadow: 0 0 12px rgba(0, 204, 255, 0.5);
             outline: none;
             color: white;
         }
@@ -149,34 +178,80 @@
             width: 100%;
             margin-top: 8px;
             cursor: pointer;
+            transition: all 0.3s ease;
         }
         
-        /* Movie cards */
+        .search-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(255, 0, 0, 0.4);
+        }
+        
+        /* Auto Update Status */
+        .auto-update-status {
+            background: linear-gradient(45deg, #28a745, #20c997);
+            color: white;
+            padding: 10px 0;
+            text-align: center;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4);
+        }
+        
+        .update-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .pulse-dot {
+            width: 10px;
+            height: 10px;
+            background: #ffffff;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.3); }
+        }
+        
+        /* Movie Cards with Auto Update */
         .movie-card {
-            background: rgba(30, 41, 59, 0.8);
+            background: rgba(30, 41, 59, 0.85);
             border: 1px solid rgba(255,255,255,0.1);
             border-radius: 12px;
             overflow: hidden;
-            transition: transform 0.3s ease;
+            transition: all 0.4s ease;
             height: 100%;
             cursor: pointer;
             position: relative;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
         }
         
         .movie-card:hover {
-            transform: translateY(-8px);
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 102, 255, 0.4);
+            border-color: var(--accent);
         }
         
         .movie-poster {
             width: 100%;
-            height: 300px;
+            height: 320px;
             object-fit: cover;
             border-bottom: 1px solid rgba(255,255,255,0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .movie-card:hover .movie-poster {
+            transform: scale(1.08);
         }
         
         .poster-placeholder {
             width: 100%;
-            height: 300px;
+            height: 320px;
             background: linear-gradient(135deg, #1a1a2e, #16213e);
             display: flex;
             align-items: center;
@@ -184,57 +259,80 @@
             color: var(--accent);
             font-weight: 600;
             text-align: center;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             border-bottom: 1px solid rgba(255,255,255,0.1);
         }
         
         .movie-info {
-            padding: 15px;
+            padding: 16px;
         }
         
         .movie-title {
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             color: var(--accent);
-            margin-bottom: 8px;
+            margin-bottom: 10px;
+            line-height: 1.4;
             font-weight: 600;
             text-align: center;
         }
         
-        .new-badge {
+        .new-movie-badge {
             position: absolute;
-            top: 8px;
-            left: 8px;
+            top: 10px;
+            left: 10px;
             background: linear-gradient(45deg, #28a745, #20c997);
             color: white;
-            padding: 4px 8px;
-            border-radius: 10px;
+            padding: 5px 10px;
+            border-radius: 15px;
             font-size: 0.7rem;
             font-weight: 700;
-            animation: newMovieBlink 3s infinite;
+            animation: newPulse 3s infinite;
         }
         
-        @keyframes newMovieBlink {
+        @keyframes newPulse {
             0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
+            50% { opacity: 0.8; }
         }
         
         .imdb-badge {
             position: absolute;
-            top: 8px;
-            right: 8px;
-            background: #f5c518;
+            top: 10px;
+            right: 10px;
+            background: linear-gradient(45deg, #f5c518, #daa520);
             color: #000;
-            padding: 4px 8px;
-            border-radius: 10px;
+            padding: 5px 10px;
+            border-radius: 15px;
             font-size: 0.7rem;
             font-weight: 700;
         }
         
-        /* Visitor counter - PRESERVED */
+        .click-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0,0,0,0.9));
+            padding: 12px 8px 8px;
+            text-align: center;
+            color: var(--accent);
+            font-size: 0.75rem;
+            font-weight: 600;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .movie-card:hover .click-overlay {
+            opacity: 1;
+        }
+        
+        /* Visitor counter */
         .visitor-container {
             position: fixed;
             bottom: 15px;
             right: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             z-index: 1000;
         }
         
@@ -247,6 +345,8 @@
             align-items: center;
             justify-content: center;
             margin-bottom: 6px;
+            border: 2px solid white;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
         }
         
         .visitor-count {
@@ -255,66 +355,94 @@
             padding: 5px 10px;
             border-radius: 12px;
             font-size: 0.8rem;
+            font-weight: bold;
             text-align: center;
+        }
+        
+        /* Loading */
+        .loading-spinner {
+            width: 3rem;
+            height: 3rem;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
         
         /* Mobile */
         @media (max-width: 768px) {
-            body { padding-top: 110px; }
-            .movie-poster, .poster-placeholder { height: 250px; }
+            body { padding-top: 80px; }
+            .container { padding: 15px 10px 30px; }
+            .logo-img { height: 45px; }
+            .brand-text { font-size: 1.8rem; }
+            .section-box { padding: 20px; margin-bottom: 20px; }
+            .movie-poster, .poster-placeholder { height: 280px; }
         }
     </style>
 </head>
 
 <body>
-    <!-- Audio - PRESERVED -->
+    <!-- Background Audio -->
     <audio autoplay id="bg-audio">
         <source src="https://files.catbox.moe/5t18g8.mp3" type="audio/mpeg">
     </audio>
     
-    <!-- Navigation - PRESERVED -->
+    <!-- Navigation with 3-Line Menu -->
     <nav class="top-navbar">
         <div class="container">
             <div class="navbar-content">
                 <a href="#" style="display: flex; align-items: center; color: white; text-decoration: none;">
                     <img src="https://iili.io/KOlfc41.png" alt="SK4FiLM Logo" class="logo-img">
-                    <div>
+                    <div style="display: flex; flex-direction: column;">
                         <div class="brand-text">SK4FiLM</div>
-                        <div style="font-size: 0.85rem; color: var(--accent); font-style: italic;">House of Entertainment</div>
+                        <div style="font-size: 0.85rem; color: var(--accent); font-weight: 300; letter-spacing: 1px; font-style: italic;">House of Entertainment</div>
                     </div>
                 </a>
                 
-                <button onclick="showSocial()" style="background: none; border: none; color: var(--accent); font-size: 1.7rem;">
-                    <i class="fas fa-bars"></i>
+                <!-- 3-Line Menu Button -->
+                <button class="menu-button" onclick="showCompleteMenu()">
+                    <div class="menu-lines">
+                        <div class="menu-line"></div>
+                        <div class="menu-line"></div>
+                        <div class="menu-line"></div>
+                    </div>
                 </button>
             </div>
         </div>
     </nav>
     
-    <!-- AUTO UPDATE STATUS BAR -->
-    <div class="auto-update-bar" id="autoUpdateBar">
-        <div class="auto-update-indicator">
-            <div class="update-pulse"></div>
-            <span>🔄 Real-time Updates Active</span>
-            <span id="updateTimer">Next check in 30s</span>
-            <button onclick="forceUpdate()" style="background: rgba(255,255,255,0.2); border: none; color: white; padding: 4px 8px; border-radius: 8px; margin-left: 10px; font-size: 0.8rem;">
-                <i class="fas fa-sync me-1"></i>Update Now
-            </button>
+    <div class="container">
+        <!-- Auto Update Status -->
+        <div class="auto-update-status animate__animated animate__fadeIn">
+            <div class="update-indicator">
+                <div class="pulse-dot"></div>
+                <span>🔄 Real-time Updates Active</span>
+                <span id="updateTimer">Next check in 30s</span>
+                <button onclick="forceUpdateNow()" style="background: rgba(255,255,255,0.2); border: none; color: white; padding: 4px 12px; border-radius: 12px; margin-left: 15px; font-size: 0.8rem; cursor: pointer;">
+                    <i class="fas fa-sync-alt me-1"></i>Update Now
+                </button>
+            </div>
         </div>
-    </div>
-    
-    <div class="container" style="padding-top: 30px;">
-        <!-- Hero - PRESERVED -->
-        <div class="section-box">
+
+        <!-- Hero Section -->
+        <div class="section-box animate__animated animate__fadeIn">
             <div class="row align-items-center">
                 <div class="col-lg-6">
-                    <p style="font-size: 1.1rem;">🥰</p>
-                    <p>Find your favorite movies with real-time updates</p>
+                    <div class="content-section">
+                        <p style="font-size: 1.1rem; margin-bottom: 10px;">🥰</p>
+                        <p style="font-size: 1rem;">Find your favorite movies with our real-time search engine</p>
+                    </div>
                 </div>
                 <div class="col-lg-6">
                     <div style="background: rgba(255, 255, 255, 0.1); border-radius: 10px; padding: 20px;">
-                        <input class="form-control search-input" id="searchQuery" placeholder="Search for movies, web series..." type="text">
-                        <button class="btn search-btn" onclick="doSearch()">
+                        <input class="form-control search-input" id="searchQuery" placeholder="Search for movies, web series..." required type="text">
+                        <button class="btn search-btn" onclick="doSearch()" type="button">
                             <i class="fas fa-search me-2"></i>Search Movies
                         </button>
                         <div class="text-center mt-3">
@@ -327,69 +455,169 @@
             </div>
         </div>
 
-        <!-- Latest Uploads - AUTO UPDATE -->
-        <div class="section-box">
-            <div style="display: flex; justify-content: between; margin-bottom: 25px;">
-                <h2 style="color: var(--accent); margin: 0;">
-                    🔄 Latest Uploads (Auto Update)
+        <!-- AdSense Space 1 -->
+        <div class="ads-space">
+            <div style="color: rgba(255, 255, 255, 0.5); text-align: center;">
+                <i class="fas fa-ad fa-2x mb-2"></i><br>
+                <small>Premium Advertisement Space - Google Auto Ads</small>
+            </div>
+        </div>
+
+        <!-- Latest Uploads with Auto Update -->
+        <div class="section-box animate__animated animate__fadeIn mt-4">
+            <div style="display: flex; justify-content: between; align-items: center; margin-bottom: 25px; flex-wrap: wrap; gap: 15px;">
+                <h2 style="color: var(--accent); margin: 0; font-size: 1.8rem;">
+                    <i class="fas fa-fire me-2" style="color: var(--primary);"></i>Latest Uploads (Auto Update)
                 </h2>
-                <div style="display: flex; gap: 8px;">
+                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
                     <span style="background: rgba(40, 167, 69, 0.2); color: #28a745; padding: 4px 10px; border-radius: 12px; font-size: 0.75rem;">
-                        <i class="fas fa-sync me-1"></i>AUTO
+                        <i class="fas fa-sync me-1"></i>Auto Update
+                    </span>
+                    <span style="background: rgba(0, 136, 204, 0.2); color: #0088cc; padding: 4px 10px; border-radius: 12px; font-size: 0.75rem;">
+                        <i class="fab fa-telegram me-1"></i>Real Posts
                     </span>
                     <span style="background: rgba(245, 197, 24, 0.2); color: #f5c518; padding: 4px 10px; border-radius: 12px; font-size: 0.75rem;">
-                        <i class="fas fa-star me-1"></i>IMDB
+                        <i class="fas fa-star me-1"></i>IMDB Posters
+                    </span>
+                    <span style="background: rgba(156, 39, 176, 0.2); color: #9c27b0; padding: 4px 10px; border-radius: 12px; font-size: 0.75rem;">
+                        <i class="fas fa-mouse-pointer me-1"></i>Click Search
                     </span>
                 </div>
             </div>
             
-            <div class="row g-3" id="moviesContainer">
+            <div class="row g-3" id="latestMovies">
                 <div class="col-12">
-                    <div style="text-align: center; padding: 40px;">
-                        <div style="width: 3rem; height: 3rem; border: 4px solid rgba(255,255,255,0.3); border-top: 4px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 15px;"></div>
-                        <p style="color: var(--accent);">Loading with Auto Update System...</p>
+                    <div style="text-align: center; padding: 40px 20px;">
+                        <div class="loading-spinner"></div>
+                        <p style="color: var(--accent); font-size: 1.3rem; margin-bottom: 10px; font-weight: 600;">
+                            <i class="fas fa-cogs fa-spin me-2"></i>Loading Real-time Movies
+                        </p>
+                        <p style="color: rgba(255, 255, 255, 0.8); margin-bottom: 15px; line-height: 1.6;">
+                            <strong>Step 1:</strong> Getting titles from Telegram channels<br>
+                            <strong>Step 2:</strong> Fetching IMDB posters automatically<br>
+                            <strong>Step 3:</strong> Setting up auto-update system
+                        </p>
+                        <div style="display: flex; justify-content: center; gap: 8px; flex-wrap: wrap;">
+                            <span style="background: rgba(0, 136, 204, 0.1); color: #0088cc; padding: 4px 8px; border-radius: 10px; font-size: 0.7rem;">📱 Telegram</span>
+                            <span style="background: rgba(245, 197, 24, 0.1); color: #f5c518; padding: 4px 8px; border-radius: 10px; font-size: 0.7rem;">🎬 IMDB</span>
+                            <span style="background: rgba(40, 167, 69, 0.1); color: #28a745; padding: 4px 8px; border-radius: 10px; font-size: 0.7rem;">🔄 Auto</span>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Features - PRESERVED -->
-        <div class="section-box">
-            <h2 style="color: var(--accent); text-align: center; margin-bottom: 30px;">Real-time Features</h2>
-            <div class="row">
-                <div class="col-md-4">
-                    <div style="background: rgba(30, 41, 59, 0.7); padding: 20px; border-radius: 8px; text-align: center;">
-                        <i class="fas fa-sync fa-2x text-success mb-3"></i>
-                        <h5>Auto Updates</h5>
-                        <p>New movies appear automatically every 30 seconds</p>
+        <!-- AdSense Space 2 -->
+        <div class="ads-space">
+            <div style="color: rgba(255, 255, 255, 0.5); text-align: center;">
+                <i class="fas fa-rectangle-ad fa-2x mb-2"></i><br>
+                <small>High-Value Advertisement Zone - Auto Optimized</small>
+            </div>
+        </div>
+
+        <!-- Tutorial Videos Section - ADDED BACK -->
+        <div class="section-box animate__animated animate__fadeIn">
+            <h2 style="color: var(--accent); text-align: center; margin-bottom: 30px;">
+                <i class="fas fa-play-circle me-2"></i>Tutorial Videos
+            </h2>
+            <div class="row gy-4">
+                <div class="col-12 col-md-4">
+                    <div style="background: rgba(30, 41, 59, 0.7); padding: 20px; border-radius: 8px; text-align: center; height: 100%;">
+                        <h5 style="color: var(--accent); margin-bottom: 15px;">How to Search Movies</h5>
+                        <div class="ratio ratio-16x9">
+                            <iframe allowfullscreen src="https://www.youtube.com/embed/PSQ9_KLzm8s" style="border-radius: 8px;"></iframe>
+                        </div>
                     </div>
                 </div>
-                <div class="col-md-4">
-                    <div style="background: rgba(30, 41, 59, 0.7); padding: 20px; border-radius: 8px; text-align: center;">
-                        <i class="fas fa-bolt fa-2x text-primary mb-3"></i>
-                        <h5>Real-time</h5>
-                        <p>Instant updates when new posts are made</p>
+                
+                <div class="col-12 col-md-4">
+                    <div style="background: rgba(30, 41, 59, 0.7); padding: 20px; border-radius: 8px; text-align: center; height: 100%;">
+                        <h5 style="color: var(--accent); margin-bottom: 15px;">How To Open StreaamNet Link</h5>
+                        <div class="ratio ratio-16x9">
+                            <iframe allowfullscreen src="https://www.youtube.com/embed/fVL7DfhnwWM" style="border-radius: 8px;"></iframe>
+                        </div>
                     </div>
                 </div>
-                <div class="col-md-4">
-                    <div style="background: rgba(30, 41, 59, 0.7); padding: 20px; border-radius: 8px; text-align: center;">
-                        <i class="fas fa-star fa-2x text-warning mb-3"></i>
-                        <h5>IMDB Posters</h5>
-                        <p>Automatic IMDB poster fetching</p>
+                
+                <div class="col-12 col-md-4">
+                    <div style="background: rgba(30, 41, 59, 0.7); padding: 20px; border-radius: 8px; text-align: center; height: 100%;">
+                        <h5 style="color: var(--accent); margin-bottom: 15px;">How To Open DiskWala Link</h5>
+                        <div class="ratio ratio-16x9">
+                            <iframe allowfullscreen src="https://www.youtube.com/embed/ZNKeL-pcIDw" style="border-radius: 8px;"></iframe>
+                        </div>
                     </div>
                 </div>
             </div>
+        </div>
+
+        <!-- AdSense Space 3 -->
+        <div class="ads-space">
+            <div style="color: rgba(255, 255, 255, 0.5); text-align: center;">
+                <i class="fas fa-bullhorn fa-2x mb-2"></i><br>
+                <small>Premium Advertisement - Before Features</small>
+            </div>
+        </div>
+
+        <!-- Features Section - ADDED BACK -->
+        <div class="section-box animate__animated animate__fadeIn">
+            <h2 style="color: var(--accent); text-align: center; margin-bottom: 30px;">
+                <i class="fas fa-star me-2"></i>Why Choose SK4FiLM?
+            </h2>
+            <div class="row gy-4">
+                <div class="col-md-4">
+                    <div style="background: rgba(30, 41, 59, 0.7); padding: 20px; border-radius: 8px; text-align: center; height: 100%;">
+                        <div style="font-size: 2.2rem; color: var(--accent); margin-bottom: 12px;">
+                            <i class="fas fa-bolt"></i>
+                        </div>
+                        <h5>Fast Search</h5>
+                        <p>Quickly find movies across multiple Telegram channels</p>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div style="background: rgba(30, 41, 59, 0.7); padding: 20px; border-radius: 8px; text-align: center; height: 100%;">
+                        <div style="font-size: 2.2rem; color: var(--accent); margin-bottom: 12px;">
+                            <i class="fas fa-download"></i>
+                        </div>
+                        <h5>Easy Download</h5>
+                        <p>Multiple download options with direct links</p>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div style="background: rgba(30, 41, 59, 0.7); padding: 20px; border-radius: 8px; text-align: center; height: 100%;">
+                        <div style="font-size: 2.2rem; color: var(--accent); margin-bottom: 12px;">
+                            <i class="fas fa-mobile-alt"></i>
+                        </div>
+                        <h5>Mobile Friendly</h5>
+                        <p>Works perfectly on all devices and platforms</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- AdSense Space 4 -->
+        <div class="ads-space">
+            <div style="color: rgba(255, 255, 255, 0.5); text-align: center;">
+                <i class="fas fa-coins fa-2x mb-2"></i><br>
+                <small>Bottom Advertisement - High Earning Zone</small>
+            </div>
+        </div>
+
+        <!-- Disclaimer Section - ADDED BACK -->
+        <div style="background: rgba(255, 0, 0, 0.1); border: 1px solid rgba(255, 0, 0, 0.3); border-radius: 8px; padding: 15px; margin-top: 30px; text-align: center; color: #ff6b6b;">
+            <p><strong><i class="fas fa-exclamation-triangle me-2"></i>Disclaimer:</strong> This Site Does Not Store Any File On The Server, It Only Links To Media Files Which Are Already Hosted On Telegram.</p>
         </div>
     </div>
 
-    <!-- Visitor Counter - PRESERVED -->
+    <!-- Visitor Counter -->
     <div class="visitor-container">
         <div class="visitor-logo">
             <i class="fas fa-users" style="color: white; font-size: 1.5rem;"></i>
         </div>
         <div class="visitor-count">
             <span id="visitorCount">1247</span>
-            <span style="background: #28a745; color: white; font-size: 0.6rem; padding: 2px 5px; border-radius: 8px; margin-left: 4px;">AUTO</span>
+            <span style="background: #28a745; color: white; font-size: 0.6rem; padding: 2px 5px; border-radius: 8px; margin-left: 4px; animation: blink 2s infinite;">Live</span>
         </div>
     </div>
 
@@ -397,13 +625,12 @@
         const BACKEND_URL = 'https://sk4film.koyeb.app';
         const AUTO_REFRESH_INTERVAL = 45000; // 45 seconds
         
-        let autoUpdateTimer;
-        let lastMovieCount = 0;
         let updateCountdown = 45;
+        let lastMovieCount = 0;
         
-        console.log('🔄 SK4FiLM - REAL-TIME AUTO UPDATE SYSTEM');
+        console.log('🔄 SK4FiLM - COMPLETE AUTO UPDATE SYSTEM');
         
-        // Search function - PRESERVED
+        // Search function
         function doSearch() {
             const input = document.getElementById('searchQuery');
             const query = input.value.trim();
@@ -411,15 +638,103 @@
             if (query && query.length >= 2) {
                 window.location.href = `search.html?query=${encodeURIComponent(query)}`;
             } else {
+                input.style.borderBottomColor = '#ff0000';
                 input.focus();
+                setTimeout(() => input.style.borderBottomColor = '', 2000);
             }
         }
         
-        // MAIN: Load movies with AUTO UPDATE
+        // Complete Menu with ALL options
+        function showCompleteMenu() {
+            const menuHTML = `
+                <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 3000; display: flex; align-items: center; justify-content: center;" id="menuOverlay">
+                    <div style="background: rgba(15, 23, 42, 0.95); padding: 40px; border-radius: 20px; max-width: 500px; width: 90%; text-align: center; border: 2px solid var(--accent);">
+                        <h3 style="color: var(--accent); margin-bottom: 25px;">
+                            <i class="fas fa-bars me-2"></i>SK4FiLM Menu
+                        </h3>
+                        
+                        <!-- Social Media Links -->
+                        <div style="margin-bottom: 25px;">
+                            <h5 style="color: var(--primary); margin-bottom: 15px;">
+                                <i class="fas fa-share-alt me-2"></i>Follow Us
+                            </h5>
+                            <div style="display: flex; flex-direction: column; gap: 12px;">
+                                <a href="https://t.me/sk4film" target="_blank" style="background: linear-gradient(45deg, #0088cc, #006bb3); color: white; padding: 12px 20px; border-radius: 15px; text-decoration: none; font-weight: 600;">
+                                    <i class="fab fa-telegram me-2"></i>Telegram Channel
+                                </a>
+                                <a href="https://whatsapp.com/channel/0029Va69Ts2C6ZvmEWsHNo3c" target="_blank" style="background: linear-gradient(45deg, #25d366, #128c7e); color: white; padding: 12px 20px; border-radius: 15px; text-decoration: none; font-weight: 600;">
+                                    <i class="fab fa-whatsapp me-2"></i>WhatsApp Channel
+                                </a>
+                                <a href="https://youtube.com/@Skcreator7" target="_blank" style="background: linear-gradient(45deg, #ff0000, #cc0000); color: white; padding: 12px 20px; border-radius: 15px; text-decoration: none; font-weight: 600;">
+                                    <i class="fab fa-youtube me-2"></i>YouTube Channel
+                                </a>
+                                <a href="https://t.me/skfilmbot" target="_blank" style="background: linear-gradient(45deg, #7b68ee, #6a5acd); color: white; padding: 12px 20px; border-radius: 15px; text-decoration: none; font-weight: 600;">
+                                    <i class="fas fa-robot me-2"></i>Telegram Bot
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <!-- Quick Links -->
+                        <div style="margin-bottom: 25px;">
+                            <h5 style="color: var(--secondary); margin-bottom: 15px;">
+                                <i class="fas fa-link me-2"></i>Quick Links
+                            </h5>
+                            <div style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;">
+                                <button onclick="scrollToTutorials()" style="background: rgba(0, 204, 255, 0.2); color: var(--accent); border: 1px solid var(--accent); padding: 8px 15px; border-radius: 12px; cursor: pointer;">
+                                    <i class="fas fa-play me-1"></i>Tutorials
+                                </button>
+                                <button onclick="scrollToFeatures()" style="background: rgba(0, 204, 255, 0.2); color: var(--accent); border: 1px solid var(--accent); padding: 8px 15px; border-radius: 12px; cursor: pointer;">
+                                    <i class="fas fa-star me-1"></i>Features
+                                </button>
+                                <button onclick="forceUpdateNow()" style="background: rgba(40, 167, 69, 0.2); color: #28a745; border: 1px solid #28a745; padding: 8px 15px; border-radius: 12px; cursor: pointer;">
+                                    <i class="fas fa-sync me-1"></i>Force Update
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Close Button -->
+                        <button onclick="closeMenu()" style="background: var(--primary); color: white; border: none; padding: 12px 30px; border-radius: 20px; font-weight: 600; cursor: pointer;">
+                            <i class="fas fa-times me-2"></i>Close Menu
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.insertAdjacentHTML('beforeend', menuHTML);
+        }
+        
+        function closeMenu() {
+            const overlay = document.getElementById('menuOverlay');
+            if (overlay) {
+                document.body.removeChild(overlay);
+            }
+        }
+        
+        function scrollToTutorials() {
+            closeMenu();
+            setTimeout(() => {
+                const tutorialsSection = document.querySelector('.section-box:nth-of-type(4)'); // Tutorial videos section
+                if (tutorialsSection) {
+                    tutorialsSection.scrollIntoView({ behavior: 'smooth' });
+                }
+            }, 300);
+        }
+        
+        function scrollToFeatures() {
+            closeMenu();
+            setTimeout(() => {
+                const featuresSection = document.querySelector('.section-box:nth-of-type(5)'); // Features section
+                if (featuresSection) {
+                    featuresSection.scrollIntoView({ behavior: 'smooth' });
+                }
+            }, 300);
+        }
+        
+        // Load movies with auto update
         async function loadMoviesWithAutoUpdate() {
+            const container = document.getElementById('latestMovies');
+            
             try {
-                console.log('🔄 Loading movies with auto-update...');
-                
                 const response = await fetch(`${BACKEND_URL}/api/latest_movies?limit=30`);
                 const data = await response.json();
                 
@@ -430,75 +745,95 @@
                     displayMoviesWithAutoUpdate(data.movies, hasNewMovies);
                     lastMovieCount = newCount;
                     
-                    // Update status bar
-                    updateStatusBar(data.last_update, data.real_time);
-                    
-                    console.log(`✅ AUTO UPDATE: ${newCount} movies loaded ${hasNewMovies ? '(NEW MOVIES!)' : ''}`);
+                    console.log(`✅ ${newCount} movies loaded ${hasNewMovies ? '(NEW MOVIES!)' : ''}`);
                 } else {
                     showNoMovies();
                 }
                 
             } catch (error) {
-                console.error('Auto update error:', error);
+                console.error('Loading error:', error);
                 showError();
             }
         }
         
-        // Display movies with NEW movie highlighting
+        // Display movies
         function displayMoviesWithAutoUpdate(movies, hasNewMovies) {
-            const container = document.getElementById('moviesContainer');
+            const container = document.getElementById('latestMovies');
             let html = '';
             
-            // Show update notification if new movies
             if (hasNewMovies) {
-                showNewMovieNotification();
+                showNewMovieAlert();
             }
             
             movies.forEach((movie, index) => {
-                const isNew = hasNewMovies && index < 3; // Mark first 3 as new
+                const isNew = hasNewMovies && index < 3;
                 const movieTitle = movie.title || 'Unknown Movie';
                 
                 html += `
                     <div class="col-6 col-sm-4 col-md-3 col-xl-2">
-                        <div class="movie-card ${isNew ? 'animate__animated animate__pulse' : ''}" 
+                        <div class="movie-card ${isNew ? 'animate__animated animate__bounceIn' : ''}" 
                              onclick="searchMovie('${escapeJs(movieTitle)}')"
                              title="Click to search: ${escapeHtml(movieTitle)}">
                             
-                            ${movie.has_poster && movie.imdb_poster ? `
-                                <img src="${BACKEND_URL}/api/poster/${encodeURIComponent(movie.imdb_poster)}" 
-                                     class="movie-poster" 
-                                     alt="${escapeHtml(movieTitle)}"
-                                     loading="lazy"
-                                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                                
-                                <div class="poster-placeholder" style="display: none;">
-                                    <div>
-                                        <i class="fas fa-film fa-2x mb-2"></i><br>
-                                        <strong>${escapeHtml(movieTitle)}</strong>
+                            <div class="position-relative">
+                                ${movie.has_poster && movie.imdb_poster ? `
+                                    <img src="${BACKEND_URL}/api/poster/${encodeURIComponent(movie.imdb_poster)}" 
+                                         class="movie-poster" 
+                                         alt="${escapeHtml(movieTitle)}"
+                                         loading="lazy"
+                                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                    
+                                    <div class="poster-placeholder" style="display: none;">
+                                        <div>
+                                            <i class="fas fa-film fa-2x mb-2"></i><br>
+                                            <strong>${escapeHtml(movieTitle)}</strong>
+                                        </div>
                                     </div>
-                                </div>
-                                
-                                <div class="imdb-badge">IMDB</div>
-                            ` : `
-                                <div class="poster-placeholder">
-                                    <div>
-                                        <i class="fas fa-film fa-2x mb-2"></i><br>
-                                        <strong>${escapeHtml(movieTitle)}</strong>
-                                        <br><small style="opacity: 0.8;">From ${movie.channel}</small>
+                                    
+                                    <div class="imdb-badge">
+                                        <i class="fas fa-star me-1"></i>IMDB
                                     </div>
+                                ` : `
+                                    <div class="poster-placeholder">
+                                        <div>
+                                            <i class="fas fa-film fa-2x mb-2"></i><br>
+                                            <strong>${escapeHtml(movieTitle)}</strong>
+                                            <br><small style="opacity: 0.8;">From ${movie.channel}</small>
+                                        </div>
+                                    </div>
+                                `}
+                                
+                                ${isNew ? '<div class="new-movie-badge"><i class="fas fa-plus me-1"></i>NEW</div>' : ''}
+                                
+                                <div class="click-overlay">
+                                    <i class="fas fa-search me-1"></i>Click to Search Telegram
                                 </div>
-                            `}
-                            
-                            ${isNew ? '<div class="new-badge"><i class="fas fa-star me-1"></i>NEW</div>' : ''}
+                            </div>
                             
                             <div class="movie-info">
-                                <div class="movie-title">
+                                <h6 class="movie-title">
                                     🎬 ${escapeHtml(movieTitle)}
+                                </h6>
+                                
+                                <div style="display: flex; justify-content: center; font-size: 0.75rem; margin-top: 8px;">
+                                    ${movie.imdb_rating && movie.imdb_rating !== 'N/A' ? `
+                                        <span style="color: #f5c518; font-weight: 600;">
+                                            <i class="fas fa-star me-1"></i>${movie.imdb_rating}
+                                        </span>
+                                    ` : `
+                                        <span style="color: var(--accent);">
+                                            <i class="fas fa-search me-1"></i>Search
+                                        </span>
+                                    `}
                                 </div>
                                 
-                                <div style="text-align: center; font-size: 0.75rem; color: rgba(255, 255, 255, 0.7);">
-                                    ${movie.imdb_rating ? `⭐ ${movie.imdb_rating}` : '🔍 Click to Search'}
-                                </div>
+                                ${movie.imdb_year ? `
+                                    <div style="margin-top: 6px; text-align: center;">
+                                        <small style="background: rgba(255, 255, 255, 0.1); color: var(--accent); padding: 2px 8px; border-radius: 10px; font-size: 0.7rem;">
+                                            ${movie.imdb_year}
+                                        </small>
+                                    </div>
+                                ` : ''}
                             </div>
                         </div>
                     </div>
@@ -508,63 +843,24 @@
             container.innerHTML = html;
         }
         
-        // Update status bar
-        function updateStatusBar(lastUpdate, realTime) {
-            const bar = document.getElementById('autoUpdateBar');
-            if (lastUpdate) {
-                const updateTime = new Date(lastUpdate).toLocaleTimeString();
-                bar.innerHTML = `
-                    <div class="auto-update-indicator">
-                        <div class="update-pulse"></div>
-                        <span>🔄 Auto Updates Active</span>
-                        <span style="margin-left: 10px;">Last: ${updateTime}</span>
-                        <span id="updateTimer" style="margin-left: 10px;">Next in 45s</span>
-                    </div>
-                `;
-            }
-        }
-        
-        // Show new movie notification
-        function showNewMovieNotification() {
-            const notification = document.createElement('div');
-            notification.style.cssText = `
-                position: fixed; top: 120px; right: 20px; z-index: 2000;
-                background: linear-gradient(45deg, #28a745, #20c997); color: white;
-                padding: 15px 25px; border-radius: 25px; font-weight: 700;
-                box-shadow: 0 6px 20px rgba(40, 167, 69, 0.5);
-                animation: slideInRight 0.5s ease;
-            `;
-            
-            notification.innerHTML = `
-                <i class="fas fa-plus-circle me-2"></i>New Movies Added!
-            `;
-            
-            document.body.appendChild(notification);
-            
-            setTimeout(() => {
-                if (document.body.contains(notification)) {
-                    notification.style.animation = 'slideOutRight 0.5s ease';
-                    setTimeout(() => document.body.removeChild(notification), 500);
-                }
-            }, 4000);
-        }
-        
         // Force update
-        async function forceUpdate() {
+        async function forceUpdateNow() {
             try {
                 console.log('🔄 Force update triggered...');
                 
-                const response = await fetch(`${BACKEND_URL}/api/force_update`);
-                const data = await response.json();
-                
-                if (data.status === 'success') {
-                    console.log('✅ Force update completed');
-                    
-                    // Reload movies
-                    setTimeout(() => {
-                        loadMoviesWithAutoUpdate();
-                    }, 1000);
+                // Visual feedback
+                const timer = document.getElementById('updateTimer');
+                if (timer) {
+                    timer.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Updating...';
                 }
+                
+                await fetch(`${BACKEND_URL}/api/force_update`);
+                
+                // Reload movies after 1 second
+                setTimeout(() => {
+                    loadMoviesWithAutoUpdate();
+                    updateCountdown = 45; // Reset countdown
+                }, 1000);
                 
             } catch (error) {
                 console.error('Force update error:', error);
@@ -573,10 +869,10 @@
         
         // Auto refresh system
         function startAutoRefresh() {
-            // Update countdown
-            function updateCountdown() {
+            // Countdown timer
+            setInterval(() => {
                 const timer = document.getElementById('updateTimer');
-                if (timer) {
+                if (timer && updateCountdown > 0) {
                     timer.textContent = `Next in ${updateCountdown}s`;
                     updateCountdown--;
                     
@@ -585,33 +881,65 @@
                         loadMoviesWithAutoUpdate();
                     }
                 }
-            }
-            
-            // Start countdown
-            setInterval(updateCountdown, 1000);
-            
-            // Auto refresh movies
-            setInterval(() => {
-                loadMoviesWithAutoUpdate();
-            }, AUTO_REFRESH_INTERVAL);
+            }, 1000);
             
             console.log('⏰ Auto refresh started - every 45 seconds');
         }
         
+        // New movie alert
+        function showNewMovieAlert() {
+            const alert = document.createElement('div');
+            alert.style.cssText = `
+                position: fixed; top: 120px; right: 20px; z-index: 2000;
+                background: linear-gradient(45deg, #28a745, #20c997); color: white;
+                padding: 15px 25px; border-radius: 25px; font-weight: 700;
+                box-shadow: 0 8px 25px rgba(40, 167, 69, 0.6);
+                animation: slideIn 0.5s ease;
+            `;
+            
+            alert.innerHTML = '<i class="fas fa-plus-circle me-2"></i>New Movies Added!';
+            document.body.appendChild(alert);
+            
+            setTimeout(() => {
+                if (document.body.contains(alert)) {
+                    alert.style.animation = 'fadeOut 0.5s ease';
+                    setTimeout(() => document.body.removeChild(alert), 500);
+                }
+            }, 4000);
+        }
+        
         function searchMovie(title) {
             console.log(`🔍 Searching: ${title}`);
-            window.location.href = `search.html?query=${encodeURIComponent(title)}`;
+            
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed; top: 20px; right: 20px; z-index: 2000;
+                background: #007bff; color: white; padding: 10px 20px;
+                border-radius: 20px; font-weight: 600;
+            `;
+            notification.innerHTML = `<i class="fas fa-search me-2"></i>Searching "${title}"...`;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                window.location.href = `search.html?query=${encodeURIComponent(title)}`;
+            }, 800);
+            
+            setTimeout(() => {
+                if (document.body.contains(notification)) {
+                    document.body.removeChild(notification);
+                }
+            }, 3000);
         }
         
         function showNoMovies() {
-            document.getElementById('moviesContainer').innerHTML = `
+            document.getElementById('latestMovies').innerHTML = `
                 <div class="col-12">
-                    <div style="text-align: center; padding: 50px;">
+                    <div style="text-align: center; padding: 50px 20px;">
                         <i class="fas fa-film fa-4x text-muted mb-4"></i>
                         <h4>No Movies Found</h4>
-                        <p>Auto update system is monitoring channels...</p>
-                        <button onclick="forceUpdate()" style="background: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: 20px;">
-                            <i class="fas fa-sync me-2"></i>Force Update
+                        <p style="color: rgba(255, 255, 255, 0.8);">Auto update system is monitoring channels...</p>
+                        <button onclick="forceUpdateNow()" style="background: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: 20px; cursor: pointer;">
+                            <i class="fas fa-sync me-2"></i>Force Update Now
                         </button>
                     </div>
                 </div>
@@ -619,23 +947,18 @@
         }
         
         function showError() {
-            document.getElementById('moviesContainer').innerHTML = `
+            document.getElementById('latestMovies').innerHTML = `
                 <div class="col-12">
-                    <div style="text-align: center; padding: 50px;">
+                    <div style="text-align: center; padding: 50px 20px;">
                         <i class="fas fa-exclamation-triangle fa-4x text-warning mb-4"></i>
-                        <h4>Auto Update Error</h4>
-                        <button onclick="loadMoviesWithAutoUpdate()" style="background: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: 20px;">
-                            <i class="fas fa-refresh me-2"></i>Retry
+                        <h4 class="text-warning">Auto Update Error</h4>
+                        <p style="color: rgba(255, 255, 255, 0.8);">Cannot connect to Telegram</p>
+                        <button onclick="loadMoviesWithAutoUpdate()" style="background: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: 20px; cursor: pointer;">
+                            <i class="fas fa-refresh me-2"></i>Try Again
                         </button>
                     </div>
                 </div>
             `;
-        }
-        
-        function showSocial() {
-            if (confirm('🔗 Open Telegram Channel?\nhttps://t.me/sk4film')) {
-                window.open('https://t.me/sk4film', '_blank');
-            }
         }
         
         function escapeHtml(text) {
@@ -650,12 +973,14 @@
             return text.replace(/'/g, "\\'").replace(/"/g, '\\"');
         }
         
-        // Initialize - AUTO UPDATE SYSTEM
+        // Initialize complete system
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('🔄 SK4FiLM - REAL-TIME AUTO UPDATE SYSTEM ACTIVE');
-            console.log('⏰ Movies update automatically every 45 seconds');
-            console.log('🆕 New movies highlighted when added');
-            console.log('🔄 Backend checks channels every 30 seconds');
+            console.log('🎬 SK4FiLM - COMPLETE SYSTEM WITH AUTO UPDATE');
+            console.log('📱 Social media links in 3-line menu');
+            console.log('🎥 Tutorial videos section included');
+            console.log('⚠️ Disclaimer section included');
+            console.log('🔄 Real-time auto update active');
+            console.log('💰 AdSense spaces for maximum earnings');
             
             // Search enter key
             const input = document.getElementById('searchQuery');
@@ -671,7 +996,7 @@
             // Load initial movies
             loadMoviesWithAutoUpdate();
             
-            // Start auto refresh system
+            // Start auto refresh after 2 seconds
             setTimeout(() => {
                 startAutoRefresh();
             }, 2000);
@@ -680,13 +1005,15 @@
             function updateCounter() {
                 const counter = document.getElementById('visitorCount');
                 if (counter) {
-                    counter.textContent = parseInt(counter.textContent) + Math.floor(Math.random() * 3) + 1;
+                    const current = parseInt(counter.textContent) || 1247;
+                    counter.textContent = current + Math.floor(Math.random() * 4) + 1;
                 }
             }
             
-            setInterval(updateCounter, 25000);
+            updateCounter();
+            setInterval(updateCounter, 30000);
             
-            // Audio
+            // Background audio
             const audio = document.getElementById('bg-audio');
             if (audio) {
                 audio.volume = 0.3;
@@ -694,21 +1021,24 @@
                     document.addEventListener('click', () => audio.play(), { once: true });
                 });
             }
+            
+            console.log('✅ Complete system initialized with all features');
         });
         
         // CSS animations
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-            @keyframes slideInRight { 0% { transform: translateX(100%); } 100% { transform: translateX(0); } }
-            @keyframes slideOutRight { 0% { transform: translateX(0); } 100% { transform: translateX(100%); } }
+        const animationStyles = document.createElement('style');
+        animationStyles.textContent = `
+            @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
+            @keyframes slideIn { 0% { transform: translateX(100%); } 100% { transform: translateX(0); } }
+            @keyframes fadeOut { 0% { opacity: 1; } 100% { opacity: 0; } }
         `;
-        document.head.appendChild(style);
+        document.head.appendChild(animationStyles);
         
-        console.log('%c🔄 REAL-TIME AUTO UPDATE SYSTEM', 'color: #28a745; font-size: 20px; font-weight: bold;');
-        console.log('%c⏰ Frontend: 45s refresh cycle', 'color: #007bff; font-size: 16px;');
-        console.log('%c🔄 Backend: 30s channel monitoring', 'color: #6f42c1; font-size: 16px;');
-        console.log('%c🆕 New movies auto-highlighted', 'color: #ffc107; font-size: 16px;');
+        console.log('%c🔄 COMPLETE AUTO UPDATE SYSTEM', 'color: #28a745; font-size: 20px; font-weight: bold;');
+        console.log('%c📱 Social Links in 3-Line Menu', 'color: #0088cc; font-size: 16px; font-weight: bold;');
+        console.log('%c🎥 Tutorial Videos Included', 'color: #ff6600; font-size: 16px; font-weight: bold;');
+        console.log('%c⚠️ Disclaimer Section Added', 'color: #dc3545; font-size: 16px; font-weight: bold;');
+        console.log('%c💰 AdSense Optimized Layout', 'color: #ffc107; font-size: 16px; font-weight: bold;');
     </script>
 </body>
 </html>
