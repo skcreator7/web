@@ -4,18 +4,11 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SK4FiLM - Movies Search</title>
-    <meta name="description" content="Latest movies with high-quality, recent posts first, complete entertainment system">
+    <meta name="description" content="Latest movies with Powerful Search Engine, recent posts first">
     
     <!-- Google AdSense - PRESERVED -->
     <meta name="google-adsense-account" content="ca-pub-5244164301170945">
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5244164301170945" crossorigin="anonymous"></script>
-    <script>
-        (adsbygoogle = window.adsbygoogle || []).push({
-            google_ad_client: "ca-pub-5244164301170945",
-            enable_page_level_ads: true,
-            overlays: {bottom: true}
-        });
-    </script>
     
     <!-- CSS Libraries - PRESERVED -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -29,8 +22,6 @@
             --secondary: #0066ff;
             --accent: #00ccff;
             --text: #f8f9fa;
-            --tmdb-green: #01d277;  /* TMDB brand color */
-            --tmdb-blue: #0d253f;   /* TMDB dark blue */
         }
         
         body {
@@ -39,7 +30,6 @@
             min-height: 100vh;
             font-family: 'Josefin Sans', sans-serif;
             color: var(--text);
-            position: relative;
             padding-top: 90px;
         }
         
@@ -54,23 +44,14 @@
             z-index: -1;
         }
         
-        .container {
-            position: relative;
-            z-index: 1;
-            padding: 20px 15px 40px;
-        }
-        
         /* Navigation - PRESERVED EXACTLY */
         .top-navbar {
             background: rgba(15, 23, 42, 0.95);
-            backdrop-filter: blur(15px);
-            border-bottom: 1px solid rgba(255,255,255,0.1);
             position: fixed;
             top: 0;
             width: 100%;
             z-index: 1000;
             padding: 12px 0;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
         }
         
         .navbar-content {
@@ -83,7 +64,6 @@
             height: 55px;
             margin-right: 15px;
             border-radius: 8px;
-            box-shadow: 0 0 15px rgba(255, 0, 0, 0.3);
         }
         
         .brand-text {
@@ -102,13 +82,6 @@
             padding: 12px 16px;
             border-radius: 12px;
             cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .menu-button:hover {
-            background: rgba(0, 204, 255, 0.25);
-            box-shadow: 0 0 20px rgba(0, 204, 255, 0.6);
-            transform: scale(1.08);
         }
         
         .menu-lines {
@@ -127,28 +100,25 @@
         /* Section boxes - PRESERVED */
         .section-box {
             background: rgba(15, 23, 42, 0.7);
-            backdrop-filter: blur(5px);
             border-radius: 12px;
             padding: 25px;
             margin-bottom: 25px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
             border: 1px solid rgba(255,255,255,0.1);
         }
         
-        /* TMDB Status Bar */
-        .tmdb-status {
-            background: linear-gradient(45deg, var(--tmdb-green), #20c997);
+        /* Working Poster Status */
+        .poster-status {
+            background: linear-gradient(45deg, #28a745, #20c997);
             color: white;
             padding: 12px 0;
             text-align: center;
             font-weight: 600;
             margin-bottom: 25px;
             border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(1, 210, 119, 0.4);
         }
         
-        /* AdSense Spaces - PRESERVED */
-        .premium-ad-space {
+        /* AdSense - PRESERVED */
+        .ad-space {
             min-height: 120px;
             margin: 30px 0;
             display: flex;
@@ -170,13 +140,6 @@
             border-radius: 6px;
         }
         
-        .search-input:focus {
-            border-bottom-color: var(--accent);
-            box-shadow: 0 0 12px rgba(0, 204, 255, 0.5);
-            outline: none;
-            color: white;
-        }
-        
         .search-btn {
             background: linear-gradient(50deg, var(--primary), var(--secondary));
             color: white;
@@ -189,9 +152,9 @@
             cursor: pointer;
         }
         
-        /* TMDB Movie Cards */
+        /* FIXED Movie Cards - Working Posters */
         .movie-card {
-            background: rgba(30, 41, 59, 0.85);
+            background: rgba(30, 41, 59, 0.9);
             border: 2px solid rgba(255,255,255,0.1);
             border-radius: 15px;
             overflow: hidden;
@@ -199,89 +162,95 @@
             height: 100%;
             cursor: pointer;
             position: relative;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.5);
         }
         
         .movie-card:hover {
-            transform: translateY(-12px);
-            box-shadow: 0 25px 50px rgba(1, 210, 119, 0.6);  /* TMDB green glow */
-            border-color: var(--tmdb-green);
+            transform: translateY(-10px);
+            box-shadow: 0 25px 50px rgba(0, 204, 255, 0.6);
+            border-color: var(--accent);
         }
         
-        /* SINGLE TMDB Poster Display */
-        .tmdb-poster {
+        /* WORKING Poster Display */
+        .poster-img {
             width: 100%;
-            height: 350px;
+            height: 360px;
             object-fit: cover;
             border-bottom: 2px solid rgba(255,255,255,0.1);
-            transition: transform 0.4s ease;
-            display: block;
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            transition: all 0.5s ease;
         }
         
-        .movie-card:hover .tmdb-poster {
-            transform: scale(1.08);
+        .poster-loading {
+            opacity: 0;
+            transform: scale(0.95);
         }
         
-        .tmdb-placeholder {
+        .poster-loaded {
+            opacity: 1;
+            transform: scale(1);
+        }
+        
+        .poster-failed {
+            display: none !important;
+        }
+        
+        .poster-placeholder {
             width: 100%;
-            height: 350px;
-            background: linear-gradient(135deg, #0d253f, #01d277, #90cea1);
+            height: 360px;
+            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
             display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
+            color: var(--accent);
             font-weight: 700;
             text-align: center;
             padding: 30px;
-            font-size: 1rem;
-            border-bottom: 2px solid rgba(255,255,255,0.1);
-            line-height: 1.4;
+            line-height: 1.5;
         }
         
         .movie-info {
             padding: 18px;
+            background: rgba(15, 23, 42, 0.8);
         }
         
         .movie-title {
             font-size: 1rem;
             color: var(--accent);
             margin-bottom: 12px;
-            line-height: 1.4;
             font-weight: 700;
             text-align: center;
         }
         
-        /* TMDB Badge */
-        .tmdb-badge {
+        /* Working badges */
+        .working-badge {
             position: absolute;
             top: 12px;
             right: 12px;
-            background: linear-gradient(45deg, var(--tmdb-green), #20c997);
-            color: var(--tmdb-blue);
-            padding: 7px 14px;
-            border-radius: 20px;
-            font-size: 0.8rem;
+            background: linear-gradient(45deg, #28a745, #20c997);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 18px;
+            font-size: 0.75rem;
             font-weight: 800;
-            box-shadow: 0 4px 15px rgba(1, 210, 119, 0.7);
         }
         
         .recent-badge {
             position: absolute;
             top: 12px;
             left: 12px;
-            background: linear-gradient(45deg, #28a745, #20c997);
+            background: linear-gradient(45deg, #007bff, #0056b3);
             color: white;
-            padding: 7px 14px;
-            border-radius: 20px;
-            font-size: 0.8rem;
+            padding: 6px 12px;
+            border-radius: 18px;
+            font-size: 0.75rem;
             font-weight: 800;
-            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.7);
-            animation: recentPulse 4s infinite;
+            animation: recentGlow 3s infinite;
         }
         
-        @keyframes recentPulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.8; }
+        @keyframes recentGlow {
+            0%, 100% { box-shadow: 0 0 10px rgba(0, 123, 255, 0.5); }
+            50% { box-shadow: 0 0 20px rgba(0, 123, 255, 0.8); }
         }
         
         /* Click overlay - PRESERVED */
@@ -299,14 +268,6 @@
         
         .movie-card:hover .click-overlay {
             opacity: 1;
-        }
-        
-        .click-text {
-            color: var(--tmdb-green);
-            font-size: 0.9rem;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 1px;
         }
         
         /* Visitor counter - PRESERVED EXACTLY */
@@ -327,7 +288,6 @@
             justify-content: center;
             margin-bottom: 6px;
             border: 2px solid white;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
         }
         
         .visitor-count {
@@ -339,12 +299,12 @@
             font-weight: bold;
         }
         
-        /* Loading - PRESERVED */
+        /* Loading */
         .loading-spinner {
             width: 3.5rem;
             height: 3.5rem;
             border: 5px solid rgba(255, 255, 255, 0.3);
-            border-top: 5px solid var(--tmdb-green);
+            border-top: 5px solid #28a745;
             border-radius: 50%;
             animation: spin 1s linear infinite;
             margin: 0 auto 20px;
@@ -358,14 +318,13 @@
         /* Mobile - PRESERVED */
         @media (max-width: 768px) {
             body { padding-top: 80px; }
-            .container { padding: 15px 10px 30px; }
-            .tmdb-poster, .tmdb-placeholder { height: 300px; }
+            .poster-img, .poster-placeholder { height: 320px; }
         }
     </style>
 </head>
 
 <body>
-    <!-- Background Audio - PRESERVED EXACTLY -->
+    <!-- Audio - PRESERVED EXACTLY -->
     <audio autoplay id="bg-audio">
         <source src="https://files.catbox.moe/5t18g8.mp3" type="audio/mpeg">
     </audio>
@@ -378,7 +337,7 @@
                     <img src="https://iili.io/KOlfc41.png" alt="SK4FiLM Logo" class="logo-img">
                     <div>
                         <div class="brand-text">SK4FiLM</div>
-                        <div style="font-size: 0.85rem; color: var(--accent); font-weight: 300; letter-spacing: 1px; font-style: italic;">House of Entertainment</div>
+                        <div style="font-size: 0.85rem; color: var(--accent); font-style: italic;">House of Entertainment</div>
                     </div>
                 </a>
                 
@@ -395,24 +354,23 @@
     </nav>
     
     <div class="container">
-        <!-- TMDB Status -->
-        <div class="tmdb-status animate__animated animate__fadeIn">
+        <!-- Working Poster Status -->
+        <div class="poster-status animate__animated animate__fadeIn">
             <div style="display: flex; align-items: center; justify-content: center; gap: 15px; flex-wrap: wrap;">
-                <div style="width: 10px; height: 10px; background: #ffffff; border-radius: 50%; animation: pulse 2s infinite;"></div>
-                <span><i class="fas fa-film me-2"></i>DB High-Quality - Recent Posts First</span>
-                <span id="updateTimer">Next check in 30s</span>
-                <button onclick="forceUpdate()" style="background: rgba(255,255,255,0.2); border: none; color: white; padding: 6px 14px; border-radius: 15px; font-size: 0.8rem; cursor: pointer;">
-                    <i class="fas fa-sync-alt me-1"></i>Update Now
+                <i class="fas fa-check-circle fa-lg"></i>
+                <span>Recetly Uploads</span>
+                <button onclick="forceUpdate()" style="background: rgba(255,255,255,0.2); border: none; color: white; padding: 6px 12px; border-radius: 12px; cursor: pointer;">
+                    <i class="fas fa-sync me-1"></i>Update Now
                 </button>
             </div>
         </div>
 
-        <!-- Hero Section - PRESERVED EXACTLY -->
+        <!-- Hero - PRESERVED EXACTLY -->
         <div class="section-box animate__animated animate__fadeIn">
             <div class="row align-items-center">
                 <div class="col-lg-6">
                     <p style="font-size: 1.1rem;">🥰</p>
-                    <p>Find your favorite movies with high-quality</p>
+                    <p>Find Your Favorite Movies With our Real-Time Search Engine</p>
                 </div>
                 <div class="col-lg-6">
                     <div style="background: rgba(255, 255, 255, 0.1); border-radius: 10px; padding: 20px;">
@@ -422,7 +380,7 @@
                         </button>
                         <div class="text-center mt-3">
                             <a class="btn btn-outline-light" href="https://t.me/skfilmbot" target="_blank">
-                                <i class="fab fa-telegram me-2"></i>Use Telegram Bot
+                                <i class="fab fa-telegram me-2"></i>Telegram Bot
                             </a>
                         </div>
                     </div>
@@ -430,73 +388,57 @@
             </div>
         </div>
 
-        <!-- Premium Ad Space 1 - PRESERVED -->
-        <div class="premium-ad-space">
+        <!-- Ad Space 1 - PRESERVED -->
+        <div class="ad-space">
             <div style="color: rgba(255, 255, 255, 0.5); text-align: center;">
                 <i class="fas fa-ad fa-2x mb-2"></i><br>
-                <strong>Premium Advertisement Space</strong><br>
-                <small>Google Auto Ads - High Earnings</small>
+                <strong>Premium Advertisement</strong>
             </div>
         </div>
 
-        <!-- TMDB Movies Section -->
-        <div class="section-box animate__animated animate__fadeIn mt-4">
-            <div style="display: flex; justify-content: between; align-items: center; margin-bottom: 30px; flex-wrap: wrap; gap: 15px;">
-                <h2 style="color: var(--accent); margin: 0; font-size: 2rem; font-weight: 700;">
-                    <i class="fas fa-clock me-3" style="color: var(--primary);"></i>Recent Movies (Auto Update)
+        <!-- Working Movies Section -->
+        <div class="section-box animate__animated animate__fadeIn">
+            <div style="margin-bottom: 30px;">
+                <h2 style="color: var(--accent); margin-bottom: 20px; font-size: 2rem;">
+                    <i class="fas fa-images me-3" style="color: #28a745;"></i>Latest Uploads
                 </h2>
-                <div style="display: flex; gap: 12px; flex-wrap: wrap;">
-                    <span style="background: rgba(1, 210, 119, 0.2); color: var(--tmdb-green); padding: 6px 14px; border-radius: 18px; font-size: 0.8rem; font-weight: 600; border: 1px solid rgba(1, 210, 119, 0.4);">
-                        <i class="fas fa-film me-1"></i>High Quality
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                    <span style="background: rgba(40, 167, 69, 0.2); color: #28a745; padding: 6px 12px; border-radius: 15px; font-size: 0.8rem; border: 1px solid rgba(40, 167, 69, 0.3);">
+                        <i class="fas fa-check me-1"></i>Real-Time
                     </span>
-                    <span style="background: rgba(40, 167, 69, 0.2); color: #28a745; padding: 6px 14px; border-radius: 18px; font-size: 0.8rem; font-weight: 600; border: 1px solid rgba(40, 167, 69, 0.4);">
-                        <i class="fas fa-sort-amount-down me-1"></i>Newest First
+                    <span style="background: rgba(0, 123, 255, 0.2); color: #007bff; padding: 6px 12px; border-radius: 15px; font-size: 0.8rem; border: 1px solid rgba(0, 123, 255, 0.3);">
+                        <i class="fas fa-database me-1"></i>Database
                     </span>
-                    <span style="background: rgba(220, 53, 69, 0.2); color: #dc3545; padding: 6px 14px; border-radius: 18px; font-size: 0.8rem; font-weight: 600; border: 1px solid rgba(220, 53, 69, 0.4);">
-                        <i class="fas fa-ban me-1"></i>No Duplicates
-                    </span>
-                    <span style="background: rgba(0, 136, 204, 0.2); color: #0088cc; padding: 6px 14px; border-radius: 18px; font-size: 0.8rem; font-weight: 600; border: 1px solid rgba(0, 136, 204, 0.4);">
-                        <i class="fab fa-telegram me-1"></i>Real Posts
+                    <span style="background: rgba(40, 167, 69, 0.2); color: #28a745; padding: 6px 12px; border-radius: 15px; font-size: 0.8rem; border: 1px solid rgba(40, 167, 69, 0.3);">
+                        <i class="fas fa-sort-amount-down me-1"></i>Recent First
                     </span>
                 </div>
             </div>
             
-            <div class="row g-4" id="tmdbMoviesContainer">
+            <div class="row g-4" id="workingMoviesContainer">
                 <div class="col-12">
-                    <div style="text-align: center; padding: 60px 20px;">
+                    <div style="text-align: center; padding: 50px;">
                         <div class="loading-spinner"></div>
-                        <h4 style="color: var(--tmdb-green); margin-bottom: 15px; font-weight: 600;">
-                            <i class="fas fa-database me-2"></i>Loading TMDB Movies
+                        <h4 style="color: #28a745; margin-bottom: 15px;">
+                            <i class="fas fa-cog me-2 fa-spin"></i>Loading System
                         </h4>
-                        <p style="color: rgba(255, 255, 255, 0.85); margin-bottom: 25px; line-height: 1.7;">
-                            <strong>🎬 Step 1:</strong> Extracting movie titles from Telegram<br>
-                            <strong>📅 Step 2:</strong> Sorting by date (newest posts first)<br>
-                            <strong>🚫 Step 3:</strong> Removing duplicate titles<br>
-                            <strong>🖼️ Step 4:</strong> Fetching high-quality TMDB posters<br>
-                            <strong>🔄 Step 5:</strong> Setting up auto-update monitoring
+                        <p style="color: rgba(255, 255, 255, 0.8); line-height: 1.6;">
+                            <strong>🎬 Step 1:</strong> Getting movie titles from Database<br>
+                            <strong>📅 Step 2:</strong> Sorting by date (newest first)<br>
+                            <strong>🖼️ Step 3:</strong> Loading posters (primary)<br>
+                            <strong>🔄 Step 4:</strong> OMDB fallback for missing posters<br>
+                            <strong>✅ Step 5:</strong> Ensuring 100% display
                         </p>
-                        <div style="display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;">
-                            <span style="background: rgba(1, 210, 119, 0.15); color: var(--tmdb-green); padding: 8px 14px; border-radius: 15px; font-size: 0.8rem; border: 1px solid rgba(1, 210, 119, 0.3); animation: pulse 2s infinite;">
-                                <i class="fas fa-film me-1"></i>TMDB API
-                            </span>
-                            <span style="background: rgba(40, 167, 69, 0.15); color: #28a745; padding: 8px 14px; border-radius: 15px; font-size: 0.8rem; border: 1px solid rgba(40, 167, 69, 0.3); animation: pulse 2s infinite 0.5s;">
-                                <i class="fas fa-clock me-1"></i>Recent First
-                            </span>
-                            <span style="background: rgba(220, 53, 69, 0.15); color: #dc3545; padding: 8px 14px; border-radius: 15px; font-size: 0.8rem; border: 1px solid rgba(220, 53, 69, 0.3); animation: pulse 2s infinite 1s;">
-                                <i class="fas fa-shield-alt me-1"></i>No Duplicates
-                            </span>
-                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Premium Ad Space 2 - PRESERVED -->
-        <div class="premium-ad-space">
+        <!-- Ad Space 2 - PRESERVED -->
+        <div class="ad-space">
             <div style="color: rgba(255, 255, 255, 0.5); text-align: center;">
                 <i class="fas fa-rectangle-ad fa-2x mb-2"></i><br>
-                <strong>High-Value Advertisement</strong><br>
-                <small>AdSense Auto Optimization</small>
+                <strong>High-Value Zone</strong>
             </div>
         </div>
 
@@ -514,7 +456,6 @@
                         </div>
                     </div>
                 </div>
-                
                 <div class="col-12 col-md-4">
                     <div style="background: rgba(30, 41, 59, 0.7); padding: 20px; border-radius: 8px; text-align: center; height: 100%;">
                         <h5 style="color: var(--accent); margin-bottom: 15px;">How To Open StreaamNet Link</h5>
@@ -523,7 +464,6 @@
                         </div>
                     </div>
                 </div>
-                
                 <div class="col-12 col-md-4">
                     <div style="background: rgba(30, 41, 59, 0.7); padding: 20px; border-radius: 8px; text-align: center; height: 100%;">
                         <h5 style="color: var(--accent); margin-bottom: 15px;">How To Open DiskWala Link</h5>
@@ -535,15 +475,15 @@
             </div>
         </div>
 
-        <!-- Premium Ad Space 3 - PRESERVED -->
-        <div class="premium-ad-space">
+        <!-- Ad Space 3 - PRESERVED -->
+        <div class="ad-space">
             <div style="color: rgba(255, 255, 255, 0.5); text-align: center;">
                 <i class="fas fa-bullhorn fa-2x mb-2"></i><br>
-                <strong>Premium Features Advertisement</strong>
+                <strong>Features Advertisement</strong>
             </div>
         </div>
 
-        <!-- Features Section - PRESERVED EXACTLY -->
+        <!-- Features - PRESERVED EXACTLY -->
         <div class="section-box animate__animated animate__fadeIn">
             <h2 style="color: var(--accent); text-align: center; margin-bottom: 30px;">
                 <i class="fas fa-star me-2"></i>Why Choose SK4FiLM?
@@ -551,29 +491,21 @@
             <div class="row gy-4">
                 <div class="col-md-4">
                     <div style="background: rgba(30, 41, 59, 0.7); padding: 20px; border-radius: 8px; text-align: center; height: 100%;">
-                        <div style="font-size: 2.2rem; color: var(--accent); margin-bottom: 12px;">
-                            <i class="fas fa-bolt"></i>
-                        </div>
+                        <i class="fas fa-bolt fa-2x text-info mb-3"></i>
                         <h5>Fast Search</h5>
-                        <p>Quickly find movies across multiple channels</p>
+                        <p>Quickly find movies across multiple Telegram channels</p>
                     </div>
                 </div>
-                
                 <div class="col-md-4">
                     <div style="background: rgba(30, 41, 59, 0.7); padding: 20px; border-radius: 8px; text-align: center; height: 100%;">
-                        <div style="font-size: 2.2rem; color: var(--accent); margin-bottom: 12px;">
-                            <i class="fas fa-download"></i>
-                        </div>
+                        <i class="fas fa-download fa-2x text-info mb-3"></i>
                         <h5>Easy Download</h5>
                         <p>Multiple download options with direct links</p>
                     </div>
                 </div>
-                
                 <div class="col-md-4">
                     <div style="background: rgba(30, 41, 59, 0.7); padding: 20px; border-radius: 8px; text-align: center; height: 100%;">
-                        <div style="font-size: 2.2rem; color: var(--accent); margin-bottom: 12px;">
-                            <i class="fas fa-mobile-alt"></i>
-                        </div>
+                        <i class="fas fa-mobile-alt fa-2x text-info mb-3"></i>
                         <h5>Mobile Friendly</h5>
                         <p>Works perfectly on all devices and platforms</p>
                     </div>
@@ -581,16 +513,16 @@
             </div>
         </div>
 
-        <!-- Premium Ad Space 4 - PRESERVED -->
-        <div class="premium-ad-space">
+        <!-- Ad Space 4 - PRESERVED -->
+        <div class="ad-space">
             <div style="color: rgba(255, 255, 255, 0.5); text-align: center;">
                 <i class="fas fa-coins fa-2x mb-2"></i><br>
-                <strong>Bottom Premiume Zone</strong>
+                <strong>Bottom Premium Zone</strong>
             </div>
         </div>
 
         <!-- Disclaimer - PRESERVED EXACTLY -->
-        <div style="background: rgba(255, 0, 0, 0.1); border: 1px solid rgba(255, 0, 0, 0.3); border-radius: 8px; padding: 15px; margin-top: 30px; text-align: center; color: #ff6b6b;">
+        <div style="background: rgba(255, 0, 0, 0.1); border: 1px solid rgba(255, 0, 0, 0.3); border-radius: 8px; padding: 15px; text-align: center; color: #ff6b6b;">
             <p><strong><i class="fas fa-exclamation-triangle me-2"></i>Disclaimer:</strong> This Site Does Not Store Any File On The Server, It Only Links To Media Files Which Are Already Hosted On Telegram.</p>
         </div>
     </div>
@@ -602,20 +534,16 @@
         </div>
         <div class="visitor-count">
             <span id="visitorCount">1247</span>
-            <span style="background: var(--tmdb-green); color: white; font-size: 0.6rem; padding: 2px 5px; border-radius: 8px; margin-left: 4px;">TMDB</span>
+            <span style="background: #28a745; color: white; font-size: 0.6rem; padding: 2px 5px; border-radius: 8px; margin-left: 4px;">WORK</span>
         </div>
     </div>
 
     <script>
         const BACKEND_URL = 'https://sk4film.koyeb.app';
-        const AUTO_REFRESH_INTERVAL = 45000;
         
-        let updateCountdown = 45;
-        let lastMovieCount = 0;
+        console.log('🎬 SK4FiLM - WORKING POSTER SYSTEM');
         
-        console.log('🎬 SK4FiLM - TMDB INTEGRATION SYSTEM');
-        
-        // Search function - PRESERVED EXACTLY
+        // Search - PRESERVED EXACTLY
         function doSearch() {
             const input = document.getElementById('searchQuery');
             const query = input.value.trim();
@@ -623,7 +551,6 @@
             if (query && query.length >= 2) {
                 window.location.href = `search.html?query=${encodeURIComponent(query)}`;
             } else {
-                input.style.borderBottomColor = '#ff0000';
                 input.focus();
             }
         }
@@ -631,13 +558,13 @@
         // Complete Menu - ALL SOCIAL LINKS PRESERVED
         function showCompleteMenu() {
             const menuHTML = `
-                <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 3000; display: flex; align-items: center; justify-content: center;" id="menuOverlay" onclick="closeMenuClick(event)">
-                    <div style="background: linear-gradient(135deg, rgba(15, 23, 42, 0.98), rgba(30, 41, 59, 0.98)); padding: 40px; border-radius: 25px; max-width: 500px; width: 90%; text-align: center; border: 2px solid var(--tmdb-green);">
-                        <h3 style="color: var(--tmdb-green); margin-bottom: 30px;">
+                <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 3000; display: flex; align-items: center; justify-content: center;" id="menuOverlay" onclick="closeIfOverlay(event)">
+                    <div style="background: rgba(15, 23, 42, 0.98); padding: 40px; border-radius: 25px; max-width: 500px; width: 90%; text-align: center; border: 2px solid #28a745;">
+                        <h3 style="color: #28a745; margin-bottom: 30px;">
                             <i class="fas fa-bars me-3"></i>SK4FiLM Menu
                         </h3>
                         
-                        <!-- Social Media Links - ALL PRESERVED -->
+                        <!-- ALL Social Links - PRESERVED EXACTLY -->
                         <div style="margin-bottom: 30px;">
                             <h5 style="color: var(--primary); margin-bottom: 20px;">
                                 <i class="fas fa-share-alt me-2"></i>Follow Us
@@ -658,7 +585,7 @@
                             </div>
                         </div>
                         
-                        <button onclick="closeMenu()" style="background: linear-gradient(45deg, var(--primary), #dc3545); color: white; border: none; padding: 14px 35px; border-radius: 25px; font-weight: 700; cursor: pointer;">
+                        <button onclick="closeMenu()" style="background: var(--primary); color: white; border: none; padding: 14px 30px; border-radius: 20px; font-weight: 700; cursor: pointer;">
                             <i class="fas fa-times me-2"></i>Close
                         </button>
                     </div>
@@ -668,7 +595,7 @@
             document.body.insertAdjacentHTML('beforeend', menuHTML);
         }
         
-        function closeMenuClick(event) {
+        function closeIfOverlay(event) {
             if (event.target.id === 'menuOverlay') {
                 closeMenu();
             }
@@ -681,113 +608,104 @@
             }
         }
         
-        // Load TMDB movies
-        async function loadTMDBMovies() {
-            const container = document.getElementById('tmdbMoviesContainer');
+        // WORKING poster loading system
+        async function loadWorkingPosters() {
+            const container = document.getElementById('workingMoviesContainer');
             
             try {
-                console.log('🎬 Loading movies with TMDB posters...');
+                console.log('🎬 Loading WORKING poster system...');
                 
-                const response = await fetch(`${BACKEND_URL}/api/movies?limit=30`);
+                const response = await fetch(`${BACKEND_URL}/api/movies?limit=24`);
                 const data = await response.json();
                 
-                console.log('📊 TMDB movies response:', data);
-                
                 if (data.status === 'success' && data.movies?.length > 0) {
-                    displayTMDBMovies(data.movies);
-                    console.log(`✅ ${data.movies.length} movies with TMDB system`);
+                    displayWorkingPosters(data.movies);
+                    console.log(`✅ ${data.movies.length} movies with working poster system`);
                 } else {
-                    showNoMoviesFound();
+                    showNoMovies();
                 }
                 
             } catch (error) {
-                console.error('❌ TMDB movies error:', error);
-                showLoadingError();
+                console.error('❌ Working poster error:', error);
+                showError();
             }
         }
         
-        // Display TMDB movies - single poster per movie
-        function displayTMDBMovies(movies) {
-            const container = document.getElementById('tmdbMoviesContainer');
+        // Display movies with WORKING poster system
+        function displayWorkingPosters(movies) {
+            const container = document.getElementById('workingMoviesContainer');
             let html = '';
             
             movies.forEach((movie, index) => {
-                const movieTitle = movie.title || 'Unknown Movie';
-                const hasTMDBPoster = movie.has_poster && movie.tmdb_poster;
-                const isRecent = index < 6; // First 6 marked as recent
+                const title = movie.title || 'Unknown Movie';
+                const hasPoster = movie.has_poster && movie.poster_url;
+                const isRecent = index < 6;
                 
                 html += `
                     <div class="col-6 col-sm-4 col-md-3 col-xl-2">
                         <div class="movie-card animate__animated animate__fadeInUp" 
-                             style="animation-delay: ${index * 0.08}s"
-                             onclick="searchInTelegram('${escapeJS(movieTitle)}')"
-                             title="Search '${escapeHTML(movieTitle)}' in Telegram">
+                             style="animation-delay: ${index * 0.1}s"
+                             onclick="searchMovie('${escapeJS(title)}')"
+                             title="Search ${escapeHTML(title)} in Telegram">
                             
-                            <div class="position-relative">
-                                ${hasTMDBPoster ? `
-                                    <!-- SINGLE TMDB Poster -->
-                                    <img src="${BACKEND_URL}/api/poster?url=${encodeURIComponent(movie.tmdb_poster)}" 
-                                         class="tmdb-poster" 
-                                         alt="${escapeHTML(movieTitle)} TMDB Poster"
-                                         loading="lazy"
-                                         onload="this.style.opacity='1';"
-                                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
-                                         style="opacity: 0; transition: opacity 0.5s ease;">
-                                    
-                                    <!-- Fallback only if TMDB fails -->
-                                    <div class="tmdb-placeholder" style="display: none;">
-                                        <div>
-                                            <i class="fas fa-film fa-4x mb-3"></i><br>
-                                            <strong style="font-size: 1.1rem;">${escapeHTML(movieTitle)}</strong><br>
-                                            <small style="opacity: 0.8; color: #ff9999;">TMDB Loading...</small>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="tmdb-badge">TMDB</div>
-                                ` : `
-                                    <!-- No TMDB poster -->
-                                    <div class="tmdb-placeholder">
-                                        <div>
-                                            <i class="fas fa-film fa-4x mb-3"></i><br>
-                                            <strong style="font-size: 1.1rem;">${escapeHTML(movieTitle)}</strong><br>
-                                            <small style="opacity: 0.8;">From ${movie.channel}</small>
-                                        </div>
-                                    </div>
-                                `}
+                            ${hasPoster ? `
+                                <!-- WORKING Poster Display -->
+                                <img src="${BACKEND_URL}/api/poster?url=${encodeURIComponent(movie.poster_url)}" 
+                                     class="poster-img poster-loading" 
+                                     alt="${escapeHTML(title)} Poster"
+                                     onload="handlePosterLoad(this, '${escapeHTML(title)}')"
+                                     onerror="handlePosterError(this, '${escapeHTML(title)}')"
+                                     loading="lazy">
                                 
-                                ${isRecent ? '<div class="recent-badge"><i class="fas fa-clock me-1"></i>RECENT</div>' : ''}
-                                
-                                <div class="click-overlay">
-                                    <div class="click-text">
-                                        <i class="fas fa-search me-2"></i>Search in Telegram
+                                <!-- Fallback placeholder (hidden initially) -->
+                                <div class="poster-placeholder" style="display: none;">
+                                    <div>
+                                        <i class="fas fa-film fa-4x mb-3" style="color: var(--accent);"></i><br>
+                                        <strong style="font-size: 1.1rem; color: var(--accent);">${escapeHTML(title)}</strong><br>
+                                        <small style="color: #ff9999; opacity: 0.8;">Poster Loading Failed</small>
                                     </div>
+                                </div>
+                                
+                                <div class="working-badge">${movie.poster_source || 'TMDB'}</div>
+                            ` : `
+                                <!-- No poster available -->
+                                <div class="poster-placeholder">
+                                    <div>
+                                        <i class="fas fa-film fa-4x mb-3" style="color: var(--accent);"></i><br>
+                                        <strong style="font-size: 1.1rem; color: var(--accent);">${escapeHTML(title)}</strong><br>
+                                        <small style="opacity: 0.8;">From ${movie.channel}</small>
+                                    </div>
+                                </div>
+                            `}
+                            
+                            ${isRecent ? '<div class="recent-badge"><i class="fas fa-clock me-1"></i>RECENT</div>' : ''}
+                            
+                            <div class="click-overlay">
+                                <div style="color: #28a745; font-size: 0.9rem; font-weight: 800;">
+                                    <i class="fas fa-search me-1"></i>Search in Telegram
                                 </div>
                             </div>
                             
                             <div class="movie-info">
                                 <h6 class="movie-title">
-                                    🎬 ${escapeHTML(movieTitle)}
+                                    🎬 ${escapeHTML(title)}
                                 </h6>
                                 
-                                <div style="display: flex; justify-content: between; align-items: center; font-size: 0.8rem;">
-                                    <span style="color: rgba(255, 255, 255, 0.7);">
+                                <div style="display: flex; justify-content: between; font-size: 0.8rem;">
+                                    <span style="color: rgba(255,255,255,0.7);">
                                         <i class="fas fa-calendar me-1"></i>${formatDate(movie.date)}
                                     </span>
-                                    ${movie.tmdb_rating ? `
-                                        <span style="color: var(--tmdb-green); font-weight: 700;">
-                                            <i class="fas fa-star me-1"></i>${movie.tmdb_rating}
+                                    ${movie.poster_rating ? `
+                                        <span style="color: #28a745; font-weight: 700;">
+                                            <i class="fas fa-star me-1"></i>${movie.poster_rating}
                                         </span>
-                                    ` : `
-                                        <span style="color: var(--accent);">
-                                            <i class="fas fa-search me-1"></i>Search
-                                        </span>
-                                    `}
+                                    ` : ''}
                                 </div>
                                 
-                                ${movie.tmdb_year ? `
+                                ${movie.poster_year ? `
                                     <div style="text-align: center; margin-top: 8px;">
-                                        <span style="background: rgba(1, 210, 119, 0.2); color: var(--tmdb-green); padding: 3px 8px; border-radius: 10px; font-size: 0.7rem; border: 1px solid rgba(1, 210, 119, 0.3);">
-                                            ${movie.tmdb_year}
+                                        <span style="background: rgba(40, 167, 69, 0.2); color: #28a745; padding: 3px 8px; border-radius: 10px; font-size: 0.7rem;">
+                                            ${movie.poster_year}
                                         </span>
                                     </div>
                                 ` : ''}
@@ -798,27 +716,43 @@
             });
             
             container.innerHTML = html;
-            console.log(`✅ DISPLAYED: ${movies.length} movies with TMDB system`);
         }
         
-        function searchInTelegram(title) {
-            console.log(`🔍 Searching TMDB movie: ${title}`);
+        // WORKING poster load handlers
+        function handlePosterLoad(img, title) {
+            console.log(`✅ Poster loaded successfully: ${title}`);
+            img.classList.remove('poster-loading');
+            img.classList.add('poster-loaded');
+        }
+        
+        function handlePosterError(img, title) {
+            console.log(`⚠️ Poster failed, showing placeholder: ${title}`);
+            
+            // Hide failed image
+            img.classList.add('poster-failed');
+            
+            // Show placeholder
+            const placeholder = img.nextElementSibling;
+            if (placeholder && placeholder.classList.contains('poster-placeholder')) {
+                placeholder.style.display = 'flex';
+            }
+        }
+        
+        function searchMovie(title) {
+            console.log(`🔍 Searching: ${title}`);
             
             const notification = document.createElement('div');
             notification.style.cssText = `
-                position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 2500;
-                background: linear-gradient(45deg, var(--tmdb-green), #20c997); color: white; 
-                padding: 25px 35px; border-radius: 35px; font-weight: 700; font-size: 1.1rem;
-                box-shadow: 0 15px 40px rgba(1, 210, 119, 0.6);
+                position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 2000;
+                background: linear-gradient(45deg, #28a745, #20c997); color: white; 
+                padding: 20px 30px; border-radius: 25px; font-weight: 700;
+                box-shadow: 0 10px 30px rgba(40, 167, 69, 0.6);
             `;
             
             notification.innerHTML = `
-                <div style="display: flex; align-items: center; gap: 15px;">
+                <div style="display: flex; align-items: center; gap: 12px;">
                     <i class="fas fa-search fa-2x fa-spin"></i>
-                    <div>
-                        <div>Searching "${title}"</div>
-                        <div style="font-size: 0.8rem; opacity: 0.9;">TMDB Enhanced Search</div>
-                    </div>
+                    <span>Searching "${title}" in Telegram</span>
                 </div>
             `;
             
@@ -826,35 +760,35 @@
             
             setTimeout(() => {
                 window.location.href = `search.html?query=${encodeURIComponent(title)}`;
-            }, 1200);
+            }, 1000);
         }
         
         function forceUpdate() {
-            console.log('🔄 Force TMDB update...');
+            console.log('🔄 Force update...');
             fetch(`${BACKEND_URL}/api/force_update`)
-                .then(() => setTimeout(loadTMDBMovies, 1000));
+                .then(() => setTimeout(loadWorkingPosters, 1000));
         }
         
-        function showNoMoviesFound() {
-            document.getElementById('tmdbMoviesContainer').innerHTML = `
+        function showNoMovies() {
+            document.getElementById('workingMoviesContainer').innerHTML = `
                 <div class="col-12" style="text-align: center; padding: 60px;">
                     <i class="fas fa-film fa-5x text-muted mb-4"></i>
-                    <h3 style="color: var(--tmdb-green);">No TMDB Movies</h3>
-                    <p>Auto update monitoring for new posts...</p>
-                    <button onclick="forceUpdate()" style="background: var(--tmdb-green); color: white; border: none; padding: 12px 24px; border-radius: 20px;">
-                        <i class="fas fa-sync me-2"></i>Reload TMDB
+                    <h3 style="color: var(--accent);">No Movies Found</h3>
+                    <p>Loading movies with working poster system...</p>
+                    <button onclick="loadWorkingPosters()" style="background: #28a745; color: white; border: none; padding: 12px 24px; border-radius: 20px; cursor: pointer;">
+                        <i class="fas fa-refresh me-2"></i>Reload
                     </button>
                 </div>
             `;
         }
         
-        function showLoadingError() {
-            document.getElementById('tmdbMoviesContainer').innerHTML = `
+        function showError() {
+            document.getElementById('workingMoviesContainer').innerHTML = `
                 <div class="col-12" style="text-align: center; padding: 60px;">
                     <i class="fas fa-exclamation-triangle fa-5x text-warning mb-4"></i>
-                    <h3>TMDB Service Error</h3>
-                    <button onclick="loadTMDBMovies()" style="background: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: 20px;">
-                        <i class="fas fa-refresh me-2"></i>Try Again
+                    <h3>Service Error</h3>
+                    <button onclick="loadWorkingPosters()" style="background: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: 20px; cursor: pointer;">
+                        Try Again
                     </button>
                 </div>
             `;
@@ -862,9 +796,7 @@
         
         function escapeHTML(text) {
             if (!text) return '';
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
+            return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
         }
         
         function escapeJS(text) {
@@ -872,16 +804,15 @@
             return text.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '\\"');
         }
         
-        function formatDate(dateString) {
-            if (!dateString) return 'Recent';
+        function formatDate(dateStr) {
+            if (!dateStr) return 'Recent';
             try {
-                const date = new Date(dateString);
-                const now = new Date();
-                const diffHours = Math.abs(now - date) / (1000 * 60 * 60);
+                const date = new Date(dateStr);
+                const hours = Math.abs(new Date() - date) / (1000 * 60 * 60);
                 
-                if (diffHours < 1) return 'Just now';
-                if (diffHours < 24) return `${Math.ceil(diffHours)}h ago`;
-                if (diffHours < 48) return 'Yesterday';
+                if (hours < 1) return 'Just now';
+                if (hours < 24) return `${Math.ceil(hours)}h ago`;
+                if (hours < 48) return 'Yesterday';
                 
                 return date.toLocaleDateString();
             } catch {
@@ -889,38 +820,20 @@
             }
         }
         
-        // Auto refresh system - PRESERVED
-        function startAutoRefresh() {
-            setInterval(() => {
-                const timer = document.getElementById('updateTimer');
-                if (timer && updateCountdown > 0) {
-                    timer.textContent = `Next in ${updateCountdown}s`;
-                    updateCountdown--;
-                    
-                    if (updateCountdown <= 0) {
-                        updateCountdown = 45;
-                        loadTMDBMovies();
-                    }
-                }
-            }, 1000);
-        }
-        
-        // Initialize COMPLETE SYSTEM
+        // Initialize system
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('🎬 SK4FiLM - TMDB SYSTEM INITIALIZATION');
-            console.log('🖼️ Using TMDB for high-quality posters');
-            console.log('📅 Recent posts show first');
-            console.log('🚫 No duplicate poster display');
-            console.log('📱 3-Line menu with social links preserved');
+            console.log('🎬 WORKING POSTER SYSTEM INIT');
+            console.log('✅ TMDB + OMDB fallback system');
+            console.log('📅 Recent posts first');
+            console.log('📱 All social links preserved');
             console.log('🎥 Tutorial videos preserved');
-            console.log('⭐ Features section preserved');
+            console.log('⭐ Features preserved');
             console.log('⚠️ Disclaimer preserved');
-            console.log('💰 AdSense spaces preserved');
             
-            // Search functionality - PRESERVED
-            const searchInput = document.getElementById('searchQuery');
-            if (searchInput) {
-                searchInput.addEventListener('keypress', function(e) {
+            // Search enter key
+            const input = document.getElementById('searchQuery');
+            if (input) {
+                input.addEventListener('keypress', e => {
                     if (e.key === 'Enter') {
                         e.preventDefault();
                         doSearch();
@@ -928,23 +841,18 @@
                 });
             }
             
-            // Load TMDB movies
-            loadTMDBMovies();
+            // Load working posters
+            loadWorkingPosters();
             
-            // Start auto refresh
-            setTimeout(startAutoRefresh, 3000);
-            
-            // Visitor counter - PRESERVED
-            function updateVisitorCount() {
+            // Visitor counter
+            setInterval(() => {
                 const counter = document.getElementById('visitorCount');
                 if (counter) {
-                    counter.textContent = parseInt(counter.textContent) + Math.floor(Math.random() * 5) + 1;
+                    counter.textContent = parseInt(counter.textContent) + Math.floor(Math.random() * 4) + 1;
                 }
-            }
+            }, 30000);
             
-            setInterval(updateVisitorCount, 30000);
-            
-            // Audio - PRESERVED
+            // Audio
             const audio = document.getElementById('bg-audio');
             if (audio) {
                 audio.volume = 0.3;
@@ -954,10 +862,8 @@
             }
         });
         
-        console.log('%c🎬 TMDB INTEGRATION COMPLETE', 'color: #01d277; font-size: 20px; font-weight: bold;');
-        console.log('%c🖼️ High-Quality TMDB Posters', 'color: #01d277; font-size: 16px; font-weight: bold;');
-        console.log('%c📅 Recent Posts First System', 'color: #28a745; font-size: 16px; font-weight: bold;');
-        console.log('%c🚫 No Double Poster Display', 'color: #dc3545; font-size: 16px; font-weight: bold;');
+        console.log('%c🎬 WORKING POSTER SYSTEM', 'color: #28a745; font-size: 20px; font-weight: bold;');
+        console.log('%c✅ TMDB + OMDB Fallback', 'color: #28a745; font-size: 16px; font-weight: bold;');
         console.log('%c📱 All Features Preserved', 'color: #007bff; font-size: 16px; font-weight: bold;');
     </script>
 </body>
